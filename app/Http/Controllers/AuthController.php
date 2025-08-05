@@ -29,25 +29,21 @@ class AuthController extends Controller
             'login_as' => 'required|in:mitra,staff',
         ]);
 
-        if (Auth::attempt($request->only('email', 'password'))) {
+        $credentials = $request->only('email', 'password');
+        
+        if (Auth::attempt($credentials)) {
             $user = Auth::user();
             
-            // Periksa apakah role user sesuai dengan yang dipilih
-            if ($request->login_as == 'staff' && !$user->isStaff()) {
+            // Periksa apakah role user sesuai
+            if ($request->login_as === 'staff' && !$user->isStaff()) {
                 Auth::logout();
-                $request->session()->invalidate();
-                $request->session()->regenerateToken();
-                
                 return back()->withErrors([
                     'login_as' => 'Anda tidak memiliki akses sebagai Staff.'
                 ]);
             }
             
-            if ($request->login_as == 'mitra' && !$user->isMitra()) {
+            if ($request->login_as === 'mitra' && !$user->isMitra()) {
                 Auth::logout();
-                $request->session()->invalidate();
-                $request->session()->regenerateToken();
-                
                 return back()->withErrors([
                     'login_as' => 'Anda tidak memiliki akses sebagai Mitra.'
                 ]);
@@ -56,15 +52,11 @@ class AuthController extends Controller
             $request->session()->regenerate();
 
             // Redirect berdasarkan role yang dipilih
-            if ($request->login_as == 'staff') {
-                return redirect()->intended('staff/dashboard');
-            } else {
-                return redirect()->intended('mitra/dashboard');
-            }
+            return redirect()->intended($request->login_as . '/dashboard');
         }
 
-        throw ValidationException::withMessages([
-            'email' => ['Kredensial yang diberikan tidak cocok dengan data kami.'],
+        return back()->withErrors([
+            'email' => 'Kredensial yang diberikan tidak cocok dengan data kami.',
         ]);
     }
 
@@ -110,10 +102,29 @@ class AuthController extends Controller
      */
     public function logout(Request $request)
     {
-        Auth::logout();
-
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+        $guard = null;
+        
+        // Tentukan guard yang sedang aktif berdasarkan URL
+        if (str_contains($request->url(), '/mitra/')) {
+            $guard = 'mitra';
+        } elseif (str_contains($request->url(), '/staff/')) {
+            $guard = 'staff';
+        }
+        
+        if ($guard) {
+            // Hapus session untuk guard ini saja
+            $request->session()->forget($guard . '_session_id');
+            Auth::guard($guard)->logout();
+            
+            // Regenerate token tapi jangan invalidate semua session
+            $request->session()->regenerateToken();
+        } else {
+            // Jika tidak ada guard spesifik, logout dari semua
+            Auth::guard('mitra')->logout();
+            Auth::guard('staff')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+        }
 
         return redirect('/');
     }

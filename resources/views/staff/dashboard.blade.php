@@ -12,7 +12,7 @@
                         <i class="bi bi-people"></i>
                     </div>
                     <div>
-                        <div class="stat-value">42</div>
+                        <div class="stat-value">{{ $totalMitra }}</div>
                         <div class="stat-label">Total Mitra</div>
                     </div>
                 </div>
@@ -25,7 +25,7 @@
                         <i class="bi bi-file-earmark-text"></i>
                     </div>
                     <div>
-                        <div class="stat-value">156</div>
+                        <div class="stat-value">{{ $totalDokumen }}</div>
                         <div class="stat-label">Total Dokumen</div>
                     </div>
                 </div>
@@ -38,46 +38,45 @@
                         <i class="bi bi-geo-alt"></i>
                     </div>
                     <div>
-                        <div class="stat-value">38</div>
+                        <div class="stat-value">{{ $proyekAktif }}</div>
                         <div class="stat-label">Proyek Aktif</div>
                     </div>
                 </div>
             </div>
         </div>
-                        <div class="col-md-3">
-                    <div class="card card-stat">
-                        <div class="d-flex align-items-center">
-                            <div class="stat-icon">
-                                <i class="bi bi-check-circle"></i>
-                            </div>
-                            <div>
-                                <div class="stat-value">24</div>
-                                <div class="stat-label">Proyek Selesai</div>
-                            </div>
-                        </div>
+        <div class="col-md-3">
+            <div class="card card-stat">
+                <div class="d-flex align-items-center">
+                    <div class="stat-icon">
+                        <i class="bi bi-check-circle"></i>
+                    </div>
+                    <div>
+                        <div class="stat-value">{{ $proyekSelesai }}</div>
+                        <div class="stat-label">Proyek Selesai</div>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="card card-stat">
-                        <div class="d-flex align-items-center">
-                            <div class="stat-icon">
-                                <i class="bi bi-clipboard-check"></i>
-                            </div>
-                            <div>
-                                <div class="stat-value" id="pendingReviewCount">0</div>
-                                <div class="stat-label">Dokumen Pending Review</div>
-                            </div>
-                        </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card card-stat">
+                <div class="d-flex align-items-center">
+                    <div class="stat-icon">
+                        <i class="bi bi-clipboard-check"></i>
+                    </div>
+                    <div>
+                        <div class="stat-value">{{ $dokumenPendingReview }}</div>
+                        <div class="stat-label">Dokumen Pending Review</div>
                     </div>
                 </div>
+            </div>
+        </div>
     </div>
     
     <div class="row mt-4">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <div class="card-header bg-white">
                     <h5 class="mb-0">Daftar Mitra</h5>
-                    <button class="btn btn-sm btn-primary">Tambah Mitra</button>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -92,66 +91,32 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>PT Telkom Indonesia</td>
-                                    <td>contact@telkom.co.id</td>
-                                    <td>12</td>
-                                    <td><span class="badge bg-success">Aktif</span></td>
-                                    <td>
-                                        <div class="btn-group">
-                                            <a href="#" class="btn btn-sm btn-outline-primary">Detail</a>
-                                            <a href="#" class="btn btn-sm btn-outline-secondary">Edit</a>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>PT Indosat Ooredoo</td>
-                                    <td>support@indosat.com</td>
-                                    <td>8</td>
-                                    <td><span class="badge bg-success">Aktif</span></td>
-                                    <td>
-                                        <div class="btn-group">
-                                            <a href="#" class="btn btn-sm btn-outline-primary">Detail</a>
-                                            <a href="#" class="btn btn-sm btn-outline-secondary">Edit</a>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>PT XL Axiata</td>
-                                    <td>info@xl.co.id</td>
-                                    <td>6</td>
-                                    <td><span class="badge bg-success">Aktif</span></td>
-                                    <td>
-                                        <div class="btn-group">
-                                            <a href="#" class="btn btn-sm btn-outline-primary">Detail</a>
-                                            <a href="#" class="btn btn-sm btn-outline-secondary">Edit</a>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>PT Smartfren</td>
-                                    <td>cs@smartfren.com</td>
-                                    <td>4</td>
-                                    <td><span class="badge bg-warning text-dark">Pending</span></td>
-                                    <td>
-                                        <div class="btn-group">
-                                            <a href="#" class="btn btn-sm btn-outline-primary">Detail</a>
-                                            <a href="#" class="btn btn-sm btn-outline-secondary">Edit</a>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>PT Hutchison 3 Indonesia</td>
-                                    <td>support@three.co.id</td>
-                                    <td>3</td>
-                                    <td><span class="badge bg-secondary">Tidak Aktif</span></td>
-                                    <td>
-                                        <div class="btn-group">
-                                            <a href="#" class="btn btn-sm btn-outline-primary">Detail</a>
-                                            <a href="#" class="btn btn-sm btn-outline-secondary">Edit</a>
-                                        </div>
-                                    </td>
-                                </tr>
+                                @forelse($daftarMitra as $mitra)
+                                    <tr>
+                                        <td>{{ $mitra->name }}</td>
+                                        <td>{{ $mitra->email }}</td>
+                                        <td>{{ $mitra->total_proyek }}</td>
+                                        <td>
+                                            @if($mitra->proyek_aktif > 0)
+                                                <span class="badge bg-success">Aktif</span>
+                                            @else
+                                                <span class="badge bg-secondary">Tidak Aktif</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <div class="btn-group">
+                                                <a href="#" class="btn btn-sm btn-outline-primary">Detail</a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="5" class="text-center py-4">
+                                            <i class="bi bi-people display-4 text-muted d-block mb-3"></i>
+                                            <p class="text-muted mb-0">Belum ada mitra yang terdaftar</p>
+                                        </td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
@@ -166,61 +131,24 @@
                 </div>
                 <div class="card-body p-0">
                     <ul class="list-group list-group-flush">
-                        <li class="list-group-item d-flex align-items-center py-3">
-                            <div class="me-3">
-                                <div class="bg-primary rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
-                                    <i class="bi bi-file-earmark-plus text-white"></i>
+                        @forelse($aktivitasTerbaru as $aktivitas)
+                            <li class="list-group-item d-flex align-items-center py-3">
+                                <div class="me-3">
+                                    <div class="bg-{{ $aktivitas['color'] }} rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
+                                        <i class="bi {{ $aktivitas['icon'] }} text-white"></i>
+                                    </div>
                                 </div>
-                            </div>
-                            <div>
-                                <p class="mb-0">PT Telkom Indonesia menambahkan dokumen baru</p>
-                                <small class="text-muted">2 jam yang lalu</small>
-                            </div>
-                        </li>
-                        <li class="list-group-item d-flex align-items-center py-3">
-                            <div class="me-3">
-                                <div class="bg-success rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
-                                    <i class="bi bi-check-circle text-white"></i>
+                                <div>
+                                    <p class="mb-0">{{ $aktivitas['message'] }}</p>
+                                    <small class="text-muted">{{ $aktivitas['time'] }}</small>
                                 </div>
-                            </div>
-                            <div>
-                                <p class="mb-0">Proyek Pemasangan Fiber Optik selesai</p>
-                                <small class="text-muted">5 jam yang lalu</small>
-                            </div>
-                        </li>
-                        <li class="list-group-item d-flex align-items-center py-3">
-                            <div class="me-3">
-                                <div class="bg-info rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
-                                    <i class="bi bi-person-plus text-white"></i>
-                                </div>
-                            </div>
-                            <div>
-                                <p class="mb-0">PT XL Axiata terdaftar sebagai mitra baru</p>
-                                <small class="text-muted">1 hari yang lalu</small>
-                            </div>
-                        </li>
-                        <li class="list-group-item d-flex align-items-center py-3">
-                            <div class="me-3">
-                                <div class="bg-warning rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
-                                    <i class="bi bi-exclamation-triangle text-white"></i>
-                                </div>
-                            </div>
-                            <div>
-                                <p class="mb-0">Proyek Upgrade Jaringan 4G tertunda</p>
-                                <small class="text-muted">2 hari yang lalu</small>
-                            </div>
-                        </li>
-                        <li class="list-group-item d-flex align-items-center py-3">
-                            <div class="me-3">
-                                <div class="bg-secondary rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
-                                    <i class="bi bi-gear text-white"></i>
-                                </div>
-                            </div>
-                            <div>
-                                <p class="mb-0">Pembaruan sistem berhasil diterapkan</p>
-                                <small class="text-muted">3 hari yang lalu</small>
-                            </div>
-                        </li>
+                            </li>
+                        @empty
+                            <li class="list-group-item text-center py-5">
+                                <i class="bi bi-clock-history display-4 text-muted d-block mb-3"></i>
+                                <p class="text-muted mb-0">Belum ada aktivitas</p>
+                            </li>
+                        @endforelse
                     </ul>
                 </div>
             </div>

@@ -12,7 +12,7 @@
                         <i class="bi bi-file-earmark-text"></i>
                     </div>
                     <div>
-                        <div class="stat-value">24</div>
+                        <div class="stat-value">{{ $totalDokumen }}</div>
                         <div class="stat-label">Total Dokumen</div>
                     </div>
                 </div>
@@ -25,7 +25,7 @@
                         <i class="bi bi-geo-alt"></i>
                     </div>
                     <div>
-                        <div class="stat-value">12</div>
+                        <div class="stat-value">{{ $proyekAktif }}</div>
                         <div class="stat-label">Proyek Aktif</div>
                     </div>
                 </div>
@@ -38,7 +38,7 @@
                         <i class="bi bi-check-circle"></i>
                     </div>
                     <div>
-                        <div class="stat-value">8</div>
+                        <div class="stat-value">{{ $proyekSelesai }}</div>
                         <div class="stat-label">Proyek Selesai</div>
                     </div>
                 </div>
@@ -91,14 +91,12 @@
                                         <label for="sto" class="form-label">STO</label>
                                         <select class="form-select" id="sto">
                                             <option value="" selected>Pilih STO</option>
-                                            <!-- Options will be populated dynamically based on Witel selection -->
                                         </select>
                                     </div>
                                     <div class="mb-3">
                                         <label for="siteName" class="form-label">Site Name</label>
                                         <select class="form-select" id="siteName">
                                             <option value="" selected>Pilih Site Name</option>
-                                            <!-- Options will be populated dynamically based on STO selection -->
                                         </select>
                                     </div>
                                     <div class="d-grid">
@@ -127,43 +125,46 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>Pemasangan Fiber Optik</td>
-                                    <td>Fiber Optik</td>
-                                    <td>FTTH-2023-001</td>
-                                    <td>Jakarta Selatan (Witel Jakarta, STO Kebayoran)</td>
-                                    <td>12 Jun 2023</td>
-                                    <td><span class="badge bg-success">Aktif</span></td>
-                                    <td><a href="#" class="btn btn-sm btn-outline-primary">Detail</a></td>
-                                </tr>
-                                <tr>
-                                    <td>Upgrade Jaringan 4G</td>
-                                    <td>Bandung</td>
-                                    <td>05 Mei 2023</td>
-                                    <td><span class="badge bg-success">Aktif</span></td>
-                                    <td><a href="#" class="btn btn-sm btn-outline-primary">Detail</a></td>
-                                </tr>
-                                <tr>
-                                    <td>Instalasi BTS</td>
-                                    <td>Surabaya</td>
-                                    <td>20 Apr 2023</td>
-                                    <td><span class="badge bg-warning text-dark">Pending</span></td>
-                                    <td><a href="#" class="btn btn-sm btn-outline-primary">Detail</a></td>
-                                </tr>
-                                <tr>
-                                    <td>Maintenance Jaringan</td>
-                                    <td>Medan</td>
-                                    <td>15 Mar 2023</td>
-                                    <td><span class="badge bg-info">Dalam Proses</span></td>
-                                    <td><a href="#" class="btn btn-sm btn-outline-primary">Detail</a></td>
-                                </tr>
-                                <tr>
-                                    <td>Pemasangan WiFi Publik</td>
-                                    <td>Yogyakarta</td>
-                                    <td>01 Feb 2023</td>
-                                    <td><span class="badge bg-secondary">Selesai</span></td>
-                                    <td><a href="#" class="btn btn-sm btn-outline-primary">Detail</a></td>
-                                </tr>
+                                @forelse($proyekTerbaru as $proyek)
+                                    <tr>
+                                        <td>{{ $proyek->nama_proyek }}</td>
+                                        <td>{{ $proyek->jenis_proyek }}</td>
+                                        <td>{{ $proyek->nomor_kontak }}</td>
+                                        <td>{{ $proyek->witel }} ({{ $proyek->sto }}, {{ $proyek->site_name }})</td>
+                                        <td>{{ $proyek->tanggal_dokumen->format('d M Y') }}</td>
+                                        <td>
+                                            @php
+                                                $statusColors = [
+                                                    'inisiasi' => 'bg-primary',
+                                                    'planning' => 'bg-info',
+                                                    'executing' => 'bg-warning',
+                                                    'controlling' => 'bg-secondary',
+                                                    'closing' => 'bg-success'
+                                                ];
+                                                $statusLabels = [
+                                                    'inisiasi' => 'Inisiasi',
+                                                    'planning' => 'Planning',
+                                                    'executing' => 'Executing',
+                                                    'controlling' => 'Controlling',
+                                                    'closing' => 'Closing'
+                                                ];
+                                            @endphp
+                                            <span class="badge {{ $statusColors[$proyek->status_implementasi] ?? 'bg-secondary' }}">
+                                                {{ $statusLabels[$proyek->status_implementasi] ?? ucfirst($proyek->status_implementasi) }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <a href="{{ route('dokumen.show', $proyek) }}" class="btn btn-sm btn-outline-primary">Detail</a>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="7" class="text-center py-4">
+                                            <i class="bi bi-file-earmark-text display-4 text-muted d-block mb-3"></i>
+                                            <p class="text-muted mb-0">Belum ada proyek yang ditambahkan</p>
+                                        </td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
@@ -222,7 +223,7 @@
         'STO Kebayoran': ['Site KB-01', 'Site KB-02', 'Site KB-03'],
         'STO Gambir': ['Site GM-01', 'Site GM-02', 'Site GM-03'],
         'STO Cempaka Putih': ['Site CP-01', 'Site CP-02', 'Site CP-03'],
-        // Tambahkan data untuk STO lainnya
+        // Data untuk STO lainnya akan diisi saat implementasi
     };
     
     // Fungsi untuk mengisi dropdown STO berdasarkan Witel yang dipilih

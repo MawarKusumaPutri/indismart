@@ -9,7 +9,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ReviewController;
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('login');
 });
 
 // Authentication Routes
@@ -19,13 +19,22 @@ Route::get('/register', [AuthController::class, 'showRegistrationForm'])->name('
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+// Notification Routes
+Route::middleware('auth')->group(function () {
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::get('/notifications/unread', [NotificationController::class, 'getUnreadNotifications'])->name('notifications.unread');
+    Route::get('/notifications/unread-count', [NotificationController::class, 'getUnreadCount'])->name('notifications.unread-count');
+    Route::post('/notifications/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.mark-as-read');
+    Route::post('/notifications/mark-all-as-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-as-read');
+});
+
 // Mitra Routes
-Route::group(['prefix' => 'mitra', 'middleware' => ['auth', 'role:mitra']], function () {
+Route::group(['prefix' => 'mitra', 'middleware' => ['web']], function () {
     Route::get('/dashboard', [DashboardController::class, 'mitraDashboard'])->name('mitra.dashboard');
 });
 
 // Staff Routes
-Route::group(['prefix' => 'staff', 'middleware' => ['auth', 'role:staff']], function () {
+Route::group(['prefix' => 'staff', 'middleware' => ['web']], function () {
     Route::get('/dashboard', [DashboardController::class, 'staffDashboard'])->name('staff.dashboard');
 });
 

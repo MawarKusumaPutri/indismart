@@ -10,12 +10,24 @@ use Illuminate\Support\Facades\Auth;
 
 class DokumenController extends Controller
 {
+    public function __construct()
+    {
+        // Middleware untuk membatasi akses create, store, edit, update, destroy hanya untuk mitra
+        $this->middleware('role:mitra')->only(['create', 'store', 'edit', 'update', 'destroy', 'deleteFile']);
+    }
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        $query = Dokumen::with('user')->where('user_id', Auth::id());
+        $user = Auth::user();
+        $query = Dokumen::with('user');
+        
+        // Jika user adalah mitra, hanya tampilkan dokumen miliknya
+        if ($user->isMitra()) {
+            $query->where('user_id', $user->id);
+        }
+        // Jika user adalah staff, tampilkan semua dokumen
 
         // Filter berdasarkan jenis proyek
         if ($request->filled('jenis_proyek')) {
@@ -25,6 +37,45 @@ class DokumenController extends Controller
         // Filter berdasarkan status implementasi
         if ($request->filled('status_implementasi')) {
             $query->where('status_implementasi', $request->status_implementasi);
+        }
+
+        // Filter berdasarkan status review
+        if ($request->filled('status_review')) {
+            switch($request->status_review) {
+                case 'approved':
+                    $query->whereHas('reviews', function($q) {
+                        $q->where('status', 'approved')
+                          ->whereIn('id', function($sub) {
+                              $sub->selectRaw('MAX(id)')
+                                  ->from('reviews')
+                                  ->groupBy('dokumen_id');
+                          });
+                    });
+                    break;
+                case 'rejected':
+                    $query->whereHas('reviews', function($q) {
+                        $q->where('status', 'rejected')
+                          ->whereIn('id', function($sub) {
+                              $sub->selectRaw('MAX(id)')
+                                  ->from('reviews')
+                                  ->groupBy('dokumen_id');
+                          });
+                    });
+                    break;
+                case 'pending':
+                    $query->whereHas('reviews', function($q) {
+                        $q->where('status', 'pending')
+                          ->whereIn('id', function($sub) {
+                              $sub->selectRaw('MAX(id)')
+                                  ->from('reviews')
+                                  ->groupBy('dokumen_id');
+                          });
+                    });
+                    break;
+                case 'none':
+                    $query->doesntHave('reviews');
+                    break;
+            }
         }
 
         // Filter berdasarkan nomor kontak
@@ -97,8 +148,10 @@ class DokumenController extends Controller
      */
     public function show(Dokumen $dokumen)
     {
-        // Pastikan user hanya bisa melihat dokumennya sendiri
-        if ($dokumen->user_id !== Auth::id()) {
+        $user = Auth::user();
+        
+        // Jika user adalah mitra, pastikan hanya bisa melihat dokumennya sendiri
+        if ($user->isMitra() && $dokumen->user_id !== $user->id) {
             abort(403);
         }
 

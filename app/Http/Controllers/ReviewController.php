@@ -219,17 +219,32 @@ class ReviewController extends Controller
      */
     private function notifyMitra(Dokumen $dokumen, Review $review)
     {
-        $title = 'Dokumen Direview';
-        $message = "Dokumen Anda telah direview oleh staff";
+        $statusLabel = [
+            'approved' => 'disetujui',
+            'rejected' => 'ditolak',
+            'pending' => 'sedang ditinjau'
+        ];
+
+        $title = 'Review Dokumen: ' . $dokumen->nama_proyek;
+        $message = "Dokumen {$dokumen->jenis_proyek} telah {$statusLabel[$review->status]} oleh {$review->reviewer->name}";
+        
+        $type = match($review->status) {
+            'approved' => 'success',
+            'rejected' => 'error',
+            'pending' => 'info'
+        };
         
         $data = [
             'dokumen_id' => $dokumen->id,
             'reviewer_name' => $review->reviewer->name,
             'status' => $review->status,
             'jenis_proyek' => $dokumen->jenis_proyek,
+            'komentar' => $review->komentar,
+            'rating' => $review->rating,
+            'reviewed_at' => $review->reviewed_at->format('d M Y H:i')
         ];
 
         // Kirim notifikasi ke mitra
-        NotificationService::notifyUser($dokumen->user_id, $title, $message, 'info', $data);
+        NotificationService::notifyUser($dokumen->user_id, $title, $message, $type, $data);
     }
 } 

@@ -2,59 +2,64 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\NotificationService;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class NotificationController extends Controller
 {
-    /**
-     * Get jumlah notifikasi yang belum dibaca
-     */
-    public function getUnreadCount()
-    {
-        $count = NotificationService::getUnreadCount(Auth::id());
-        return response()->json(['count' => $count]);
-    }
-
-    /**
-     * Get notifikasi yang belum dibaca
-     */
-    public function getUnreadNotifications()
-    {
-        $notifications = NotificationService::getUnreadNotifications(Auth::id(), 10);
-        return response()->json($notifications);
-    }
-
-    /**
-     * Mark notifikasi sebagai sudah dibaca
-     */
-    public function markAsRead(Request $request)
-    {
-        $notificationId = $request->input('notification_id');
-        $success = NotificationService::markAsRead($notificationId, Auth::id());
-        
-        return response()->json(['success' => $success]);
-    }
-
-    /**
-     * Mark semua notifikasi sebagai sudah dibaca
-     */
-    public function markAllAsRead()
-    {
-        $success = NotificationService::markAllAsRead(Auth::id());
-        return response()->json(['success' => $success]);
-    }
-
-    /**
-     * Tampilkan halaman notifikasi
-     */
     public function index()
     {
-        $notifications = \App\Models\Notification::where('user_id', Auth::id())
+        $notifications = Auth::user()
+            ->notifications()
             ->orderBy('created_at', 'desc')
-            ->paginate(20);
+            ->paginate(10);
 
         return view('notifications.index', compact('notifications'));
     }
-} 
+
+    public function markAsRead(Request $request)
+    {
+        $notification = Notification::findOrFail($request->notification_id);
+        
+        if ($notification->user_id !== Auth::id()) {
+            return response()->json(['success' => false], 403);
+        }
+
+        $notification->markAsRead();
+
+        return response()->json(['success' => true]);
+    }
+
+    public function markAllAsRead()
+    {
+        Auth::user()
+            ->notifications()
+            ->unread()
+            ->update(['read_at' => now()]);
+
+        return response()->json(['success' => true]);
+    }
+
+    public function getUnreadCount()
+    {
+        $count = Auth::user()
+            ->notifications()
+            ->unread()
+            ->count();
+
+        return response()->json(['count' => $count]);
+    }
+
+    public function getUnreadNotifications()
+    {
+        $notifications = Auth::user()
+            ->notifications()
+            ->unread()
+            ->orderBy('created_at', 'desc')
+            ->limit(5)
+            ->get();
+
+        return response()->json($notifications);
+    }
+}

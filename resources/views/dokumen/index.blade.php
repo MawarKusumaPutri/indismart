@@ -13,9 +13,11 @@
             </ol>
         </div>
         <div class="col-md-6 text-end">
-            <a href="{{ route('dokumen.create') }}" class="btn btn-primary">
-                <i class="bi bi-plus-circle me-1"></i> Tambah Dokumen
-            </a>
+            @if(Auth::user()->isMitra())
+                <a href="{{ route('dokumen.create') }}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle me-1"></i> Tambah Dokumen
+                </a>
+            @endif
         </div>
     </div>
 </div>
@@ -43,7 +45,7 @@
                         </select>
                     </div>
                     <div class="col-md-2">
-                        <label for="status_implementasi" class="form-label">Status</label>
+                        <label for="status_implementasi" class="form-label">Status Implementasi</label>
                         <select class="form-select" id="status_implementasi" name="status_implementasi">
                             <option value="">Semua Status</option>
                             <option value="inisiasi" {{ request('status_implementasi') == 'inisiasi' ? 'selected' : '' }}>Inisiasi</option>
@@ -51,6 +53,16 @@
                             <option value="executing" {{ request('status_implementasi') == 'executing' ? 'selected' : '' }}>Executing</option>
                             <option value="controlling" {{ request('status_implementasi') == 'controlling' ? 'selected' : '' }}>Controlling</option>
                             <option value="closing" {{ request('status_implementasi') == 'closing' ? 'selected' : '' }}>Closing</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="status_review" class="form-label">Status Review</label>
+                        <select class="form-select" id="status_review" name="status_review">
+                            <option value="">Semua Status</option>
+                            <option value="approved" {{ request('status_review') == 'approved' ? 'selected' : '' }}>Disetujui</option>
+                            <option value="rejected" {{ request('status_review') == 'rejected' ? 'selected' : '' }}>Ditolak</option>
+                            <option value="pending" {{ request('status_review') == 'pending' ? 'selected' : '' }}>Menunggu Review</option>
+                            <option value="none" {{ request('status_review') == 'none' ? 'selected' : '' }}>Belum Direview</option>
                         </select>
                     </div>
                     <div class="col-md-2">
@@ -96,10 +108,14 @@
                             <thead>
                                 <tr>
                                     <th>No</th>
+                                    @if(Auth::user()->isStaff())
+                                        <th>Mitra</th>
+                                    @endif
                                     <th>Jenis Proyek</th>
                                     <th>Nomor Kontak</th>
                                     <th>Lokasi</th>
-                                    <th>Status</th>
+                                    <th>Status Implementasi</th>
+                                    <th>Status Review</th>
                                     <th>Tanggal Dokumen</th>
                                     <th>File</th>
                                     <th>Aksi</th>
@@ -109,6 +125,9 @@
                                 @foreach($dokumen as $index => $item)
                                     <tr>
                                         <td>{{ $dokumen->firstItem() + $index }}</td>
+                                        @if(Auth::user()->isStaff())
+                                            <td>{{ $item->user->name }}</td>
+                                        @endif
                                         <td>{{ $item->jenis_proyek }}</td>
                                         <td>{{ $item->nomor_kontak }}</td>
                                         <td>
@@ -137,6 +156,41 @@
                                                 {{ $statusLabels[$item->status_implementasi] ?? $item->status_implementasi }}
                                             </span>
                                         </td>
+                                        <td>
+                                            @php
+                                                $reviewStatus = $item->getReviewStatus();
+                                                $reviewStatusBadge = match($reviewStatus) {
+                                                    'approved' => 'bg-success',
+                                                    'rejected' => 'bg-danger',
+                                                    'pending' => 'bg-warning',
+                                                    default => 'bg-secondary'
+                                                };
+                                                $reviewStatusText = match($reviewStatus) {
+                                                    'approved' => 'Disetujui',
+                                                    'rejected' => 'Ditolak',
+                                                    'pending' => 'Menunggu Review',
+                                                    default => 'Belum Direview'
+                                                };
+                                                $reviewStatusIcon = match($reviewStatus) {
+                                                    'approved' => 'bi-check-circle',
+                                                    'rejected' => 'bi-x-circle',
+                                                    'pending' => 'bi-clock',
+                                                    default => 'bi-dash-circle'
+                                                };
+                                            @endphp
+                                            <span class="badge {{ $reviewStatusBadge }}">
+                                                <i class="bi {{ $reviewStatusIcon }} me-1"></i>
+                                                {{ $reviewStatusText }}
+                                            </span>
+                                            @if($item->latestReview)
+                                                <br>
+                                                <small class="text-muted">
+                                                    {{ $item->latestReview->reviewer->name }}
+                                                    <br>
+                                                    {{ $item->latestReview->created_at->format('d/m/Y H:i') }}
+                                                </small>
+                                            @endif
+                                        </td>
                                         <td>{{ $item->tanggal_dokumen->format('d/m/Y') }}</td>
                                         <td>
                                             @if($item->file_path)
@@ -158,21 +212,29 @@
                                                 <a href="{{ route('dokumen.show', $item) }}" class="btn btn-sm btn-outline-primary" title="Detail">
                                                     <i class="bi bi-eye"></i>
                                                 </a>
-                                                <a href="{{ route('dokumen.edit', $item) }}" class="btn btn-sm btn-outline-warning" title="Edit">
-                                                    <i class="bi bi-pencil"></i>
-                                                </a>
-                                                @if($item->file_path)
-                                                    <a href="{{ route('dokumen.download', $item) }}" class="btn btn-sm btn-outline-success" title="Download">
-                                                        <i class="bi bi-download"></i>
+                                                @if(Auth::user()->isMitra() && $item->user_id === Auth::id())
+                                                    <a href="{{ route('dokumen.edit', $item) }}" class="btn btn-sm btn-outline-warning" title="Edit">
+                                                        <i class="bi bi-pencil"></i>
                                                     </a>
+                                                    @if($item->file_path)
+                                                        <a href="{{ route('dokumen.download', $item) }}" class="btn btn-sm btn-outline-success" title="Download">
+                                                            <i class="bi bi-download"></i>
+                                                        </a>
+                                                    @endif
+                                                    <form method="POST" action="{{ route('dokumen.destroy', $item) }}" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus dokumen ini?')">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Hapus">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                @else
+                                                    @if($item->file_path)
+                                                        <a href="{{ route('dokumen.download', $item) }}" class="btn btn-sm btn-outline-success" title="Download">
+                                                            <i class="bi bi-download"></i>
+                                                        </a>
+                                                    @endif
                                                 @endif
-                                                <form method="POST" action="{{ route('dokumen.destroy', $item) }}" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus dokumen ini?')">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Hapus">
-                                                        <i class="bi bi-trash"></i>
-                                                    </button>
-                                                </form>
                                             </div>
                                         </td>
                                     </tr>

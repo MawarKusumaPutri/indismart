@@ -71,4 +71,12 @@ class User extends Authenticatable
     {
         return $this->role === 'staff';
     }
+
+    /**
+     * Get all documents belonging to the user
+     */
+    public function dokumen()
+    {
+        return $this->hasMany(Dokumen::class);
+    }
 }

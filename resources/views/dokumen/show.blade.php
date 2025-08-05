@@ -191,5 +191,103 @@
             </div>
         </div>
     </div>
+
+    <!-- Review Section -->
+    <div class="col-12 mt-4">
+        <div class="card">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Riwayat Review</h5>
+                @if(Auth::user()->isStaff())
+                    <a href="{{ route('reviews.create', $dokumen) }}" class="btn btn-primary btn-sm">
+                        <i class="bi bi-plus-circle me-1"></i> Tambah Review
+                    </a>
+                @endif
+            </div>
+            <div class="card-body">
+                @if($dokumen->reviews->count() > 0)
+                    <div class="timeline">
+                        @foreach($dokumen->reviews->sortByDesc('created_at') as $review)
+                            <div class="timeline-item mb-4">
+                                <div class="d-flex">
+                                    <div class="timeline-icon me-3">
+                                        @php
+                                            $iconClass = match($review->status) {
+                                                'approved' => 'bi bi-check-circle-fill text-success',
+                                                'rejected' => 'bi bi-x-circle-fill text-danger',
+                                                default => 'bi bi-clock-fill text-warning'
+                                            };
+                                        @endphp
+                                        <i class="{{ $iconClass }} fs-4"></i>
+                                    </div>
+                                    <div class="timeline-content flex-grow-1">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <h6 class="mb-0">
+                                                Review oleh {{ $review->reviewer->name }}
+                                                <span class="badge {{ $review->status === 'approved' ? 'bg-success' : ($review->status === 'rejected' ? 'bg-danger' : 'bg-warning') }} ms-2">
+                                                    {{ ucfirst($review->status) }}
+                                                </span>
+                                            </h6>
+                                            <small class="text-muted">{{ $review->created_at->format('d M Y H:i') }}</small>
+                                        </div>
+                                        @if($review->komentar)
+                                            <p class="mb-2">{{ $review->komentar }}</p>
+                                        @endif
+                                        @if($review->rating)
+                                            <div class="rating">
+                                                @for($i = 1; $i <= 5; $i++)
+                                                    <i class="bi {{ $i <= $review->rating ? 'bi-star-fill text-warning' : 'bi-star' }}"></i>
+                                                @endfor
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <div class="text-center py-4">
+                        <i class="bi bi-clipboard-x display-1 text-muted"></i>
+                        <h6 class="mt-3">Belum ada review</h6>
+                        <p class="text-muted">Dokumen ini belum memiliki review dari staff.</p>
+                    </div>
+                @endif
+            </div>
+        </div>
+    </div>
 </div>
+
+<style>
+    .timeline {
+        position: relative;
+        padding: 1rem;
+    }
+    .timeline-item {
+        position: relative;
+        padding-bottom: 1rem;
+    }
+    .timeline-item:not(:last-child)::after {
+        content: '';
+        position: absolute;
+        left: 0.85rem;
+        top: 2.5rem;
+        bottom: 0;
+        width: 2px;
+        background-color: #e9ecef;
+    }
+    .timeline-icon {
+        width: 2rem;
+        height: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1;
+        position: relative;
+        background: white;
+    }
+    .timeline-content {
+        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 0.5rem;
+    }
+</style>
 @endsection 
