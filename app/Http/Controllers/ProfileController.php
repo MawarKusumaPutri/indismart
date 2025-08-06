@@ -100,8 +100,18 @@ class ProfileController extends Controller
         if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
             Storage::disk('public')->delete($user->avatar);
             $user->update(['avatar' => null]);
+            
+            if (request()->expectsJson()) {
+                return response()->json(['success' => true, 'message' => 'Avatar berhasil dihapus!']);
+            }
+            
+            return redirect()->route('profile.edit')->with('success', 'Avatar berhasil dihapus!');
         }
 
-        return redirect()->route('profile.edit')->with('success', 'Avatar berhasil dihapus!');
+        if (request()->expectsJson()) {
+            return response()->json(['success' => false, 'message' => 'Avatar tidak ditemukan']);
+        }
+        
+        return redirect()->route('profile.edit')->with('error', 'Avatar tidak ditemukan');
     }
 } 

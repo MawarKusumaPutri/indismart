@@ -14,6 +14,7 @@ class Dokumen extends Model
 
     protected $fillable = [
         'user_id',
+        'nama_dokumen',
         'jenis_proyek',
         'nomor_kontak',
         'witel',

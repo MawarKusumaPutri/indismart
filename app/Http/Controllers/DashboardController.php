@@ -67,6 +67,21 @@ class DashboardController extends Controller
                 ];
             });
 
+        // Data untuk pie chart - distribusi status proyek
+        $statusProyek = [
+            'inisiasi' => Dokumen::where('status_implementasi', 'inisiasi')->count(),
+            'planning' => Dokumen::where('status_implementasi', 'planning')->count(),
+            'executing' => Dokumen::where('status_implementasi', 'executing')->count(),
+            'controlling' => Dokumen::where('status_implementasi', 'controlling')->count(),
+            'closing' => Dokumen::where('status_implementasi', 'closing')->count(),
+        ];
+
+        // Data untuk pie chart - jenis proyek
+        $jenisProyek = Dokumen::selectRaw('jenis_proyek, COUNT(*) as count')
+            ->groupBy('jenis_proyek')
+            ->pluck('count', 'jenis_proyek')
+            ->toArray();
+
         return view('staff.dashboard', compact(
             'totalMitra',
             'totalDokumen',
@@ -74,8 +89,57 @@ class DashboardController extends Controller
             'proyekSelesai',
             'dokumenPendingReview',
             'daftarMitra',
-            'aktivitasTerbaru'
+            'aktivitasTerbaru',
+            'statusProyek',
+            'jenisProyek'
         ));
+    }
+
+    public function mitraDetail($id)
+    {
+        $mitra = User::where('role', 'mitra')->findOrFail($id);
+        
+        // Statistik mitra
+        $totalProyek = Dokumen::where('user_id', $mitra->id)->count();
+        $proyekAktif = Dokumen::where('user_id', $mitra->id)
+            ->whereIn('status_implementasi', ['inisiasi', 'planning', 'executing', 'controlling'])
+            ->count();
+        $proyekSelesai = Dokumen::where('user_id', $mitra->id)
+            ->where('status_implementasi', 'closing')
+            ->count();
+        
+        // Daftar proyek mitra dengan detail
+        $proyekMitra = Dokumen::where('user_id', $mitra->id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+            
+        // Distribusi status proyek mitra
+        $statusDistribusi = [
+            'inisiasi' => Dokumen::where('user_id', $mitra->id)->where('status_implementasi', 'inisiasi')->count(),
+            'planning' => Dokumen::where('user_id', $mitra->id)->where('status_implementasi', 'planning')->count(),
+            'executing' => Dokumen::where('user_id', $mitra->id)->where('status_implementasi', 'executing')->count(),
+            'controlling' => Dokumen::where('user_id', $mitra->id)->where('status_implementasi', 'controlling')->count(),
+            'closing' => Dokumen::where('user_id', $mitra->id)->where('status_implementasi', 'closing')->count(),
+        ];
+        
+        // Distribusi jenis proyek mitra
+        $jenisDistribusi = Dokumen::where('user_id', $mitra->id)
+            ->selectRaw('jenis_proyek, COUNT(*) as count')
+            ->groupBy('jenis_proyek')
+            ->pluck('count', 'jenis_proyek')
+            ->toArray();
+        
+        return response()->json([
+            'mitra' => $mitra,
+            'statistik' => [
+                'total_proyek' => $totalProyek,
+                'proyek_aktif' => $proyekAktif,
+                'proyek_selesai' => $proyekSelesai
+            ],
+            'proyek_list' => $proyekMitra,
+            'status_distribusi' => $statusDistribusi,
+            'jenis_distribusi' => $jenisDistribusi
+        ]);
     }
 
     private function getActivityIcon($status)

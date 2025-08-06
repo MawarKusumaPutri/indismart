@@ -1,104 +1,202 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile - {{ $user->name }}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-</head>
-<body class="bg-light">
-    <div class="container py-5">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card shadow">
-                    <div class="card-header bg-primary text-white">
-                        <h4 class="mb-0">
-                            <i class="fas fa-user me-2"></i>Profile Saya
-                        </h4>
-                    </div>
-                    <div class="card-body">
-                        @if(session('success'))
-                            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                {{ session('success') }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                            </div>
-                        @endif
+@extends('layouts.app')
 
-                        <div class="row">
-                            <div class="col-md-4 text-center mb-4">
-                                <div class="position-relative d-inline-block">
-                                    @if($user->avatar)
-                                        <img src="{{ Storage::url($user->avatar) }}" 
-                                             alt="Avatar" 
-                                             class="rounded-circle img-thumbnail" 
-                                             style="width: 150px; height: 150px; object-fit: cover;">
-                                    @else
-                                        <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center mx-auto" 
-                                             style="width: 150px; height: 150px;">
-                                            <i class="fas fa-user fa-3x text-white"></i>
-                                        </div>
-                                    @endif
+@section('title', 'Profile Saya')
+
+@php
+    use Illuminate\Support\Facades\Storage;
+@endphp
+
+@section('content')
+<div class="page-title-box">
+    <div class="row align-items-center">
+        <div class="col-md-6">
+            <h4 class="page-title">👤 Profile Saya</h4>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    @if($user->isMitra())
+                        <a href="{{ route('mitra.dashboard') }}">Dashboard</a>
+                    @elseif($user->isStaff())
+                        <a href="{{ route('staff.dashboard') }}">Dashboard</a>
+                    @endif
+                </li>
+                <li class="breadcrumb-item active">Profile</li>
+            </ol>
+        </div>
+        <div class="col-md-6 text-end">
+            <a href="{{ route('profile.edit') }}" class="btn btn-outline-secondary">
+                <i class="bi bi-pencil-square me-1"></i> Edit Profile
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">📄 Informasi Profile</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <!-- Avatar dan Info Dasar -->
+                    <div class="col-md-4 text-center mb-4">
+                        <div class="profile-avatar-section">
+                            <!-- Avatar Display (only real photos) -->
+                            @if($user->avatar && Storage::disk('public')->exists($user->avatar))
+                                <div class="avatar-container mb-3">
+                                    <img src="{{ Storage::url($user->avatar) }}" 
+                                         alt="Avatar {{ $user->name }}" 
+                                         class="profile-avatar rounded-circle img-thumbnail shadow-sm">
                                 </div>
-                                <div class="mt-3">
-                                    <span class="badge bg-{{ $user->role === 'mitra' ? 'success' : 'info' }} fs-6">
-                                        {{ ucfirst($user->role) }}
-                                    </span>
-                                </div>
+                            @endif
+                            
+                            <!-- Avatar Actions -->
+                            <div class="avatar-actions mb-3">
+                                <a href="{{ route('profile.edit') }}" class="btn btn-sm btn-outline-secondary">
+                                    <i class="bi bi-camera me-1"></i> 
+                                    {{ $user->avatar ? 'Ganti Foto' : 'Upload Foto' }}
+                                </a>
                             </div>
-                            <div class="col-md-8">
-                                <div class="row mb-3">
-                                    <div class="col-sm-4 fw-bold">Nama:</div>
-                                    <div class="col-sm-8">{{ $user->name }}</div>
+                            
+                            <!-- User Info -->
+                            <div class="user-info">
+                                <h5 class="mb-1">{{ $user->name }}</h5>
+                                <span class="badge bg-{{ $user->role === 'mitra' ? 'success' : 'secondary' }} fs-6">
+                                    <i class="bi bi-{{ $user->role === 'mitra' ? 'building' : 'person' }} me-1"></i>
+                                    {{ $user->role === 'mitra' ? 'Mitra' : 'Staff' }}
+                                </span>
+                            </div>
+                            
+                            <!-- Status Account -->
+                            <div class="mt-3 p-3 bg-light rounded">
+                                <small class="text-muted d-block">Status Akun</small>
+                                <span class="badge bg-success">
+                                    <i class="bi bi-check-circle me-1"></i> Aktif
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Detail Informasi -->
+                    <div class="col-md-8">
+                        <div class="profile-info">
+                            <h6 class="section-title mb-3">
+                                <i class="bi bi-info-circle me-2"></i>Informasi Personal
+                            </h6>
+                            
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <div class="info-label">
+                                        <i class="bi bi-envelope text-primary me-2"></i>
+                                        <strong>Email</strong>
+                                    </div>
+                                    <div class="info-value">{{ $user->email }}</div>
                                 </div>
-                                <div class="row mb-3">
-                                    <div class="col-sm-4 fw-bold">Email:</div>
-                                    <div class="col-sm-8">{{ $user->email }}</div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-sm-4 fw-bold">Telepon:</div>
-                                    <div class="col-sm-8">{{ $user->phone ?? 'Belum diisi' }}</div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-sm-4 fw-bold">Alamat:</div>
-                                    <div class="col-sm-8">{{ $user->address ?? 'Belum diisi' }}</div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-sm-4 fw-bold">Tanggal Lahir:</div>
-                                    <div class="col-sm-8">{{ $user->birth_date ? $user->birth_date->format('d/m/Y') : 'Belum diisi' }}</div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-sm-4 fw-bold">Jenis Kelamin:</div>
-                                    <div class="col-sm-8">
-                                        @if($user->gender)
-                                            <i class="fas fa-{{ $user->gender === 'male' ? 'mars text-primary' : 'venus text-danger' }} me-2"></i>
-                                            {{ $user->gender === 'male' ? 'Laki-laki' : 'Perempuan' }}
+                                
+                                <div class="info-item">
+                                    <div class="info-label">
+                                        <i class="bi bi-telephone text-success me-2"></i>
+                                        <strong>Telepon</strong>
+                                    </div>
+                                    <div class="info-value">
+                                        @if($user->phone)
+                                            {{ $user->phone }}
                                         @else
-                                            Belum diisi
+                                            <span class="text-muted">Belum diisi</span>
+
                                         @endif
                                     </div>
                                 </div>
-                                <div class="row mb-3">
-                                    <div class="col-sm-4 fw-bold">Bergabung Sejak:</div>
-                                    <div class="col-sm-8">{{ $user->created_at->format('d/m/Y H:i') }}</div>
+                                
+                                <div class="info-item">
+                                    <div class="info-label">
+                                        <i class="bi bi-geo-alt text-danger me-2"></i>
+                                        <strong>Alamat</strong>
+                                    </div>
+                                    <div class="info-value">
+                                        @if($user->address)
+                                            {{ $user->address }}
+                                        @else
+                                            <span class="text-muted">Belum diisi</span>
+
+                                        @endif
+                                    </div>
+                                </div>
+                                
+                                <div class="info-item">
+                                    <div class="info-label">
+                                        <i class="bi bi-calendar text-info me-2"></i>
+                                        <strong>Tanggal Lahir</strong>
+                                    </div>
+                                    <div class="info-value">
+                                        @if($user->birth_date)
+                                            {{ $user->birth_date->format('d F Y') }}
+                                            <small class="text-muted ms-2">({{ $user->birth_date->diffInYears(now()) }} tahun)</small>
+                                        @else
+                                            <span class="text-muted">Belum diisi</span>
+
+                                        @endif
+                                    </div>
+                                </div>
+                                
+                                <div class="info-item">
+                                    <div class="info-label">
+                                        <i class="bi bi-{{ $user->gender === 'male' ? 'gender-male text-primary' : ($user->gender === 'female' ? 'gender-female text-danger' : 'question-circle text-muted') }} me-2"></i>
+                                        <strong>Jenis Kelamin</strong>
+                                    </div>
+                                    <div class="info-value">
+                                        @if($user->gender)
+                                            {{ $user->gender === 'male' ? 'Laki-laki' : 'Perempuan' }}
+                                        @else
+                                            <span class="text-muted">Belum diisi</span>
+
+                                        @endif
+                                    </div>
+                                </div>
+                                
+                                <div class="info-item">
+                                    <div class="info-label">
+                                        <i class="bi bi-clock-history text-secondary me-2"></i>
+                                        <strong>Bergabung Sejak</strong>
+                                    </div>
+                                    <div class="info-value">
+                                        {{ $user->created_at->format('d F Y, H:i') }}
+                                        <small class="text-muted ms-2">({{ $user->created_at->diffForHumans() }})</small>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-
-                        <div class="d-flex gap-2 mt-4">
-                            <a href="{{ route('profile.edit') }}" class="btn btn-primary">
-                                <i class="fas fa-edit me-2"></i>Edit Profile
-                            </a>
-                            <a href="{{ route('profile.change-password') }}" class="btn btn-warning">
-                                <i class="fas fa-key me-2"></i>Ubah Password
-                            </a>
+                    </div>
+                </div>
+                
+                <!-- Action Buttons -->
+                <hr class="my-4">
+                <div class="profile-actions">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="mb-3">
+                                <i class="bi bi-gear me-2"></i>Pengaturan Akun
+                            </h6>
+                            <div class="d-flex flex-wrap gap-2">
+                                <a href="{{ route('profile.edit') }}" class="btn btn-outline-secondary">
+                                    <i class="bi bi-pencil-square me-1"></i> Edit Profile
+                                </a>
+                                <a href="{{ route('profile.change-password') }}" class="btn btn-warning">
+                                    <i class="bi bi-shield-lock me-1"></i> Ubah Password
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-md-6 text-md-end">
+                            <h6 class="mb-3">
+                                <i class="bi bi-arrow-left me-2"></i>Navigasi
+                            </h6>
                             @if($user->isMitra())
-                                <a href="{{ route('mitra.dashboard') }}" class="btn btn-secondary">
-                                    <i class="fas fa-arrow-left me-2"></i>Kembali ke Dashboard
+                                <a href="{{ route('mitra.dashboard') }}" class="btn btn-outline-secondary">
+                                    <i class="bi bi-speedometer2 me-1"></i> Dashboard Mitra
                                 </a>
                             @elseif($user->isStaff())
-                                <a href="{{ route('staff.dashboard') }}" class="btn btn-secondary">
-                                    <i class="fas fa-arrow-left me-2"></i>Kembali ke Dashboard
+                                <a href="{{ route('staff.dashboard') }}" class="btn btn-outline-secondary">
+                                    <i class="bi bi-speedometer2 me-1"></i> Dashboard Staff
                                 </a>
                             @endif
                         </div>
@@ -107,7 +205,93 @@
             </div>
         </div>
     </div>
+</div>
+@endsection
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html> 
+@push('styles')
+<style>
+    .profile-avatar {
+        width: 120px;
+        height: 120px;
+        object-fit: cover;
+        border: 4px solid #e9ecef;
+    }
+    
+    .profile-avatar-placeholder {
+        width: 120px;
+        height: 120px;
+    }
+    
+    .profile-avatar-section {
+        padding: 20px 0;
+    }
+    
+    .section-title {
+        color: #495057;
+        border-bottom: 2px solid #e9ecef;
+        padding-bottom: 8px;
+    }
+    
+    .info-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .info-item {
+        padding: 15px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        border-left: 4px solid #007bff;
+    }
+    
+    .info-label {
+        font-size: 0.9rem;
+        margin-bottom: 5px;
+        color: #6c757d;
+    }
+    
+    .info-value {
+        font-size: 1rem;
+        color: #495057;
+    }
+    
+    .profile-actions {
+        background-color: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+        margin-top: 20px;
+    }
+    
+    .card {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border: none;
+    }
+    
+    .badge {
+        font-size: 0.875rem;
+    }
+    
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, #007bff, #0056b3);
+    }
+    
+    .shadow-sm {
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    }
+    
+    @media (max-width: 768px) {
+        .info-grid {
+            gap: 15px;
+        }
+        
+        .info-item {
+            padding: 12px;
+        }
+        
+        .profile-actions .row > div {
+            margin-bottom: 20px;
+        }
+    }
+</style>
+@endpush 

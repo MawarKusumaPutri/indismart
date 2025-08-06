@@ -78,20 +78,39 @@ class DokumenController extends Controller
             }
         }
 
-        // Filter berdasarkan nomor kontak
-        if ($request->filled('nomor_kontak')) {
-            $query->where('nomor_kontak', 'like', '%' . $request->nomor_kontak . '%');
-        }
+        // Search keseluruhan
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('nama_dokumen', 'like', '%' . $search . '%')
+                  ->orWhere('jenis_proyek', 'like', '%' . $search . '%')
+                  ->orWhere('nomor_kontak', 'like', '%' . $search . '%')
+                  ->orWhere('witel', 'like', '%' . $search . '%')
+                  ->orWhere('sto', 'like', '%' . $search . '%')
+                  ->orWhere('site_name', 'like', '%' . $search . '%')
+                  ->orWhere('status_implementasi', 'like', '%' . $search . '%')
+                  ->orWhere('keterangan', 'like', '%' . $search . '%')
+                  ->orWhereHas('user', function($userQuery) use ($search) {
+                      $userQuery->where('name', 'like', '%' . $search . '%');
+                  });
+            });
+        } else {
+            // Filter individual jika tidak ada search
+            // Filter berdasarkan nomor kontak
+            if ($request->filled('nomor_kontak')) {
+                $query->where('nomor_kontak', 'like', '%' . $request->nomor_kontak . '%');
+            }
 
-        // Filter berdasarkan lokasi
-        if ($request->filled('witel')) {
-            $query->where('witel', $request->witel);
-        }
-        if ($request->filled('sto')) {
-            $query->where('sto', $request->sto);
-        }
-        if ($request->filled('site_name')) {
-            $query->where('site_name', $request->site_name);
+            // Filter berdasarkan lokasi
+            if ($request->filled('witel')) {
+                $query->where('witel', 'like', '%' . $request->witel . '%');
+            }
+            if ($request->filled('sto')) {
+                $query->where('sto', 'like', '%' . $request->sto . '%');
+            }
+            if ($request->filled('site_name')) {
+                $query->where('site_name', 'like', '%' . $request->site_name . '%');
+            }
         }
 
         $dokumen = $query->orderBy('created_at', 'desc')->paginate(10);
@@ -113,6 +132,7 @@ class DokumenController extends Controller
     public function store(Request $request)
     {
         $request->validate([
+            'nama_dokumen' => 'required|string|max:255',
             'jenis_proyek' => 'required|in:Instalasi Baru,Migrasi,Upgrade,Maintenance,Troubleshooting,Survey,Audit,Lainnya',
             'nomor_kontak' => 'required|string|max:255',
             'witel' => 'required|string|max:255',
@@ -182,6 +202,7 @@ class DokumenController extends Controller
         }
 
         $request->validate([
+            'nama_dokumen' => 'required|string|max:255',
             'jenis_proyek' => 'required|in:Instalasi Baru,Migrasi,Upgrade,Maintenance,Troubleshooting,Survey,Audit,Lainnya',
             'nomor_kontak' => 'required|string|max:255',
             'witel' => 'required|string|max:255',
@@ -229,7 +250,10 @@ class DokumenController extends Controller
         // Simpan data dokumen sebelum dihapus untuk notifikasi
         $dokumenData = [
             'mitra_name' => $dokumen->user->name,
+            'nama_dokumen' => $dokumen->nama_dokumen,
+            'nama_proyek' => $dokumen->jenis_proyek . ' ' . $dokumen->sto . '-' . $dokumen->site_name . ' (' . $dokumen->nomor_kontak . ')',
             'jenis_proyek' => $dokumen->jenis_proyek,
+            'lokasi' => "{$dokumen->witel} - {$dokumen->sto} - {$dokumen->site_name}",
         ];
 
         // Hapus file jika ada
@@ -250,16 +274,25 @@ class DokumenController extends Controller
      */
     public function download(Dokumen $dokumen)
     {
-        // Pastikan user hanya bisa download dokumennya sendiri
-        if ($dokumen->user_id !== Auth::id()) {
-            abort(403);
+        $user = Auth::user();
+        
+        // Mitra hanya bisa download dokumennya sendiri
+        // Staff bisa download semua dokumen
+        if ($user->isMitra() && $dokumen->user_id !== $user->id) {
+            abort(403, 'Anda tidak memiliki akses untuk download dokumen ini.');
         }
 
         if (!$dokumen->file_path || !Storage::disk('public')->exists($dokumen->file_path)) {
             return back()->with('error', 'File tidak ditemukan!');
         }
 
-        return Storage::disk('public')->download($dokumen->file_path);
+        // Get original filename
+        $originalName = basename($dokumen->file_path);
+        if (strpos($originalName, '_') !== false) {
+            $originalName = substr($originalName, strpos($originalName, '_') + 1);
+        }
+
+        return Storage::disk('public')->download($dokumen->file_path, $originalName);
     }
 
     /**

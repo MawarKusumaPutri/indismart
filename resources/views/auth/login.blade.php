@@ -92,6 +92,20 @@
             border-color: #E22626;
             box-shadow: 0 0 0 2px rgba(226, 38, 38, 0.1);
         }
+        .form-control[type="select"] {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m1 6 7 7 7-7'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 16px 12px;
+            padding-right: 2.5rem;
+        }
+        select.form-control {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m1 6 7 7 7-7'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 16px 12px;
+            padding-right: 2.5rem;
+        }
         .btn-login {
             background-color: #E22626;
             border: none;
@@ -235,7 +249,9 @@
                                 </div>
                                 
                                 <div class="d-grid">
-                                    <button type="submit" class="btn btn-primary btn-login">Masuk</button>
+                                    <button type="submit" class="btn btn-primary btn-login">
+                                        <i class="bi bi-arrow-right me-2"></i>Masuk
+                                    </button>
                                 </div>
                                 
                                 <div class="text-center mt-4">

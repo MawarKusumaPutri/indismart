@@ -42,6 +42,10 @@
                     <div class="col-md-6">
                         <table class="table table-borderless">
                             <tr>
+                                <td width="40%"><strong>Nama Dokumen</strong></td>
+                                <td width="60%">{{ $dokumen->nama_dokumen }}</td>
+                            </tr>
+                            <tr>
                                 <td width="40%"><strong>Jenis Proyek</strong></td>
                                 <td width="60%">{{ $dokumen->jenis_proyek }}</td>
                             </tr>

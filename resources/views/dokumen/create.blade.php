@@ -32,6 +32,18 @@
                     @csrf
                     
                     <div class="row">
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label for="nama_dokumen" class="form-label">Nama Dokumen <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control @error('nama_dokumen') is-invalid @enderror" id="nama_dokumen" name="nama_dokumen" value="{{ old('nama_dokumen') }}" placeholder="Masukkan nama dokumen" required>
+                                @error('nama_dokumen')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="jenis_proyek" class="form-label">Jenis Proyek <span class="text-danger">*</span></label>

@@ -1,3 +1,7 @@
+@php
+    use Illuminate\Support\Facades\Storage;
+@endphp
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -31,6 +35,10 @@
         }
         .sidebar-logo {
             height: 40px;
+            background: white;
+            border-radius: 50%;
+            padding: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         .sidebar-menu {
             padding: 1rem 0;
@@ -113,15 +121,8 @@
                 <i class="bi bi-file-earmark-text sidebar-menu-icon"></i> Dokumen
             </a>
             
-            @if(Auth::user()->isMitra())
-                <a href="#" class="sidebar-menu-item">
-                    <i class="bi bi-geo-alt sidebar-menu-icon"></i> Lokasi Proyek
-                </a>
-                <a href="#" class="sidebar-menu-item">
-                    <i class="bi bi-bar-chart sidebar-menu-icon"></i> Analisis
-                </a>
-            @elseif(Auth::user()->isStaff())
-                <a href="#" class="sidebar-menu-item">
+            @if(Auth::user()->isStaff())
+                <a href="{{ route('manajemen-mitra.index') }}" class="sidebar-menu-item {{ request()->routeIs('manajemen-mitra.*') ? 'active' : '' }}">
                     <i class="bi bi-people sidebar-menu-icon"></i> Manajemen Mitra
                 </a>
                 <a href="{{ route('reviews.index') }}" class="sidebar-menu-item {{ request()->routeIs('reviews.*') ? 'active' : '' }}">
@@ -129,7 +130,7 @@
                 </a>
             @endif
             
-            <a href="#" class="sidebar-menu-item">
+            <a href="{{ route('settings.index') }}" class="sidebar-menu-item {{ request()->routeIs('settings.*') ? 'active' : '' }}">
                 <i class="bi bi-gear sidebar-menu-icon"></i> Pengaturan
             </a>
             
@@ -176,13 +177,35 @@
                     
                     <!-- User Dropdown -->
                     <div class="dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-person-circle me-1"></i> {{ Auth::user()->name }}
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
+                            @if(Auth::user()->avatar && Storage::disk('public')->exists(Auth::user()->avatar))
+                                <img src="{{ Storage::url(Auth::user()->avatar) }}" 
+                                     alt="Avatar {{ Auth::user()->name }}" 
+                                     class="rounded-circle me-2" 
+                                     style="width: 32px; height: 32px; object-fit: cover;"
+                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-block';">
+                                <i class="bi bi-person-circle me-1" style="display: none;"></i>
+                            @else
+                                <i class="bi bi-person-circle me-1"></i>
+                            @endif
+                            {{ Auth::user()->name }}
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="{{ route('profile.show') }}">Profil</a></li>
-                            <li><a class="dropdown-item" href="{{ route('profile.edit') }}">Edit Profil</a></li>
-                            <li><a class="dropdown-item" href="{{ route('profile.change-password') }}">Ubah Password</a></li>
+                        <ul class="dropdown-menu dropdown-menu-end" style="min-width: 280px;">
+                            <!-- Profile Header in Dropdown -->
+                            <li class="dropdown-header text-center py-3">
+                                @if(Auth::user()->avatar && Storage::disk('public')->exists(Auth::user()->avatar))
+                                    <img src="{{ Storage::url(Auth::user()->avatar) }}" 
+                                         alt="Avatar {{ Auth::user()->name }}" 
+                                         class="rounded-circle mb-2" 
+                                         style="width: 60px; height: 60px; object-fit: cover;">
+                                @endif
+                                <div class="fw-bold">{{ Auth::user()->name }}</div>
+                                <small class="text-muted">{{ Auth::user()->email }}</small>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ route('profile.show') }}"><i class="bi bi-person me-2"></i>Profil</a></li>
+                            <li><a class="dropdown-item" href="{{ route('profile.edit') }}"><i class="bi bi-pencil me-2"></i>Edit Profil</a></li>
+                            <li><a class="dropdown-item" href="{{ route('profile.change-password') }}"><i class="bi bi-lock me-2"></i>Ubah Password</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li>
                                 <form method="POST" action="{{ route('logout') }}">
@@ -196,40 +219,44 @@
             </div>
         </nav>
         
-        <!-- Content -->
-        @if(session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="fas fa-check-circle me-2"></i>
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        @endif
-        
-        @if(session('error'))
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <i class="fas fa-exclamation-circle me-2"></i>
-                {{ session('error') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        @endif
-        
-        @if(session('warning'))
-            <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                <i class="fas fa-exclamation-triangle me-2"></i>
-                {{ session('warning') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        @endif
-        
-        @if(session('info'))
-            <div class="alert alert-info alert-dismissible fade show" role="alert">
-                <i class="fas fa-info-circle me-2"></i>
-                {{ session('info') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        @endif
-        
-        @yield('content')
+        <!-- Content Container -->
+        <div class="container-fluid">
+            <!-- Global Alerts -->
+            @if(session('success'))
+                <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+                    <i class="bi bi-check-circle me-2"></i>
+                    {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            @endif
+            
+            @if(session('error'))
+                <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+                    <i class="bi bi-exclamation-circle me-2"></i>
+                    {{ session('error') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            @endif
+            
+            @if(session('warning'))
+                <div class="alert alert-warning alert-dismissible fade show mb-4" role="alert">
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    {{ session('warning') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            @endif
+            
+            @if(session('info'))
+                <div class="alert alert-info alert-dismissible fade show mb-4" role="alert">
+                    <i class="bi bi-info-circle me-2"></i>
+                    {{ session('info') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            @endif
+            
+            <!-- Page Content -->
+            @yield('content')
+        </div>
     </div>
     
     <!-- Bootstrap JS -->
@@ -259,6 +286,9 @@
                     } else {
                         badge.style.display = 'none';
                     }
+                })
+                .catch(error => {
+                    console.error('Error loading unread count:', error);
                 });
 
             // Load unread notifications
@@ -300,6 +330,9 @@
                             </li>
                         `;
                     }
+                })
+                .catch(error => {
+                    console.error('Error loading unread notifications:', error);
                 });
         }
 

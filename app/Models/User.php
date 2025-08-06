@@ -27,6 +27,17 @@ class User extends Authenticatable
         'avatar',
         'birth_date',
         'gender',
+        'email_notifications',
+        'document_upload_notifications',
+        'review_notifications',
+        'system_notifications',
+        'theme',
+        'language',
+        'sidebar_collapsed',
+        'compact_mode',
+        'last_password_change',
+        'last_login_at',
+        'last_login_ip',
     ];
 
     /**
@@ -49,6 +60,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'birth_date' => 'date',
         ];
     }
     
@@ -78,5 +90,13 @@ class User extends Authenticatable
     public function dokumen()
     {
         return $this->hasMany(Dokumen::class);
+    }
+
+    /**
+     * Get all notifications belonging to the user
+     */
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class);
     }
 }

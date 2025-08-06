@@ -7,6 +7,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DokumenController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\ManajemenMitraController;
+use App\Http\Controllers\SettingsController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -36,6 +38,7 @@ Route::group(['prefix' => 'mitra', 'middleware' => ['web']], function () {
 // Staff Routes
 Route::group(['prefix' => 'staff', 'middleware' => ['web']], function () {
     Route::get('/dashboard', [DashboardController::class, 'staffDashboard'])->name('staff.dashboard');
+    Route::get('/mitra/{id}/detail', [DashboardController::class, 'mitraDetail'])->name('staff.mitra.detail');
 });
 
 // Profile Routes
@@ -70,6 +73,16 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/notifications/mark-all-as-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-as-read');
 });
 
+// Profile Routes
+Route::group(['middleware' => 'auth'], function () {
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::get('/profile/change-password', [ProfileController::class, 'changePassword'])->name('profile.change-password');
+    Route::put('/profile/change-password', [ProfileController::class, 'updatePassword'])->name('profile.update-password');
+    Route::delete('/profile/avatar', [ProfileController::class, 'deleteAvatar'])->name('profile.delete-avatar');
+});
+
 // Review Routes (Staff Only)
 Route::group(['middleware' => ['auth', 'role:staff']], function () {
     Route::get('/reviews', [ReviewController::class, 'index'])->name('reviews.index');
@@ -80,6 +93,30 @@ Route::group(['middleware' => ['auth', 'role:staff']], function () {
     Route::put('/reviews/{review}', [ReviewController::class, 'update'])->name('reviews.update');
     Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
     Route::get('/reviews/pending/count', [ReviewController::class, 'getPendingReviews'])->name('reviews.pending-count');
+});
+
+// Manajemen Mitra Routes (Staff Only)
+Route::group(['middleware' => ['auth', 'role:staff']], function () {
+    Route::get('/manajemen-mitra', [ManajemenMitraController::class, 'index'])->name('manajemen-mitra.index');
+    Route::get('/manajemen-mitra/{id}', [ManajemenMitraController::class, 'show'])->name('manajemen-mitra.show');
+    Route::get('/manajemen-mitra/export', [ManajemenMitraController::class, 'export'])->name('manajemen-mitra.export');
+});
+
+// Settings Routes
+Route::group(['middleware' => ['auth']], function () {
+    Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
+    Route::get('/settings/profile', [SettingsController::class, 'profile'])->name('settings.profile');
+    Route::post('/settings/profile', [SettingsController::class, 'updateProfile'])->name('settings.profile.update');
+    Route::get('/settings/security', [SettingsController::class, 'security'])->name('settings.security');
+    Route::post('/settings/security', [SettingsController::class, 'updatePassword'])->name('settings.security.update');
+    Route::get('/settings/notifications', [SettingsController::class, 'notifications'])->name('settings.notifications');
+    Route::post('/settings/notifications', [SettingsController::class, 'updateNotifications'])->name('settings.notifications.update');
+    Route::get('/settings/appearance', [SettingsController::class, 'appearance'])->name('settings.appearance');
+    Route::post('/settings/appearance', [SettingsController::class, 'updateAppearance'])->name('settings.appearance.update');
+    Route::get('/settings/system', [SettingsController::class, 'system'])->name('settings.system');
+    Route::post('/settings/system/clear-cache', [SettingsController::class, 'clearCache'])->name('settings.system.clear-cache');
+    Route::get('/settings/system/export-data', [SettingsController::class, 'exportData'])->name('settings.system.export-data');
+    Route::post('/settings/system/delete-account', [SettingsController::class, 'deleteAccount'])->name('settings.system.delete-account');
 });
 
 

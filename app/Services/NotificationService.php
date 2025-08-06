@@ -32,19 +32,24 @@ class NotificationService
     public static function notifyDokumenUploaded(Dokumen $dokumen)
     {
         $mitra = $dokumen->user;
+        $namaProyek = self::generateNamaProyek($dokumen);
         
-        $title = 'Dokumen Baru Diupload';
-        $message = "Mitra {$mitra->name} telah mengupload dokumen baru: {$dokumen->jenis_proyek}";
+        $title = '📄 Dokumen Baru Diupload';
+        $message = "Mitra {$mitra->name} telah mengupload dokumen '{$dokumen->nama_dokumen}' dengan jenis proyek {$dokumen->jenis_proyek}";
         
         $data = [
             'dokumen_id' => $dokumen->id,
             'mitra_name' => $mitra->name,
+            'nama_proyek' => $namaProyek,
             'jenis_proyek' => $dokumen->jenis_proyek,
             'lokasi' => "{$dokumen->witel} - {$dokumen->sto} - {$dokumen->site_name}",
             'status' => $dokumen->status_implementasi,
+            'tanggal_upload' => $dokumen->created_at->format('d M Y H:i'),
+            'has_file' => $dokumen->file_path ? true : false,
+            'action_url' => route('dokumen.show', $dokumen->id),
         ];
 
-        self::notifyStaff($title, $message, 'info', $data);
+        self::notifyStaff($title, $message, 'success', $data);
     }
 
     /**
@@ -53,16 +58,21 @@ class NotificationService
     public static function notifyDokumenUpdated(Dokumen $dokumen)
     {
         $mitra = $dokumen->user;
+        $namaProyek = self::generateNamaProyek($dokumen);
         
-        $title = 'Dokumen Diperbarui';
-        $message = "Mitra {$mitra->name} telah memperbarui dokumen: {$dokumen->jenis_proyek}";
+        $title = '✏️ Dokumen Diperbarui';
+        $message = "Mitra {$mitra->name} telah memperbarui dokumen '{$dokumen->nama_dokumen}' dengan jenis proyek {$dokumen->jenis_proyek}";
         
         $data = [
             'dokumen_id' => $dokumen->id,
             'mitra_name' => $mitra->name,
+            'nama_proyek' => $namaProyek,
             'jenis_proyek' => $dokumen->jenis_proyek,
             'lokasi' => "{$dokumen->witel} - {$dokumen->sto} - {$dokumen->site_name}",
             'status' => $dokumen->status_implementasi,
+            'tanggal_update' => $dokumen->updated_at->format('d M Y H:i'),
+            'has_file' => $dokumen->file_path ? true : false,
+            'action_url' => route('dokumen.show', $dokumen->id),
         ];
 
         self::notifyStaff($title, $message, 'warning', $data);
@@ -73,12 +83,15 @@ class NotificationService
      */
     public static function notifyDokumenDeleted($dokumenData)
     {
-        $title = 'Dokumen Dihapus';
-        $message = "Dokumen telah dihapus oleh mitra";
+        $title = '🗑️ Dokumen Dihapus';
+        $message = "Mitra {$dokumenData['mitra_name']} telah menghapus dokumen '{$dokumenData['nama_dokumen']}' dengan jenis proyek {$dokumenData['jenis_proyek']}";
         
         $data = [
             'mitra_name' => $dokumenData['mitra_name'] ?? 'Unknown',
+            'nama_proyek' => $dokumenData['nama_proyek'] ?? 'Unknown',
             'jenis_proyek' => $dokumenData['jenis_proyek'] ?? 'Unknown',
+            'lokasi' => $dokumenData['lokasi'] ?? 'Unknown',
+            'tanggal_hapus' => now()->format('d M Y H:i'),
         ];
 
         self::notifyStaff($title, $message, 'error', $data);
@@ -145,5 +158,37 @@ class NotificationService
             'type' => $type,
             'data' => $data,
         ]);
+    }
+
+    /**
+     * Generate nama proyek berdasarkan data dokumen
+     */
+    private static function generateNamaProyek(Dokumen $dokumen)
+    {
+        // Buat nama proyek berdasarkan jenis proyek, lokasi, dan nomor kontak
+        $jenisShort = self::getShortJenisProyek($dokumen->jenis_proyek);
+        $lokasiShort = $dokumen->sto . '-' . $dokumen->site_name;
+        $nomorKontak = $dokumen->nomor_kontak;
+        
+        return "{$jenisShort} {$lokasiShort} ({$nomorKontak})";
+    }
+
+    /**
+     * Get singkatan jenis proyek
+     */
+    private static function getShortJenisProyek($jenisProyek)
+    {
+        $mapping = [
+            'Instalasi Baru' => 'IB',
+            'Migrasi' => 'MIG',
+            'Upgrade' => 'UPG',
+            'Maintenance' => 'MNT',
+            'Troubleshooting' => 'TRB',
+            'Survey' => 'SRV',
+            'Audit' => 'AUD',
+            'Lainnya' => 'LYN'
+        ];
+
+        return $mapping[$jenisProyek] ?? 'UNK';
     }
 } 

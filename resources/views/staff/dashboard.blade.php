@@ -72,6 +72,30 @@
         </div>
     </div>
     
+    <!-- Row untuk Chart -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Distribusi Status Proyek</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="statusProyekChart" style="max-height: 300px;"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Distribusi Jenis Proyek</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="jenisProyekChart" style="max-height: 300px;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row mt-4">
         <div class="col-md-8">
             <div class="card">
@@ -105,7 +129,7 @@
                                         </td>
                                         <td>
                                             <div class="btn-group">
-                                                <a href="#" class="btn btn-sm btn-outline-primary">Detail</a>
+                                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="showMitraDetail({{ $mitra->id }})">Detail</button>
                                             </div>
                                         </td>
                                     </tr>
@@ -155,6 +179,26 @@
         </div>
     </div>
 </div>
+
+<!-- Modal Detail Mitra -->
+<div class="modal fade" id="mitraDetailModal" tabindex="-1" aria-labelledby="mitraDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="mitraDetailModalLabel">Detail Mitra</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="mitraDetailContent">
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-3 text-muted">Memuat data mitra...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @push('styles')
@@ -190,6 +234,8 @@
 @endpush
 
 @push('scripts')
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Load pending review count
@@ -202,6 +248,384 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('pendingReviewCount').textContent = data.count;
             });
     }
+
+    // Data untuk pie chart status proyek
+    const statusData = @json($statusProyek);
+    const statusLabels = ['Inisiasi', 'Planning', 'Executing', 'Controlling', 'Closing'];
+    const statusValues = [
+        statusData.inisiasi || 0,
+        statusData.planning || 0,
+        statusData.executing || 0,
+        statusData.controlling || 0,
+        statusData.closing || 0
+    ];
+
+    // Pie Chart untuk Status Proyek
+    const statusCtx = document.getElementById('statusProyekChart').getContext('2d');
+    new Chart(statusCtx, {
+        type: 'pie',
+        data: {
+            labels: statusLabels,
+            datasets: [{
+                data: statusValues,
+                backgroundColor: [
+                    '#0d6efd', // Inisiasi - Primary Blue
+                    '#17a2b8', // Planning - Info Cyan
+                    '#ffc107', // Executing - Warning Yellow
+                    '#6c757d', // Controlling - Secondary Gray
+                    '#28a745'  // Closing - Success Green
+                ],
+                borderWidth: 2,
+                borderColor: '#fff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 20,
+                        usePointStyle: true
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const percentage = total > 0 ? ((context.parsed / total) * 100).toFixed(1) : 0;
+                            return context.label + ': ' + context.parsed + ' (' + percentage + '%)';
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // Data untuk pie chart jenis proyek
+    const jenisData = @json($jenisProyek);
+    const jenisLabels = Object.keys(jenisData);
+    const jenisValues = Object.values(jenisData);
+
+    // Warna dinamis untuk jenis proyek
+    const jenisColors = [
+        '#e22626', // Brand Red
+        '#fd7e14', // Orange
+        '#20c997', // Teal
+        '#6f42c1', // Purple
+        '#dc3545', // Danger Red
+        '#198754', // Success Green
+        '#0dcaf0', // Info Light Blue
+        '#adb5bd'  // Light Gray
+    ];
+
+    // Pie Chart untuk Jenis Proyek
+    if (jenisLabels.length > 0) {
+        const jenisCtx = document.getElementById('jenisProyekChart').getContext('2d');
+        new Chart(jenisCtx, {
+            type: 'pie',
+            data: {
+                labels: jenisLabels.map(label => {
+                    // Kapitalisasi label
+                    return label.charAt(0).toUpperCase() + label.slice(1);
+                }),
+                datasets: [{
+                    data: jenisValues,
+                    backgroundColor: jenisColors.slice(0, jenisLabels.length),
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 20,
+                            usePointStyle: true
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = total > 0 ? ((context.parsed / total) * 100).toFixed(1) : 0;
+                                return context.label + ': ' + context.parsed + ' (' + percentage + '%)';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    } else {
+        // Tampilkan pesan jika tidak ada data jenis proyek
+        document.getElementById('jenisProyekChart').style.display = 'none';
+        const chartContainer = document.getElementById('jenisProyekChart').parentNode;
+        chartContainer.innerHTML = '<div class="text-center py-5"><i class="bi bi-pie-chart display-4 text-muted"></i><p class="text-muted mt-3">Belum ada data jenis proyek</p></div>';
+    }
 });
+
+// Function untuk menampilkan detail mitra
+function showMitraDetail(mitraId) {
+    const modal = new bootstrap.Modal(document.getElementById('mitraDetailModal'));
+    const modalContent = document.getElementById('mitraDetailContent');
+    
+    // Tampilkan loading
+    modalContent.innerHTML = `
+        <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-3 text-muted">Memuat data mitra...</p>
+        </div>
+    `;
+    
+    modal.show();
+    
+    // Fetch data mitra
+    fetch(`/staff/mitra/${mitraId}/detail`)
+        .then(response => response.json())
+        .then(data => {
+            renderMitraDetail(data);
+        })
+        .catch(error => {
+            modalContent.innerHTML = `
+                <div class="text-center py-5">
+                    <i class="bi bi-exclamation-circle display-4 text-danger"></i>
+                    <p class="mt-3 text-muted">Gagal memuat data mitra</p>
+                </div>
+            `;
+        });
+}
+
+function renderMitraDetail(data) {
+    const { mitra, statistik, proyek_list, status_distribusi, jenis_distribusi } = data;
+    
+    const modalContent = document.getElementById('mitraDetailContent');
+    
+    modalContent.innerHTML = `
+        <!-- Info Mitra -->
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card border-primary">
+                    <div class="card-header bg-primary text-white">
+                        <h6 class="mb-0"><i class="bi bi-person-circle me-2"></i>Informasi Mitra</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <strong>Nama:</strong><br>
+                                <span class="text-muted">${mitra.name}</span>
+                            </div>
+                            <div class="col-md-4">
+                                <strong>Email:</strong><br>
+                                <span class="text-muted">${mitra.email}</span>
+                            </div>
+                            <div class="col-md-4">
+                                <strong>Bergabung:</strong><br>
+                                <span class="text-muted">${new Date(mitra.created_at).toLocaleDateString('id-ID')}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Statistik -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="bi bi-file-earmark-text display-6 text-primary"></i>
+                        <h4 class="mt-2">${statistik.total_proyek}</h4>
+                        <p class="text-muted mb-0">Total Proyek</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="bi bi-play-circle display-6 text-warning"></i>
+                        <h4 class="mt-2">${statistik.proyek_aktif}</h4>
+                        <p class="text-muted mb-0">Proyek Aktif</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="bi bi-check-circle display-6 text-success"></i>
+                        <h4 class="mt-2">${statistik.proyek_selesai}</h4>
+                        <p class="text-muted mb-0">Proyek Selesai</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Charts -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0">Distribusi Status Proyek</h6>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="mitraStatusChart" style="max-height: 250px;"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0">Distribusi Jenis Proyek</h6>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="mitraJenisChart" style="max-height: 250px;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Daftar Proyek -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0"><i class="bi bi-list-ul me-2"></i>Daftar Proyek</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Nama Proyek</th>
+                                        <th>Jenis</th>
+                                        <th>Status</th>
+                                        <th>Tanggal</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${proyek_list.map(proyek => `
+                                        <tr>
+                                            <td>${proyek.nama_proyek || '-'}</td>
+                                            <td>${proyek.jenis_proyek || '-'}</td>
+                                            <td>
+                                                <span class="badge ${getStatusBadgeClass(proyek.status_implementasi)}">
+                                                    ${getStatusLabel(proyek.status_implementasi)}
+                                                </span>
+                                            </td>
+                                            <td>${new Date(proyek.created_at).toLocaleDateString('id-ID')}</td>
+                                            <td>
+                                                <a href="/dokumen/${proyek.id}" class="btn btn-sm btn-outline-primary" target="_blank">
+                                                    <i class="bi bi-eye"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Render charts untuk mitra
+    setTimeout(() => {
+        renderMitraCharts(status_distribusi, jenis_distribusi);
+    }, 100);
+}
+
+function renderMitraCharts(statusDistribusi, jenisDistribusi) {
+    // Chart Status Proyek Mitra
+    const statusCtx = document.getElementById('mitraStatusChart').getContext('2d');
+    const statusValues = [
+        statusDistribusi.inisiasi || 0,
+        statusDistribusi.planning || 0,
+        statusDistribusi.executing || 0,
+        statusDistribusi.controlling || 0,
+        statusDistribusi.closing || 0
+    ];
+    
+    new Chart(statusCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Inisiasi', 'Planning', 'Executing', 'Controlling', 'Closing'],
+            datasets: [{
+                data: statusValues,
+                backgroundColor: ['#0d6efd', '#17a2b8', '#ffc107', '#6c757d', '#28a745'],
+                borderWidth: 2,
+                borderColor: '#fff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: { padding: 15, usePointStyle: true }
+                }
+            }
+        }
+    });
+    
+    // Chart Jenis Proyek Mitra
+    if (Object.keys(jenisDistribusi).length > 0) {
+        const jenisCtx = document.getElementById('mitraJenisChart').getContext('2d');
+        new Chart(jenisCtx, {
+            type: 'doughnut',
+            data: {
+                labels: Object.keys(jenisDistribusi).map(label => label.charAt(0).toUpperCase() + label.slice(1)),
+                datasets: [{
+                    data: Object.values(jenisDistribusi),
+                    backgroundColor: ['#e22626', '#fd7e14', '#20c997', '#6f42c1', '#dc3545'],
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { padding: 15, usePointStyle: true }
+                    }
+                }
+            }
+        });
+    } else {
+        document.getElementById('mitraJenisChart').parentNode.innerHTML = 
+            '<div class="text-center py-4"><i class="bi bi-pie-chart text-muted"></i><p class="text-muted mt-2">Belum ada data</p></div>';
+    }
+}
+
+function getStatusBadgeClass(status) {
+    const classes = {
+        'inisiasi': 'bg-primary',
+        'planning': 'bg-info',
+        'executing': 'bg-warning',
+        'controlling': 'bg-secondary',
+        'closing': 'bg-success'
+    };
+    return classes[status] || 'bg-secondary';
+}
+
+function getStatusLabel(status) {
+    const labels = {
+        'inisiasi': 'Inisiasi',
+        'planning': 'Planning',
+        'executing': 'Executing',
+        'controlling': 'Controlling',
+        'closing': 'Closing'
+    };
+    return labels[status] || status;
+}
 </script>
 @endpush

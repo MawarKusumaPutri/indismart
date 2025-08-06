@@ -1,22 +1,31 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ubah Password</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-</head>
-<body class="bg-light">
-    <div class="container py-5">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="card shadow">
-                    <div class="card-header bg-warning text-dark">
-                        <h4 class="mb-0">
-                            <i class="fas fa-key me-2"></i>Ubah Password
-                        </h4>
-                    </div>
+@extends('layouts.app')
+
+@section('title', 'Ubah Password')
+
+@section('content')
+<div class="page-title-box">
+    <div class="row align-items-center">
+        <div class="col-md-6">
+            <h4 class="page-title">🔐 Ubah Password</h4>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ route('profile.show') }}">Profile</a></li>
+                <li class="breadcrumb-item active">Ubah Password</li>
+            </ol>
+        </div>
+        <div class="col-md-6 text-end">
+            <a href="{{ route('profile.show') }}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left me-1"></i> Kembali
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">🛡️ Keamanan Akun</h5>
+            </div>
                     <div class="card-body">
                         @if($errors->any())
                             <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -77,7 +86,7 @@
                             </div>
 
                             <div class="alert alert-info">
-                                <i class="fas fa-info-circle me-2"></i>
+                                <i class="bi bi-info-circle me-2"></i>
                                 <strong>Tips Password yang Aman:</strong>
                                 <ul class="mb-0 mt-2">
                                     <li>Gunakan minimal 8 karakter</li>
@@ -89,10 +98,10 @@
 
                             <div class="d-flex gap-2">
                                 <button type="submit" class="btn btn-warning">
-                                    <i class="fas fa-save me-2"></i>Ubah Password
+                                    <i class="bi bi-shield-lock me-2"></i>Ubah Password
                                 </button>
                                 <a href="{{ route('profile.show') }}" class="btn btn-secondary">
-                                    <i class="fas fa-times me-2"></i>Batal
+                                    <i class="bi bi-x-circle me-2"></i>Batal
                                 </a>
                             </div>
                         </form>
@@ -128,5 +137,4 @@
         togglePasswordVisibility('password', 'togglePassword');
         togglePasswordVisibility('password_confirmation', 'toggleConfirmPassword');
     </script>
-</body>
-</html> 
+@endsection 
