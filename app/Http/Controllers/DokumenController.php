@@ -146,6 +146,11 @@ class DokumenController extends Controller
 
         $data = $request->all();
         $data['user_id'] = Auth::id();
+        
+        // Auto-fill nomor kontrak from user's assigned contract number
+        if (Auth::user()->nomor_kontrak) {
+            $data['nomor_kontrak'] = Auth::user()->nomor_kontrak;
+        }
 
         // Handle file upload
         if ($request->hasFile('file')) {

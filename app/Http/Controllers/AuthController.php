@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -88,6 +89,11 @@ class AuthController extends Controller
         ]);
 
         Auth::login($user);
+
+        // Kirim notifikasi ke staff jika yang registrasi adalah mitra
+        if ($user->isMitra()) {
+            NotificationService::notifyMitraRegistration($user);
+        }
 
         // Redirect berdasarkan role
         if ($user->isStaff()) {

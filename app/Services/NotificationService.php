@@ -191,4 +191,23 @@ class NotificationService
 
         return $mapping[$jenisProyek] ?? 'UNK';
     }
+
+    /**
+     * Notifikasi ketika ada mitra baru yang registrasi
+     */
+    public static function notifyMitraRegistration(User $mitra)
+    {
+        $title = 'Mitra Baru Terdaftar';
+        $message = "Mitra baru dengan nama '{$mitra->name}' telah mendaftar ke sistem. Email: {$mitra->email}";
+        
+        $data = [
+            'mitra_id' => $mitra->id,
+            'mitra_name' => $mitra->name,
+            'mitra_email' => $mitra->email,
+            'registration_date' => $mitra->created_at->format('d M Y H:i'),
+            'action_url' => route('manajemen-mitra.show', $mitra->id),
+        ];
+
+        self::notifyStaff($title, $message, 'info', $data);
+    }
 } 

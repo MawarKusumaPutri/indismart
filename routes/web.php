@@ -8,6 +8,7 @@ use App\Http\Controllers\DokumenController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ManajemenMitraController;
+use App\Http\Controllers\NomorKontrakController;
 use App\Http\Controllers\SettingsController;
 
 Route::get('/', function () {
@@ -100,6 +101,16 @@ Route::group(['middleware' => ['auth', 'role:staff']], function () {
     Route::get('/manajemen-mitra', [ManajemenMitraController::class, 'index'])->name('manajemen-mitra.index');
     Route::get('/manajemen-mitra/{id}', [ManajemenMitraController::class, 'show'])->name('manajemen-mitra.show');
     Route::get('/manajemen-mitra/export', [ManajemenMitraController::class, 'export'])->name('manajemen-mitra.export');
+});
+
+// Nomor Kontrak Routes (Staff Only)
+Route::group(['middleware' => ['auth', 'role:staff']], function () {
+    Route::get('/nomor-kontrak', [NomorKontrakController::class, 'index'])->name('nomor-kontrak.index');
+    Route::get('/nomor-kontrak/{id}/assign', [NomorKontrakController::class, 'assign'])->name('nomor-kontrak.assign');
+    Route::post('/nomor-kontrak/{id}', [NomorKontrakController::class, 'store'])->name('nomor-kontrak.store');
+    Route::get('/nomor-kontrak/generate', [NomorKontrakController::class, 'generate'])->name('nomor-kontrak.generate');
+    Route::get('/nomor-kontrak/bulk-assign', [NomorKontrakController::class, 'bulkAssign'])->name('nomor-kontrak.bulk-assign');
+    Route::post('/nomor-kontrak/bulk-assign-selected', [NomorKontrakController::class, 'bulkAssignSelected'])->name('nomor-kontrak.bulk-assign-selected');
 });
 
 // Settings Routes

@@ -22,6 +22,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role', // Tambahkan role ke fillable
+        'nomor_kontrak',
         'phone',
         'address',
         'avatar',

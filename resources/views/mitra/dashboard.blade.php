@@ -4,6 +4,33 @@
 
 @section('content')
 <div class="container-fluid">
+    <!-- Informasi Nomor Kontrak -->
+    @if(auth()->user()->nomor_kontrak)
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-hash fs-4 me-2"></i>
+                <div>
+                    <strong>Nomor Kontrak Anda:</strong> {{ auth()->user()->nomor_kontrak }}
+                    <br>
+                    <small class="text-muted">Nomor kontrak ini akan otomatis digunakan saat membuat dokumen baru.</small>
+                </div>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @else
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-exclamation-triangle fs-4 me-2"></i>
+                <div>
+                    <strong>Anda belum memiliki nomor kontrak!</strong>
+                    <br>
+                    <small class="text-muted">Silakan hubungi staff untuk mendapatkan nomor kontrak terlebih dahulu sebelum membuat dokumen.</small>
+                </div>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
+
     <div class="row">
         <div class="col-md-4">
             <div class="card card-stat">

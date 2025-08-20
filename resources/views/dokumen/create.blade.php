@@ -66,11 +66,33 @@
                         
                         <div class="col-md-6">
                             <div class="mb-3">
-                                                <label for="nomor_kontrak" class="form-label">Nomor Kontrak <span class="text-danger">*</span></label>
-                <input type="text" class="form-control @error('nomor_kontrak') is-invalid @enderror" id="nomor_kontrak" name="nomor_kontrak" value="{{ old('nomor_kontrak') }}" placeholder="Masukkan nomor kontrak" required>
-                @error('nomor_kontrak')
+                                <label for="nomor_kontrak" class="form-label">Nomor Kontrak <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control @error('nomor_kontrak') is-invalid @enderror" 
+                                           id="nomor_kontrak" name="nomor_kontrak" 
+                                           value="{{ old('nomor_kontrak', auth()->user()->nomor_kontrak) }}" 
+                                           placeholder="Nomor kontrak akan diisi otomatis" 
+                                           {{ auth()->user()->nomor_kontrak ? 'readonly' : 'required' }}>
+                                    @if(!auth()->user()->nomor_kontrak)
+                                        <button type="button" class="btn btn-outline-warning" onclick="alert('Silakan hubungi staff untuk mendapatkan nomor kontrak terlebih dahulu.')">
+                                            <i class="bi bi-exclamation-triangle me-1"></i> Belum Ada
+                                        </button>
+                                    @else
+                                        <span class="input-group-text bg-success text-white">
+                                            <i class="bi bi-check-circle"></i>
+                                        </span>
+                                    @endif
+                                </div>
+                                @error('nomor_kontrak')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
+                                @if(!auth()->user()->nomor_kontrak)
+                                    <div class="alert alert-warning mt-2">
+                                        <small><i class="bi bi-info-circle me-1"></i> Anda belum memiliki nomor kontrak. Silakan hubungi staff untuk mendapatkan nomor kontrak terlebih dahulu.</small>
+                                    </div>
+                                @else
+                                    <small class="text-muted">Nomor kontrak Anda: <strong>{{ auth()->user()->nomor_kontrak }}</strong></small>
+                                @endif
                             </div>
                         </div>
                     </div>

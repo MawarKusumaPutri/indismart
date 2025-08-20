@@ -98,6 +98,29 @@
                                         <i class="bi bi-telephone text-success me-2"></i>
                                         <strong>Telepon</strong>
                                     </div>
+                                </div>
+                                
+                                @if($user->isMitra())
+                                <div class="info-item">
+                                    <div class="info-label">
+                                        <i class="bi bi-hash text-warning me-2"></i>
+                                        <strong>Nomor Kontrak</strong>
+                                    </div>
+                                    <div class="info-value">
+                                        @if($user->nomor_kontrak)
+                                            <span class="badge bg-success">{{ $user->nomor_kontrak }}</span>
+                                        @else
+                                            <span class="badge bg-warning">Belum Ditugaskan</span>
+                                        @endif
+                                    </div>
+                                </div>
+                                @endif
+                                
+                                <div class="info-item">
+                                    <div class="info-label">
+                                        <i class="bi bi-telephone text-success me-2"></i>
+                                        <strong>Telepon</strong>
+                                    </div>
                                     <div class="info-value">
                                         @if($user->phone)
                                             {{ $user->phone }}

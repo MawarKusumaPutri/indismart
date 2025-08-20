@@ -4,6 +4,30 @@
 
 @section('content')
 <div class="container-fluid">
+    <!-- Notifikasi Mitra Tanpa Nomor Kontrak -->
+    @php
+        $mitraWithoutContract = \App\Models\User::where('role', 'mitra')
+            ->whereNull('nomor_kontrak')
+            ->count();
+    @endphp
+    
+    @if($mitraWithoutContract > 0)
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-exclamation-triangle fs-4 me-2"></i>
+                <div>
+                    <strong>Perhatian!</strong> Ada {{ $mitraWithoutContract }} mitra yang belum memiliki nomor kontrak.
+                    <br>
+                    <small class="text-muted">
+                        Mitra tersebut tidak dapat membuat dokumen sampai nomor kontrak ditugaskan.
+                        <a href="{{ route('nomor-kontrak.index') }}" class="alert-link">Kelola nomor kontrak</a>
+                    </small>
+                </div>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
+
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
@@ -202,8 +226,12 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
+                            <th>
+                                <input type="checkbox" class="form-check-input" id="selectAllMitra">
+                            </th>
                             <th>Nama Mitra</th>
                             <th>Email</th>
+                            <th class="text-center">Nomor Kontrak</th>
                             <th class="text-center">Total Dokumen</th>
                             <th class="text-center">Dokumen Aktif</th>
                             <th class="text-center">Dokumen Selesai</th>
@@ -213,6 +241,9 @@
                     <tbody>
                         @forelse($mitra as $m)
                         <tr>
+                            <td>
+                                <input type="checkbox" class="form-check-input mitra-checkbox-manajemen" value="{{ $m->id }}" name="selected_mitra_manajemen[]">
+                            </td>
                             <td>
                                 <div class="d-flex align-items-center">
                                     <div class="avatar-sm me-3">
@@ -236,6 +267,13 @@
                             </td>
                             <td>{{ $m->email }}</td>
                             <td class="text-center">
+                                @if($m->nomor_kontrak)
+                                    <span class="badge bg-success">{{ $m->nomor_kontrak }}</span>
+                                @else
+                                    <span class="badge bg-warning">Belum Ada</span>
+                                @endif
+                            </td>
+                            <td class="text-center">
                                 <span class="badge bg-primary">{{ $m->total_dokumen }}</span>
                             </td>
                             <td class="text-center">
@@ -245,15 +283,23 @@
                                 <span class="badge bg-success">{{ $m->dokumen_selesai }}</span>
                             </td>
                             <td class="text-center">
-                                <a href="{{ route('manajemen-mitra.show', $m->id) }}" 
-                                   class="btn btn-sm btn-outline-primary">
-                                    <i class="bi bi-eye me-1"></i>Detail
-                                </a>
+                                <div class="btn-group" role="group">
+                                    <a href="{{ route('manajemen-mitra.show', $m->id) }}" 
+                                       class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-eye me-1"></i>Detail
+                                    </a>
+                                    @if(!$m->nomor_kontrak)
+                                        <a href="{{ route('nomor-kontrak.assign', $m->id) }}" 
+                                           class="btn btn-sm btn-outline-success">
+                                            <i class="bi bi-hash me-1"></i>Tugaskan Kontrak
+                                        </a>
+                                    @endif
+                                </div>
                             </td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="6" class="text-center py-4">
+                            <td colspan="8" class="text-center py-4">
                                 <i class="bi bi-inbox text-muted fs-1"></i>
                                 <p class="text-muted mb-0">Tidak ada data mitra</p>
                             </td>
@@ -265,8 +311,15 @@
             
             <!-- Pagination -->
             @if($mitra->hasPages())
-            <div class="d-flex justify-content-center mt-4">
-                {{ $mitra->links() }}
+            <div class="d-flex justify-content-between align-items-center mt-4">
+                <div>
+                    <button type="button" class="btn btn-success btn-sm" id="assignContractBtn" style="display: none;">
+                        <i class="bi bi-hash me-1"></i> Tugaskan Nomor Kontrak
+                    </button>
+                </div>
+                <div>
+                    {{ $mitra->links() }}
+                </div>
             </div>
             @endif
         </div>
@@ -421,5 +474,79 @@ function exportLaporan() {
     // Submit form
     form.submit();
 }
+
+// Checkbox functionality for mitra selection
+document.addEventListener('DOMContentLoaded', function() {
+    const selectAllCheckbox = document.getElementById('selectAllMitra');
+    const mitraCheckboxes = document.querySelectorAll('.mitra-checkbox-manajemen');
+    const assignContractBtn = document.getElementById('assignContractBtn');
+
+    // Handle select all checkbox
+    if (selectAllCheckbox) {
+        selectAllCheckbox.addEventListener('change', function() {
+            mitraCheckboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+            updateAssignButton();
+        });
+    }
+
+    // Handle individual checkboxes
+    mitraCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            updateSelectAllState();
+            updateAssignButton();
+        });
+    });
+
+    // Update select all state
+    function updateSelectAllState() {
+        const checkedCount = document.querySelectorAll('.mitra-checkbox-manajemen:checked').length;
+        const totalCount = mitraCheckboxes.length;
+        
+        if (checkedCount === 0) {
+            selectAllCheckbox.indeterminate = false;
+            selectAllCheckbox.checked = false;
+        } else if (checkedCount === totalCount) {
+            selectAllCheckbox.indeterminate = false;
+            selectAllCheckbox.checked = true;
+        } else {
+            selectAllCheckbox.indeterminate = true;
+            selectAllCheckbox.checked = false;
+        }
+    }
+
+    // Update assign button visibility
+    function updateAssignButton() {
+        const checkedCount = document.querySelectorAll('.mitra-checkbox-manajemen:checked').length;
+        
+        if (checkedCount > 0) {
+            assignContractBtn.style.display = 'inline-block';
+        } else {
+            assignContractBtn.style.display = 'none';
+        }
+    }
+
+    // Handle assign contract button
+    if (assignContractBtn) {
+        assignContractBtn.addEventListener('click', function() {
+            const selectedMitra = Array.from(document.querySelectorAll('.mitra-checkbox-manajemen:checked'))
+                .map(checkbox => checkbox.value);
+            
+            if (selectedMitra.length === 0) {
+                alert('Pilih mitra terlebih dahulu!');
+                return;
+            }
+
+            if (selectedMitra.length === 1) {
+                // Redirect to nomor kontrak assign page
+                window.location.href = `{{ route('nomor-kontrak.index') }}/${selectedMitra[0]}/assign`;
+            } else {
+                // Redirect to nomor kontrak index page with selected mitra
+                window.location.href = `{{ route('nomor-kontrak.index') }}?selected=${selectedMitra.join(',')}`;
+            }
+        });
+    }
+});
 </script>
 @endsection 

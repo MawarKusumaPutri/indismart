@@ -125,6 +125,9 @@
                 <a href="{{ route('manajemen-mitra.index') }}" class="sidebar-menu-item {{ request()->routeIs('manajemen-mitra.*') ? 'active' : '' }}">
                     <i class="bi bi-people sidebar-menu-icon"></i> Manajemen Mitra
                 </a>
+                <a href="{{ route('nomor-kontrak.index') }}" class="sidebar-menu-item {{ request()->routeIs('nomor-kontrak.*') ? 'active' : '' }}">
+                    <i class="bi bi-hash sidebar-menu-icon"></i> Nomor Kontrak
+                </a>
                 <a href="{{ route('reviews.index') }}" class="sidebar-menu-item {{ request()->routeIs('reviews.*') ? 'active' : '' }}">
                     <i class="bi bi-clipboard-check sidebar-menu-icon"></i> Review Dokumen
                 </a>

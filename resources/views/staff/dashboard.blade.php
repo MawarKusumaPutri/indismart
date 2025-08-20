@@ -4,6 +4,32 @@
 
 @section('content')
 <div class="container-fluid">
+    <!-- Notifikasi Mitra Baru -->
+    @php
+        $recentMitra = \App\Models\User::where('role', 'mitra')
+            ->where('created_at', '>=', now()->subDays(7))
+            ->orderBy('created_at', 'desc')
+            ->limit(5)
+            ->get();
+    @endphp
+    
+    @if($recentMitra->count() > 0)
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-person-plus fs-4 me-2"></i>
+                <div>
+                    <strong>Mitra Baru Terdaftar!</strong>
+                    <br>
+                    <small class="text-muted">
+                        {{ $recentMitra->count() }} mitra baru telah mendaftar dalam 7 hari terakhir.
+                        <a href="{{ route('manajemen-mitra.index') }}" class="alert-link">Lihat daftar mitra</a>
+                    </small>
+                </div>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
+
     <div class="row">
         <div class="col-md-3">
             <div class="card card-stat">
@@ -194,6 +220,94 @@
                         <span class="visually-hidden">Loading...</span>
                     </div>
                     <p class="mt-3 text-muted">Memuat data mitra...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mitra Terbaru -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="bi bi-person-plus me-2"></i>Mitra Terbaru
+                    </h5>
+                    <a href="{{ route('manajemen-mitra.index') }}" class="btn btn-sm btn-outline-primary">
+                        Lihat Semua
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Nama Mitra</th>
+                                    <th>Email</th>
+                                    <th>Tanggal Registrasi</th>
+                                    <th>Status</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($recentMitra as $mitra)
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="avatar-sm me-3">
+                                                    @if($mitra->avatar)
+                                                        <img src="{{ asset('storage/' . $mitra->avatar) }}" alt="Avatar" class="rounded-circle" width="40">
+                                                    @else
+                                                        <div class="avatar-sm bg-primary rounded-circle d-flex align-items-center justify-content-center">
+                                                            <span class="text-white fw-bold">{{ strtoupper(substr($mitra->name, 0, 1)) }}</span>
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                                <div>
+                                                    <h6 class="mb-0">{{ $mitra->name }}</h6>
+                                                    <small class="text-muted">ID: {{ $mitra->id }}</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>{{ $mitra->email }}</td>
+                                        <td>
+                                            <small class="text-muted">
+                                                {{ $mitra->created_at->format('d M Y H:i') }}
+                                            </small>
+                                        </td>
+                                        <td>
+                                            @if($mitra->nomor_kontrak)
+                                                <span class="badge bg-success">Aktif</span>
+                                            @else
+                                                <span class="badge bg-warning">Belum Ada Nomor Kontrak</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <a href="{{ route('manajemen-mitra.show', $mitra->id) }}" class="btn btn-sm btn-outline-primary">
+                                                    <i class="bi bi-eye"></i>
+                                                </a>
+                                                @if(!$mitra->nomor_kontrak)
+                                                    <a href="{{ route('nomor-kontrak.assign', $mitra->id) }}" class="btn btn-sm btn-outline-success">
+                                                        <i class="bi bi-hash"></i> Tugaskan Kontrak
+                                                    </a>
+                                                @endif
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="5" class="text-center py-4">
+                                            <div class="text-muted">
+                                                <i class="bi bi-people display-4"></i>
+                                                <p class="mt-2">Tidak ada mitra baru</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
