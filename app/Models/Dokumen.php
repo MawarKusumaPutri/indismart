@@ -16,7 +16,7 @@ class Dokumen extends Model
         'user_id',
         'nama_dokumen',
         'jenis_proyek',
-        'nomor_kontak',
+        'nomor_kontrak',
         'witel',
         'sto',
         'site_name',

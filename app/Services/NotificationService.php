@@ -165,12 +165,12 @@ class NotificationService
      */
     private static function generateNamaProyek(Dokumen $dokumen)
     {
-        // Buat nama proyek berdasarkan jenis proyek, lokasi, dan nomor kontak
+        // Buat nama proyek berdasarkan jenis proyek, lokasi, dan nomor kontrak
         $jenisShort = self::getShortJenisProyek($dokumen->jenis_proyek);
         $lokasiShort = $dokumen->sto . '-' . $dokumen->site_name;
-        $nomorKontak = $dokumen->nomor_kontak;
+        $nomorKontrak = $dokumen->nomor_kontrak;
         
-        return "{$jenisShort} {$lokasiShort} ({$nomorKontak})";
+        return "{$jenisShort} {$lokasiShort} ({$nomorKontrak})";
     }
 
     /**

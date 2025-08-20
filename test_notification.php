@@ -38,7 +38,7 @@ echo "Mitra User: " . $mitraUser->name . " (ID: " . $mitraUser->id . ")\n";
 $dokumen = Dokumen::create([
     'user_id' => $mitraUser->id,
     'jenis_proyek' => 'Instalasi Baru',
-    'nomor_kontak' => '08123456789',
+    'nomor_kontrak' => '08123456789',
     'witel' => 'Jakarta',
     'sto' => 'STO Kebayoran',
     'site_name' => 'Site KB-01',

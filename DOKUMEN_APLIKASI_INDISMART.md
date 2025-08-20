@@ -373,7 +373,7 @@ indihome/
 - user_id: ID pengguna yang mengunggah
 - nama_dokumen: Nama dokumen
 - jenis_proyek: Jenis proyek
-- nomor_kontak: Nomor kontak
+- nomor_kontrak: Nomor kontrak
 - witel: Witel
 - sto: STO
 - site_name: Nama site

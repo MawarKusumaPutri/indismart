@@ -20,7 +20,7 @@ try {
         $results = Dokumen::where(function($q) use ($term) {
             $q->where('nama_dokumen', 'like', '%' . $term . '%')
               ->orWhere('jenis_proyek', 'like', '%' . $term . '%')
-              ->orWhere('nomor_kontak', 'like', '%' . $term . '%')
+              ->orWhere('nomor_kontrak', 'like', '%' . $term . '%')
               ->orWhere('witel', 'like', '%' . $term . '%')
               ->orWhere('sto', 'like', '%' . $term . '%')
               ->orWhere('site_name', 'like', '%' . $term . '%')
@@ -49,7 +49,7 @@ try {
         $results = Dokumen::where(function($q) use ($term) {
             $q->where('nama_dokumen', 'like', '%' . $term . '%')
               ->orWhere('jenis_proyek', 'like', '%' . $term . '%')
-              ->orWhere('nomor_kontak', 'like', '%' . $term . '%')
+              ->orWhere('nomor_kontrak', 'like', '%' . $term . '%')
               ->orWhere('witel', 'like', '%' . $term . '%')
               ->orWhere('sto', 'like', '%' . $term . '%')
               ->orWhere('site_name', 'like', '%' . $term . '%')

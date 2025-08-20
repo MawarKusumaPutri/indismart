@@ -50,8 +50,8 @@
                                 <td width="60%">{{ $dokumen->jenis_proyek }}</td>
                             </tr>
                             <tr>
-                                <td><strong>Nomor Kontak</strong></td>
-                                <td>{{ $dokumen->nomor_kontak }}</td>
+                                                        <td><strong>Nomor Kontrak</strong></td>
+                        <td>{{ $dokumen->nomor_kontrak }}</td>
                             </tr>
                             <tr>
                                 <td><strong>Witel</strong></td>

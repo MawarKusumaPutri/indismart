@@ -84,7 +84,7 @@ class DokumenController extends Controller
             $query->where(function($q) use ($search) {
                 $q->where('nama_dokumen', 'like', '%' . $search . '%')
                   ->orWhere('jenis_proyek', 'like', '%' . $search . '%')
-                  ->orWhere('nomor_kontak', 'like', '%' . $search . '%')
+                  ->orWhere('nomor_kontrak', 'like', '%' . $search . '%')
                   ->orWhere('witel', 'like', '%' . $search . '%')
                   ->orWhere('sto', 'like', '%' . $search . '%')
                   ->orWhere('site_name', 'like', '%' . $search . '%')
@@ -96,9 +96,9 @@ class DokumenController extends Controller
             });
         } else {
             // Filter individual jika tidak ada search
-            // Filter berdasarkan nomor kontak
-            if ($request->filled('nomor_kontak')) {
-                $query->where('nomor_kontak', 'like', '%' . $request->nomor_kontak . '%');
+            // Filter berdasarkan nomor kontrak
+            if ($request->filled('nomor_kontrak')) {
+                $query->where('nomor_kontrak', 'like', '%' . $request->nomor_kontrak . '%');
             }
 
             // Filter berdasarkan lokasi
@@ -134,7 +134,7 @@ class DokumenController extends Controller
         $request->validate([
             'nama_dokumen' => 'required|string|max:255',
             'jenis_proyek' => 'required|in:Instalasi Baru,Migrasi,Upgrade,Maintenance,Troubleshooting,Survey,Audit,Lainnya',
-            'nomor_kontak' => 'required|string|max:255',
+            'nomor_kontrak' => 'required|string|max:255',
             'witel' => 'required|string|max:255',
             'sto' => 'required|string|max:255',
             'site_name' => 'required|string|max:255',
@@ -204,7 +204,7 @@ class DokumenController extends Controller
         $request->validate([
             'nama_dokumen' => 'required|string|max:255',
             'jenis_proyek' => 'required|in:Instalasi Baru,Migrasi,Upgrade,Maintenance,Troubleshooting,Survey,Audit,Lainnya',
-            'nomor_kontak' => 'required|string|max:255',
+            'nomor_kontrak' => 'required|string|max:255',
             'witel' => 'required|string|max:255',
             'sto' => 'required|string|max:255',
             'site_name' => 'required|string|max:255',
@@ -251,7 +251,7 @@ class DokumenController extends Controller
         $dokumenData = [
             'mitra_name' => $dokumen->user->name,
             'nama_dokumen' => $dokumen->nama_dokumen,
-            'nama_proyek' => $dokumen->jenis_proyek . ' ' . $dokumen->sto . '-' . $dokumen->site_name . ' (' . $dokumen->nomor_kontak . ')',
+            'nama_proyek' => $dokumen->jenis_proyek . ' ' . $dokumen->sto . '-' . $dokumen->site_name . ' (' . $dokumen->nomor_kontrak . ')',
             'jenis_proyek' => $dokumen->jenis_proyek,
             'lokasi' => "{$dokumen->witel} - {$dokumen->sto} - {$dokumen->site_name}",
         ];

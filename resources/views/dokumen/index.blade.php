@@ -39,7 +39,7 @@
                                 </span>
                                 <input type="text" class="form-control form-control-lg" id="search" name="search" 
                                        value="{{ request('search') }}" 
-                                       placeholder="Cari dokumen berdasarkan nama, jenis proyek, nomor kontak, lokasi, status, atau keterangan..."
+                                       placeholder="Cari dokumen berdasarkan nama, jenis proyek, nomor kontrak, lokasi, status, atau keterangan..."
                                        autocomplete="off">
                                 <button type="submit" class="btn btn-primary" id="searchBtn">
                                     <i class="bi bi-search me-1"></i> Cari
@@ -104,8 +104,8 @@
                                     </select>
                                 </div>
                                 <div class="col-md-2">
-                                    <label for="nomor_kontak" class="form-label">Nomor Kontak</label>
-                                    <input type="text" class="form-control" id="nomor_kontak" name="nomor_kontak" value="{{ request('nomor_kontak') }}" placeholder="Cari nomor kontak...">
+                                                            <label for="nomor_kontrak" class="form-label">Nomor Kontrak</label>
+                        <input type="text" class="form-control" id="nomor_kontrak" name="nomor_kontrak" value="{{ request('nomor_kontrak') }}" placeholder="Cari nomor kontrak...">
                                 </div>
                                 <div class="col-md-2">
                                     <label for="witel" class="form-label">Witel</label>
@@ -143,7 +143,7 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Daftar Dokumen</h5>
                     <div class="d-flex align-items-center">
-                        @if(request('search') || request('jenis_proyek') || request('status_implementasi') || request('status_review') || request('nomor_kontak') || request('witel') || request('sto') || request('site_name'))
+                        @if(request('search') || request('jenis_proyek') || request('status_implementasi') || request('status_review') || request('nomor_kontrak') || request('witel') || request('sto') || request('site_name'))
                             <span class="badge bg-info me-2">
                                 <i class="bi bi-funnel me-1"></i> Filter Aktif
                             </span>
@@ -156,7 +156,7 @@
             </div>
             <div class="card-body">
                 <!-- Search Results Info -->
-                @if(request('search') || request('jenis_proyek') || request('status_implementasi') || request('status_review') || request('nomor_kontak') || request('witel') || request('sto') || request('site_name'))
+                                        @if(request('search') || request('jenis_proyek') || request('status_implementasi') || request('status_review') || request('nomor_kontrak') || request('witel') || request('sto') || request('site_name'))
                     <div class="alert alert-info mb-3">
                         <div class="d-flex align-items-center">
                             <i class="bi bi-search me-2"></i>
@@ -190,7 +190,7 @@
                                     @endif
                                     <th>Nama Dokumen</th>
                                     <th>Jenis Proyek</th>
-                                    <th>Nomor Kontak</th>
+                                    <th>Nomor Kontrak</th>
                                     <th>Lokasi</th>
                                     <th>Status Implementasi</th>
                                     <th>Status Review</th>
@@ -210,7 +210,7 @@
                                             <strong>{{ $item->nama_dokumen }}</strong>
                                         </td>
                                         <td>{{ $item->jenis_proyek }}</td>
-                                        <td>{{ $item->nomor_kontak }}</td>
+                                        <td>{{ $item->nomor_kontrak }}</td>
                                         <td>
                                             <small class="text-muted d-block">{{ $item->witel }}</small>
                                             <small class="text-muted d-block">{{ $item->sto }}</small>

@@ -129,7 +129,7 @@
                                     <tr>
                                         <td>{{ $proyek->nama_proyek }}</td>
                                         <td>{{ $proyek->jenis_proyek }}</td>
-                                        <td>{{ $proyek->nomor_kontak }}</td>
+                                        <td>{{ $proyek->nomor_kontrak }}</td>
                                         <td>{{ $proyek->witel }} ({{ $proyek->sto }}, {{ $proyek->site_name }})</td>
                                         <td>{{ $proyek->tanggal_dokumen->format('d M Y') }}</td>
                                         <td>

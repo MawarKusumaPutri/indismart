@@ -171,7 +171,7 @@
                         <tr>
                             <td>
                                 <div class="fw-bold">{{ $doc->nama_dokumen }}</div>
-                                <small class="text-muted">{{ $doc->nomor_kontak }}</small>
+                                <small class="text-muted">{{ $doc->nomor_kontrak }}</small>
                             </td>
                             <td>
                                 <span class="badge bg-info">{{ $doc->jenis_proyek }}</span>

@@ -66,9 +66,9 @@
                         
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="nomor_kontak" class="form-label">Nomor Kontak <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control @error('nomor_kontak') is-invalid @enderror" id="nomor_kontak" name="nomor_kontak" value="{{ old('nomor_kontak') }}" placeholder="Masukkan nomor kontak" required>
-                                @error('nomor_kontak')
+                                                <label for="nomor_kontrak" class="form-label">Nomor Kontrak <span class="text-danger">*</span></label>
+                <input type="text" class="form-control @error('nomor_kontrak') is-invalid @enderror" id="nomor_kontrak" name="nomor_kontrak" value="{{ old('nomor_kontrak') }}" placeholder="Masukkan nomor kontrak" required>
+                @error('nomor_kontrak')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
