@@ -10,6 +10,7 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ManajemenMitraController;
 use App\Http\Controllers\NomorKontrakController;
 use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\LookerStudioController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -130,4 +131,15 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/settings/system/delete-account', [SettingsController::class, 'deleteAccount'])->name('settings.system.delete-account');
 });
 
+// Looker Studio Routes (Staff Only)
+Route::group(['middleware' => ['auth', 'role:staff']], function () {
+    Route::get('/looker-studio', [LookerStudioController::class, 'index'])->name('looker-studio.index');
+    Route::get('/looker-studio/dashboard-data', [LookerStudioController::class, 'dashboardData'])->name('looker-studio.dashboard-data');
+    Route::get('/looker-studio/export-data', [LookerStudioController::class, 'exportData'])->name('looker-studio.export-data');
+});
+
+// API Routes for Looker Studio (without auth for now)
+Route::get('/api/looker-studio/dashboard-data', [LookerStudioController::class, 'dashboardData']);
+Route::get('/api/looker-studio/mitra-analytics', [LookerStudioController::class, 'getMitraAnalyticsApi']);
+Route::get('/api/looker-studio/proyek-analytics', [LookerStudioController::class, 'getProyekAnalyticsApi']);
 

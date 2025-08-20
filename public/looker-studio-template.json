@@ -1,0 +1,254 @@
+{
+  "dashboard_template": {
+    "name": "Indismart Analytics Dashboard",
+    "description": "Template dashboard untuk monitoring performa mitra dan proyek",
+    "version": "1.0",
+    "data_sources": [
+      {
+        "name": "Dashboard Overview",
+        "url": "/looker-studio/dashboard-data",
+        "type": "json",
+        "description": "Data overview lengkap untuk dashboard"
+      },
+      {
+        "name": "Mitra Analytics",
+        "url": "/api/mitra-analytics",
+        "type": "json",
+        "description": "Data analytics khusus mitra"
+      },
+      {
+        "name": "Proyek Analytics",
+        "url": "/api/proyek-analytics",
+        "type": "json",
+        "description": "Data analytics khusus proyek"
+      }
+    ],
+    "charts": [
+      {
+        "type": "scorecard",
+        "name": "KPI Overview",
+        "position": {
+          "x": 0,
+          "y": 0,
+          "width": 12,
+          "height": 2
+        },
+        "metrics": [
+          {
+            "field": "overview.total_mitra",
+            "label": "Total Mitra",
+            "format": "number",
+            "color": "#e22626"
+          },
+          {
+            "field": "overview.total_dokumen",
+            "label": "Total Proyek",
+            "format": "number",
+            "color": "#28a745"
+          },
+          {
+            "field": "overview.proyek_aktif",
+            "label": "Proyek Aktif",
+            "format": "number",
+            "color": "#ffc107"
+          },
+          {
+            "field": "overview.completion_rate",
+            "label": "Completion Rate",
+            "format": "percentage",
+            "color": "#17a2b8"
+          }
+        ]
+      },
+      {
+        "type": "time_series",
+        "name": "Growth Trends",
+        "position": {
+          "x": 0,
+          "y": 2,
+          "width": 8,
+          "height": 4
+        },
+        "data_source": "Dashboard Overview",
+        "dimension": "trends.monthly_trends.month_name",
+        "metrics": [
+          {
+            "field": "trends.monthly_trends.new_mitra",
+            "label": "New Mitra",
+            "color": "#e22626"
+          },
+          {
+            "field": "trends.monthly_trends.new_proyek",
+            "label": "New Projects",
+            "color": "#28a745"
+          },
+          {
+            "field": "trends.monthly_trends.completed_proyek",
+            "label": "Completed Projects",
+            "color": "#ffc107"
+          }
+        ]
+      },
+      {
+        "type": "pie_chart",
+        "name": "Project Status Distribution",
+        "position": {
+          "x": 8,
+          "y": 2,
+          "width": 4,
+          "height": 4
+        },
+        "data_source": "Proyek Analytics",
+        "dimension": "status_distribution",
+        "metric": "count",
+        "colors": [
+          "#0d6efd",
+          "#17a2b8",
+          "#ffc107",
+          "#6c757d",
+          "#28a745"
+        ]
+      },
+      {
+        "type": "bar_chart",
+        "name": "Top Performing Mitra",
+        "position": {
+          "x": 0,
+          "y": 6,
+          "width": 6,
+          "height": 4
+        },
+        "data_source": "Mitra Analytics",
+        "dimension": "top_performing_mitra.name",
+        "metric": "top_performing_mitra.success_rate",
+        "sort": "desc",
+        "limit": 10,
+        "color": "#e22626"
+      },
+      {
+        "type": "table",
+        "name": "Mitra Details",
+        "position": {
+          "x": 6,
+          "y": 6,
+          "width": 6,
+          "height": 4
+        },
+        "data_source": "Mitra Analytics",
+        "columns": [
+          {
+            "field": "top_performing_mitra.name",
+            "label": "Nama Mitra"
+          },
+          {
+            "field": "top_performing_mitra.total_proyek",
+            "label": "Total Proyek"
+          },
+          {
+            "field": "top_performing_mitra.proyek_selesai",
+            "label": "Proyek Selesai"
+          },
+          {
+            "field": "top_performing_mitra.success_rate",
+            "label": "Success Rate",
+            "format": "percentage"
+          }
+        ]
+      }
+    ],
+    "filters": [
+      {
+        "type": "date_range",
+        "name": "Date Filter",
+        "field": "date",
+        "default_value": "last_30_days"
+      },
+      {
+        "type": "dropdown",
+        "name": "Status Filter",
+        "field": "status_implementasi",
+        "options": [
+          "inisiasi",
+          "planning",
+          "executing",
+          "controlling",
+          "closing"
+        ]
+      }
+    ],
+    "theme": {
+      "primary_color": "#e22626",
+      "secondary_color": "#28a745",
+      "accent_color": "#ffc107",
+      "background_color": "#ffffff",
+      "text_color": "#333333"
+    },
+    "refresh_settings": {
+      "auto_refresh": true,
+      "refresh_interval": 300,
+      "refresh_interval_unit": "seconds"
+    }
+  },
+  "setup_instructions": {
+    "step_1": "Buka Google Looker Studio",
+    "step_2": "Buat data source baru dengan URL connector",
+    "step_3": "Masukkan endpoint API yang sesuai",
+    "step_4": "Buat report dan tambahkan visualisasi",
+    "step_5": "Gunakan template ini sebagai referensi",
+    "step_6": "Customize sesuai kebutuhan",
+    "step_7": "Share dan embed ke sistem"
+  },
+  "api_endpoints": {
+    "dashboard_data": {
+      "url": "/looker-studio/dashboard-data",
+      "method": "GET",
+      "auth": "required",
+      "description": "Complete dashboard data dalam format JSON"
+    },
+    "mitra_analytics": {
+      "url": "/api/mitra-analytics",
+      "method": "GET",
+      "auth": "required",
+      "description": "Mitra performance analytics"
+    },
+    "proyek_analytics": {
+      "url": "/api/proyek-analytics",
+      "method": "GET",
+      "auth": "required",
+      "description": "Project analytics data"
+    },
+    "export_data": {
+      "url": "/looker-studio/export-data",
+      "method": "GET",
+      "auth": "required",
+      "description": "Export data untuk analysis"
+    }
+  },
+  "data_fields": {
+    "overview": {
+      "total_mitra": "Total jumlah mitra terdaftar",
+      "total_dokumen": "Total jumlah dokumen/proyek",
+      "proyek_aktif": "Jumlah proyek yang sedang aktif",
+      "proyek_selesai": "Jumlah proyek yang telah selesai",
+      "dokumen_pending_review": "Jumlah dokumen pending review",
+      "mitra_growth_monthly": "Pertumbuhan mitra bulanan",
+      "proyek_growth_monthly": "Pertumbuhan proyek bulanan",
+      "completion_rate": "Persentase penyelesaian proyek"
+    },
+    "trends": {
+      "monthly_trends": "Data trend bulanan",
+      "weekly_trends": "Data trend mingguan"
+    },
+    "mitra_analytics": {
+      "top_performing_mitra": "Daftar mitra terbaik",
+      "registration_trend": "Trend registrasi mitra",
+      "mitra_by_status": "Distribusi status mitra"
+    },
+    "proyek_analytics": {
+      "status_distribution": "Distribusi status proyek",
+      "jenis_proyek_distribution": "Distribusi jenis proyek",
+      "proyek_timeline": "Timeline proyek",
+      "avg_completion_time_days": "Rata-rata waktu penyelesaian"
+    }
+  }
+}
