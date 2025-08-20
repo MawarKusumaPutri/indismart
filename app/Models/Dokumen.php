@@ -21,6 +21,7 @@ class Dokumen extends Model
         'sto',
         'site_name',
         'status_implementasi',
+        'jenis_dokumen',
         'tanggal_dokumen',
         'file_path',
         'keterangan',

@@ -92,6 +92,28 @@
             border-color: #E22626;
             box-shadow: 0 0 0 2px rgba(226, 38, 38, 0.1);
         }
+        .password-container {
+            position: relative;
+        }
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #6B7280;
+            cursor: pointer;
+            padding: 0;
+            font-size: 1.1rem;
+            transition: color 0.3s ease;
+        }
+        .password-toggle:hover {
+            color: #E22626;
+        }
+        .password-container .form-control {
+            padding-right: 3rem;
+        }
         .form-control[type="select"] {
             background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m1 6 7 7 7-7'/%3e%3c/svg%3e");
             background-repeat: no-repeat;
@@ -237,7 +259,12 @@
                                 
                                 <div class="mb-3">
                                     <label for="password" class="form-label">Password</label>
-                                    <input type="password" class="form-control" id="password" name="password" placeholder="Masukkan password Anda" required>
+                                    <div class="password-container">
+                                        <input type="password" class="form-control" id="password" name="password" placeholder="Masukkan password Anda" required>
+                                        <button type="button" class="password-toggle" onclick="togglePassword()">
+                                            <i class="bi bi-eye" id="password-icon"></i>
+                                        </button>
+                                    </div>
                                 </div>
                                 
                                 <div class="mb-4">
@@ -277,6 +304,22 @@
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
+
+        // Function untuk toggle password visibility
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const passwordIcon = document.getElementById('password-icon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                passwordIcon.classList.remove('bi-eye');
+                passwordIcon.classList.add('bi-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                passwordIcon.classList.remove('bi-eye-slash');
+                passwordIcon.classList.add('bi-eye');
+            }
+        }
     </script>
 </body>
 </html>

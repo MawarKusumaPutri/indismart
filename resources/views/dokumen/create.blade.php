@@ -143,6 +143,20 @@
                         
                         <div class="col-md-6">
                             <div class="mb-3">
+                                <label for="jenis_dokumen" class="form-label">Jenis Dokumen <span class="text-danger">*</span></label>
+                                <select class="form-select @error('jenis_dokumen') is-invalid @enderror" id="jenis_dokumen" name="jenis_dokumen" required>
+                                    <option value="">Pilih Status Implementasi terlebih dahulu</option>
+                                </select>
+                                @error('jenis_dokumen')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
                                 <label for="tanggal_dokumen" class="form-label">Tanggal Dokumen <span class="text-danger">*</span></label>
                                 <input type="date" class="form-control @error('tanggal_dokumen') is-invalid @enderror" id="tanggal_dokumen" name="tanggal_dokumen" value="{{ old('tanggal_dokumen') }}" required>
                                 @error('tanggal_dokumen')
@@ -284,11 +298,62 @@ document.getElementById('sto').addEventListener('change', function() {
     }
 });
 
+// Data Jenis Dokumen berdasarkan Status Implementasi
+const jenisDokumenData = {
+    'inisiasi': [
+        'Dokumen Kontrak Harga Satuan',
+        'Dokumen Surat Pesanan'
+    ],
+    'planning': [
+        'Berita Acara Design Review Meeting',
+        'As Planned Drawing',
+        'Rencana Anggaran Belanja',
+        'Lainnya (Eviden Pendukung)'
+    ],
+    'executing': [
+        'Berita Acara Penyelesaian Pekerjaan',
+        'Berita Acara Uji Fungsi',
+        'Lampiran Hasil Uji Fungsi',
+        'Lainnya (Eviden Pendukung)'
+    ],
+    'controlling': [
+        'Berita Acara Uji Terima',
+        'Lampiran Hasil Uji Terima',
+        'As Built Drawing Uji Terima'
+    ],
+    'closing': [
+        'Berita Acara Rekonsiliasi',
+        'Lampiran BoQ Hasil Rekonsiliasi',
+        'Berita Acara Serah Terima'
+    ]
+};
+
+// Fungsi untuk mengisi dropdown Jenis Dokumen berdasarkan Status Implementasi yang dipilih
+document.getElementById('status_implementasi').addEventListener('change', function() {
+    const statusImplementasi = this.value;
+    const jenisDokumenSelect = document.getElementById('jenis_dokumen');
+    
+    // Reset dropdown Jenis Dokumen
+    jenisDokumenSelect.innerHTML = '<option value="">Pilih Jenis Dokumen</option>';
+    
+    if (statusImplementasi && jenisDokumenData[statusImplementasi]) {
+        // Isi dropdown Jenis Dokumen berdasarkan Status Implementasi yang dipilih
+        jenisDokumenData[statusImplementasi].forEach(jenis => {
+            const option = document.createElement('option');
+            option.value = jenis;
+            option.textContent = jenis;
+            jenisDokumenSelect.appendChild(option);
+        });
+    }
+});
+
 // Set nilai awal jika ada old input
 document.addEventListener('DOMContentLoaded', function() {
     const oldWitel = '{{ old("witel") }}';
     const oldSto = '{{ old("sto") }}';
     const oldSiteName = '{{ old("site_name") }}';
+    const oldStatusImplementasi = '{{ old("status_implementasi") }}';
+    const oldJenisDokumen = '{{ old("jenis_dokumen") }}';
     
     if (oldWitel) {
         document.getElementById('witel').value = oldWitel;
@@ -308,6 +373,20 @@ document.addEventListener('DOMContentLoaded', function() {
                         document.getElementById('site_name').value = oldSiteName;
                     }
                 }, 100);
+            }
+        }, 100);
+    }
+    
+    // Set Status Implementasi dan Jenis Dokumen jika ada old input
+    if (oldStatusImplementasi) {
+        document.getElementById('status_implementasi').value = oldStatusImplementasi;
+        // Trigger change event untuk mengisi Jenis Dokumen
+        document.getElementById('status_implementasi').dispatchEvent(new Event('change'));
+        
+        // Set Jenis Dokumen setelah dropdown terisi
+        setTimeout(() => {
+            if (oldJenisDokumen) {
+                document.getElementById('jenis_dokumen').value = oldJenisDokumen;
             }
         }, 100);
     }

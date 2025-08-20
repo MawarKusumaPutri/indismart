@@ -90,6 +90,28 @@
             border-color: #E22626;
             box-shadow: 0 0 0 2px rgba(226, 38, 38, 0.1);
         }
+        .password-container {
+            position: relative;
+        }
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #6B7280;
+            cursor: pointer;
+            padding: 0;
+            font-size: 1.1rem;
+            transition: color 0.3s ease;
+        }
+        .password-toggle:hover {
+            color: #E22626;
+        }
+        .password-container .form-control {
+            padding-right: 3rem;
+        }
         .btn-register {
             background-color: #E22626;
             border: none;
@@ -217,12 +239,22 @@
                                 
                                 <div class="mb-3">
                                     <label for="password" class="form-label">Password</label>
-                                    <input type="password" class="form-control" id="password" name="password" placeholder="Masukkan password" required>
+                                    <div class="password-container">
+                                        <input type="password" class="form-control" id="password" name="password" placeholder="Masukkan password" required>
+                                        <button type="button" class="password-toggle" onclick="togglePassword('password', 'password-icon')">
+                                            <i class="bi bi-eye" id="password-icon"></i>
+                                        </button>
+                                    </div>
                                 </div>
                                 
                                 <div class="mb-3">
                                     <label for="password_confirmation" class="form-label">Konfirmasi Password</label>
-                                    <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" placeholder="Konfirmasi password" required>
+                                    <div class="password-container">
+                                        <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" placeholder="Konfirmasi password" required>
+                                        <button type="button" class="password-toggle" onclick="togglePassword('password_confirmation', 'password-confirmation-icon')">
+                                            <i class="bi bi-eye" id="password-confirmation-icon"></i>
+                                        </button>
+                                    </div>
                                 </div>
                                 
                                 <div class="mb-3">
@@ -251,5 +283,22 @@
     
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Function untuk toggle password visibility
+        function togglePassword(inputId, iconId) {
+            const passwordInput = document.getElementById(inputId);
+            const passwordIcon = document.getElementById(iconId);
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                passwordIcon.classList.remove('bi-eye');
+                passwordIcon.classList.add('bi-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                passwordIcon.classList.remove('bi-eye-slash');
+                passwordIcon.classList.add('bi-eye');
+            }
+        }
+    </script>
 </body>
 </html>
