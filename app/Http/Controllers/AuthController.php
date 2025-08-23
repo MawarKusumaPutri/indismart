@@ -74,11 +74,18 @@ class AuthController extends Controller
      */
     public function register(Request $request)
     {
+        // Mencegah registrasi sebagai karyawan
+        if ($request->role === 'staff') {
+            return back()->withErrors([
+                'role' => 'Registrasi sebagai Karyawan tidak diizinkan. Silakan hubungi administrator.'
+            ]);
+        }
+
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
-            'role' => 'required|in:mitra,staff',
+            'role' => 'required|in:mitra',
         ]);
 
         $user = User::create([

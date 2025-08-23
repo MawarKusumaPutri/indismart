@@ -239,6 +239,12 @@
                                 <p class="text-muted">Silakan masukkan kredensial Anda untuk melanjutkan</p>
                             </div>
                             
+                            @if (session('info'))
+                                <div class="alert alert-info">
+                                    {{ session('info') }}
+                                </div>
+                            @endif
+                            
                             @if ($errors->any())
                                 <div class="alert alert-danger">
                                     <ul class="mb-0">
@@ -269,10 +275,13 @@
                                 
                                 <div class="mb-4">
                                     <label for="login_as" class="form-label">Masuk Sebagai</label>
-                                    <select class="form-control" id="login_as" name="login_as" required>
+                                    <select class="form-control" id="login_as" name="login_as" required onchange="toggleCredentials()">
                                         <option value="mitra">Mitra</option>
                                         <option value="staff">Karyawan</option>
                                     </select>
+                                    <small class="text-muted" id="karyawan-credentials" style="display: none;">
+                                        Karyawan: karyawan@telkom.co.id | Password: Ped123*
+                                    </small>
                                 </div>
                                 
                                 <div class="d-grid">
@@ -320,6 +329,23 @@
                 passwordIcon.classList.add('bi-eye');
             }
         }
+
+        // Function untuk toggle kredensial karyawan
+        function toggleCredentials() {
+            const loginAs = document.getElementById('login_as').value;
+            const karyawanCredentials = document.getElementById('karyawan-credentials');
+            
+            if (loginAs === 'staff') {
+                karyawanCredentials.style.display = 'block';
+            } else {
+                karyawanCredentials.style.display = 'none';
+            }
+        }
+
+        // Jalankan function saat halaman dimuat untuk set initial state
+        document.addEventListener('DOMContentLoaded', function() {
+            toggleCredentials();
+        });
     </script>
 </body>
 </html>

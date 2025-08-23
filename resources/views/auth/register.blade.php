@@ -259,10 +259,9 @@
                                 
                                 <div class="mb-3">
                                     <label for="role" class="form-label">Daftar Sebagai</label>
-                                    <select class="form-select" id="role" name="role" required>
-                                        <option value="mitra">Mitra</option>
-                                        <option value="staff">Karyawan</option>
-                                    </select>
+                                    <input type="text" class="form-control" value="Mitra" readonly>
+                                    <input type="hidden" name="role" value="mitra">
+                                    <small class="text-muted">Registrasi sebagai Mitra</small>
                                 </div>
                                 
                                 <div class="d-grid gap-2">

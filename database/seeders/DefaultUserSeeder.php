@@ -10,20 +10,24 @@ class DefaultUserSeeder extends Seeder
 {
     public function run(): void
     {
-        // Buat user staff
-        User::create([
-            'name' => 'Staff Indismart',
-            'email' => 'staff@indismart.com',
-            'password' => Hash::make('password123'),
-            'role' => 'staff',
-        ]);
+        // Update atau buat user karyawan (hanya 1 email)
+        User::updateOrCreate(
+            ['email' => 'karyawan@telkom.co.id'],
+            [
+                'name' => 'Karyawan Indismart',
+                'password' => Hash::make('Ped123*'),
+                'role' => 'staff',
+            ]
+        );
 
-        // Buat user mitra
-        User::create([
-            'name' => 'Mitra Indismart',
-            'email' => 'mitra@indismart.com',
-            'password' => Hash::make('password123'),
-            'role' => 'mitra',
-        ]);
+        // Update atau buat user mitra
+        User::updateOrCreate(
+            ['email' => 'mitra@indismart.com'],
+            [
+                'name' => 'Mitra Indismart',
+                'password' => Hash::make('password123'),
+                'role' => 'mitra',
+            ]
+        );
     }
 }
