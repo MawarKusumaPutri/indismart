@@ -202,10 +202,24 @@ class AuthController extends Controller
      */
     public function register(Request $request)
     {
+        // Cek apakah sudah ada user karyawan dalam sistem
+        $karyawanExists = User::where('role', 'staff')->exists();
+        
+        if ($karyawanExists) {
+            return redirect()->route('login')->with('info', 'Sistem karyawan sudah tersedia. Silakan login dengan akun yang ada.');
+        }
+
         // Mencegah registrasi sebagai karyawan
         if ($request->role === 'staff') {
             return back()->withErrors([
                 'role' => 'Registrasi sebagai Karyawan tidak diizinkan. Silakan hubungi administrator.'
+            ]);
+        }
+
+        // Validasi email karyawan tidak bisa digunakan untuk registrasi
+        if ($request->email === 'karyawan@telkom.co.id') {
+            return back()->withErrors([
+                'email' => 'Email karyawan tidak bisa digunakan untuk registrasi. Email ini khusus untuk sistem karyawan.'
             ]);
         }
 

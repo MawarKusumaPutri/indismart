@@ -20,7 +20,7 @@ Route::get('/', function () {
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/register', [AuthController::class, 'showRegistrationForm'])->name('register');
-Route::post('/register', [AuthController::class, 'register'])->middleware('prevent.karyawan.registration');
+Route::post('/register', [AuthController::class, 'register']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Password Reset Routes
@@ -29,22 +29,13 @@ Route::post('/forgot-password', [AuthController::class, 'sendResetLinkEmail'])->
 Route::get('/reset-password/{token}', [AuthController::class, 'showResetPasswordForm'])->name('password.reset');
 Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
 
-// Notification Routes
-Route::middleware('auth')->group(function () {
-    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
-    Route::get('/notifications/unread', [NotificationController::class, 'getUnreadNotifications'])->name('notifications.unread');
-    Route::get('/notifications/unread-count', [NotificationController::class, 'getUnreadCount'])->name('notifications.unread-count');
-    Route::post('/notifications/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.mark-as-read');
-    Route::post('/notifications/mark-all-as-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-as-read');
-});
-
 // Mitra Routes
-Route::group(['prefix' => 'mitra', 'middleware' => ['web']], function () {
+Route::group(['prefix' => 'mitra'], function () {
     Route::get('/dashboard', [DashboardController::class, 'mitraDashboard'])->name('mitra.dashboard');
 });
 
 // Karyawan Routes
-Route::group(['prefix' => 'staff', 'middleware' => ['web']], function () {
+Route::group(['prefix' => 'staff'], function () {
     Route::get('/dashboard', [DashboardController::class, 'staffDashboard'])->name('staff.dashboard');
     Route::get('/mitra/{id}/detail', [DashboardController::class, 'mitraDetail'])->name('staff.mitra.detail');
 });
@@ -75,20 +66,10 @@ Route::group(['middleware' => 'auth'], function () {
 // Notification Routes
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
-    Route::get('/notifications/unread-count', [NotificationController::class, 'getUnreadCount'])->name('notifications.unread-count');
     Route::get('/notifications/unread', [NotificationController::class, 'getUnreadNotifications'])->name('notifications.unread');
+    Route::get('/notifications/unread-count', [NotificationController::class, 'getUnreadCount'])->name('notifications.unread-count');
     Route::post('/notifications/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.mark-as-read');
     Route::post('/notifications/mark-all-as-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-as-read');
-});
-
-// Profile Routes
-Route::group(['middleware' => 'auth'], function () {
-    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
-    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::get('/profile/change-password', [ProfileController::class, 'changePassword'])->name('profile.change-password');
-    Route::put('/profile/change-password', [ProfileController::class, 'updatePassword'])->name('profile.update-password');
-    Route::delete('/profile/avatar', [ProfileController::class, 'deleteAvatar'])->name('profile.delete-avatar');
 });
 
 // Review Routes (Karyawan Only)
@@ -117,35 +98,30 @@ Route::group(['middleware' => ['auth', 'role:staff']], function () {
     Route::post('/nomor-kontrak/{id}', [NomorKontrakController::class, 'store'])->name('nomor-kontrak.store');
     Route::get('/nomor-kontrak/generate', [NomorKontrakController::class, 'generate'])->name('nomor-kontrak.generate');
     Route::get('/nomor-kontrak/bulk-assign', [NomorKontrakController::class, 'bulkAssign'])->name('nomor-kontrak.bulk-assign');
-    Route::post('/nomor-kontrak/bulk-assign-selected', [NomorKontrakController::class, 'bulkAssignSelected'])->name('nomor-kontrak.bulk-assign-selected');
+    Route::post('/nomor-kontrak/bulk-assign', [NomorKontrakController::class, 'bulkAssignStore'])->name('nomor-kontrak.bulk-assign-store');
 });
 
 // Settings Routes
-Route::group(['middleware' => ['auth']], function () {
+Route::group(['middleware' => 'auth'], function () {
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
-    Route::get('/settings/profile', [SettingsController::class, 'profile'])->name('settings.profile');
-    Route::post('/settings/profile', [SettingsController::class, 'updateProfile'])->name('settings.profile.update');
-    Route::get('/settings/security', [SettingsController::class, 'security'])->name('settings.security');
-    Route::post('/settings/security', [SettingsController::class, 'updatePassword'])->name('settings.security.update');
-    Route::get('/settings/notifications', [SettingsController::class, 'notifications'])->name('settings.notifications');
-    Route::post('/settings/notifications', [SettingsController::class, 'updateNotifications'])->name('settings.notifications.update');
     Route::get('/settings/appearance', [SettingsController::class, 'appearance'])->name('settings.appearance');
-    Route::post('/settings/appearance', [SettingsController::class, 'updateAppearance'])->name('settings.appearance.update');
+    Route::get('/settings/notifications', [SettingsController::class, 'notifications'])->name('settings.notifications');
+    Route::get('/settings/profile', [SettingsController::class, 'profile'])->name('settings.profile');
+    Route::get('/settings/security', [SettingsController::class, 'security'])->name('settings.security');
     Route::get('/settings/system', [SettingsController::class, 'system'])->name('settings.system');
-    Route::post('/settings/system/clear-cache', [SettingsController::class, 'clearCache'])->name('settings.system.clear-cache');
-    Route::get('/settings/system/export-data', [SettingsController::class, 'exportData'])->name('settings.system.export-data');
-    Route::post('/settings/system/delete-account', [SettingsController::class, 'deleteAccount'])->name('settings.system.delete-account');
 });
 
-// Looker Studio Routes (Karyawan Only)
-Route::group(['middleware' => ['auth', 'role:staff']], function () {
+// Looker Studio Routes
+Route::group(['middleware' => 'auth'], function () {
     Route::get('/looker-studio', [LookerStudioController::class, 'index'])->name('looker-studio.index');
-    Route::get('/looker-studio/dashboard-data', [LookerStudioController::class, 'dashboardData'])->name('looker-studio.dashboard-data');
-    Route::get('/looker-studio/export-data', [LookerStudioController::class, 'exportData'])->name('looker-studio.export-data');
+    Route::get('/looker-studio/template', [LookerStudioController::class, 'getTemplate'])->name('looker-studio.template');
 });
 
-// API Routes for Looker Studio (without auth for now)
-Route::get('/api/looker-studio/dashboard-data', [LookerStudioController::class, 'dashboardData']);
-Route::get('/api/looker-studio/mitra-analytics', [LookerStudioController::class, 'getMitraAnalyticsApi']);
-Route::get('/api/looker-studio/proyek-analytics', [LookerStudioController::class, 'getProyekAnalyticsApi']);
+// Dashboard Routes
+Route::group(['middleware' => 'auth'], function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/analisis-realtime', [DashboardController::class, 'analisisRealtime'])->name('analisis-realtime');
+    Route::get('/visualisasi-data', [DashboardController::class, 'visualisasiData'])->name('visualisasi-data');
+    Route::get('/manajemen-dokumen', [DashboardController::class, 'manajemenDokumen'])->name('manajemen-dokumen');
+});
 
