@@ -131,9 +131,7 @@
                 <a href="{{ route('reviews.index') }}" class="sidebar-menu-item {{ request()->routeIs('reviews.*') ? 'active' : '' }}">
                     <i class="bi bi-clipboard-check sidebar-menu-icon"></i> Review Dokumen
                 </a>
-                <a href="{{ route('looker-studio.index') }}" class="sidebar-menu-item {{ request()->routeIs('looker-studio.*') ? 'active' : '' }}">
-                    <i class="bi bi-graph-up sidebar-menu-icon"></i> Analytics Dashboard
-                </a>
+
             @endif
             
             <a href="{{ route('settings.index') }}" class="sidebar-menu-item {{ request()->routeIs('settings.*') ? 'active' : '' }}">

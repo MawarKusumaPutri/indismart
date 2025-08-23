@@ -10,7 +10,7 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ManajemenMitraController;
 use App\Http\Controllers\NomorKontrakController;
 use App\Http\Controllers\SettingsController;
-use App\Http\Controllers\LookerStudioController;
+
 use App\Http\Controllers\FotoController;
 
 Route::get('/', function () {
@@ -121,17 +121,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/settings/system', [SettingsController::class, 'system'])->name('settings.system');
 });
 
-// Looker Studio Routes
-Route::group(['middleware' => 'auth'], function () {
-    Route::get('/looker-studio', [LookerStudioController::class, 'index'])->name('looker-studio.index');
-    Route::get('/looker-studio/template', [LookerStudioController::class, 'getTemplate'])->name('looker-studio.template');
-});
+
 
 // Dashboard Routes
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/analisis-realtime', [DashboardController::class, 'analisisRealtime'])->name('analisis-realtime');
-    Route::get('/visualisasi-data', [DashboardController::class, 'visualisasiData'])->name('visualisasi-data');
     Route::get('/manajemen-dokumen', [DashboardController::class, 'manajemenDokumen'])->name('manajemen-dokumen');
 });
 
