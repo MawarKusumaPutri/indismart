@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Dropdown Witel → STO → Site Name</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        select:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+        }
+        .status-indicator {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .console-output {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .test-buttons {
+            margin: 20px 0;
+        }
+        .test-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .test-btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Test Dropdown Witel → STO → Site Name</h1>
+        <p>Testing automatic dropdown functionality</p>
+        
+        <div id="status-indicator" class="status-indicator info">
+            Status: Menunggu input...
+        </div>
+
+        <div class="form-group">
+            <label for="witel">Witel:</label>
+            <select id="witel">
+                <option value="">Pilih Witel</option>
+                <option value="Jakarta">Jakarta</option>
+                <option value="Bandung">Bandung</option>
+                <option value="Surabaya">Surabaya</option>
+                <option value="Medan">Medan</option>
+                <option value="Yogyakarta">Yogyakarta</option>
+                <option value="Semarang">Semarang</option>
+                <option value="Palembang">Palembang</option>
+                <option value="Makassar">Makassar</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="sto">STO:</label>
+            <select id="sto">
+                <option value="">Pilih STO</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="site_name">Site Name:</label>
+            <select id="site_name">
+                <option value="">Pilih Site Name</option>
+            </select>
+        </div>
+
+        <div class="test-buttons">
+            <button class="test-btn" onclick="testWitel('Jakarta')">Test Jakarta</button>
+            <button class="test-btn" onclick="testWitel('Bandung')">Test Bandung</button>
+            <button class="test-btn" onclick="testWitel('Surabaya')">Test Surabaya</button>
+            <button class="test-btn" onclick="testSto('STO Kebayoran')">Test STO Kebayoran</button>
+            <button class="test-btn" onclick="clearConsole()">Clear Console</button>
+        </div>
+
+        <div class="console-output" id="console-output">
+            <div>Console Output:</div>
+            <div id="console-content"></div>
+        </div>
+    </div>
+
+    <script>
+        // Data STO berdasarkan Witel
+        const stoData = {
+            'Jakarta': ['STO Kebayoran', 'STO Gambir', 'STO Cempaka Putih', 'STO Tanjung Priok', 'STO Jakarta Utara'],
+            'Bandung': ['STO Dago', 'STO Hegarmanah', 'STO Ujung Berung', 'STO Cimahi', 'STO Bandung Selatan'],
+            'Surabaya': ['STO Gubeng', 'STO Manyar', 'STO Rungkut', 'STO Surabaya Pusat', 'STO Surabaya Barat'],
+            'Medan': ['STO Medan Kota', 'STO Medan Denai', 'STO Medan Amplas', 'STO Medan Timur', 'STO Medan Barat'],
+            'Yogyakarta': ['STO Kotabaru', 'STO Bantul', 'STO Sleman', 'STO Yogyakarta Pusat', 'STO Yogyakarta Selatan'],
+            'Semarang': ['STO Semarang Pusat', 'STO Semarang Utara', 'STO Semarang Timur', 'STO Semarang Barat'],
+            'Palembang': ['STO Palembang Pusat', 'STO Palembang Utara', 'STO Palembang Timur', 'STO Palembang Barat'],
+            'Makassar': ['STO Makassar Pusat', 'STO Makassar Utara', 'STO Makassar Timur', 'STO Makassar Barat']
+        };
+
+        // Data Site Name berdasarkan STO
+        const siteNameData = {
+            'STO Kebayoran': ['Site KB-01', 'Site KB-02', 'Site KB-03', 'Site KB-04', 'Site KB-05'],
+            'STO Gambir': ['Site GM-01', 'Site GM-02', 'Site GM-03', 'Site GM-04', 'Site GM-05'],
+            'STO Cempaka Putih': ['Site CP-01', 'Site CP-02', 'Site CP-03', 'Site CP-04', 'Site CP-05'],
+            'STO Tanjung Priok': ['Site TP-01', 'Site TP-02', 'Site TP-03', 'Site TP-04', 'Site TP-05'],
+            'STO Jakarta Utara': ['Site JU-01', 'Site JU-02', 'Site JU-03', 'Site JU-04', 'Site JU-05'],
+            'STO Dago': ['Site DG-01', 'Site DG-02', 'Site DG-03', 'Site DG-04', 'Site DG-05'],
+            'STO Hegarmanah': ['Site HG-01', 'Site HG-02', 'Site HG-03', 'Site HG-04', 'Site HG-05'],
+            'STO Ujung Berung': ['Site UB-01', 'Site UB-02', 'Site UB-03', 'Site UB-04', 'Site UB-05'],
+            'STO Cimahi': ['Site CM-01', 'Site CM-02', 'Site CM-03', 'Site CM-04', 'Site CM-05'],
+            'STO Bandung Selatan': ['Site BS-01', 'Site BS-02', 'Site BS-03', 'Site BS-04', 'Site BS-05'],
+            'STO Gubeng': ['Site GB-01', 'Site GB-02', 'Site GB-03', 'Site GB-04', 'Site GB-05'],
+            'STO Manyar': ['Site MY-01', 'Site MY-02', 'Site MY-03', 'Site MY-04', 'Site MY-05'],
+            'STO Rungkut': ['Site RK-01', 'Site RK-02', 'Site RK-03', 'Site RK-04', 'Site RK-05'],
+            'STO Surabaya Pusat': ['Site SP-01', 'Site SP-02', 'Site SP-03', 'Site SP-04', 'Site SP-05'],
+            'STO Surabaya Barat': ['Site SB-01', 'Site SB-02', 'Site SB-03', 'Site SB-04', 'Site SB-05'],
+            'STO Medan Kota': ['Site MK-01', 'Site MK-02', 'Site MK-03', 'Site MK-04', 'Site MK-05'],
+            'STO Medan Denai': ['Site MD-01', 'Site MD-02', 'Site MD-03', 'Site MD-04', 'Site MD-05'],
+            'STO Medan Amplas': ['Site MA-01', 'Site MA-02', 'Site MA-03', 'Site MA-04', 'Site MA-05'],
+            'STO Medan Timur': ['Site MT-01', 'Site MT-02', 'Site MT-03', 'Site MT-04', 'Site MT-05'],
+            'STO Medan Barat': ['Site MB-01', 'Site MB-02', 'Site MB-03', 'Site MB-04', 'Site MB-05'],
+            'STO Kotabaru': ['Site KB-01', 'Site KB-02', 'Site KB-03', 'Site KB-04', 'Site KB-05'],
+            'STO Bantul': ['Site BT-01', 'Site BT-02', 'Site BT-03', 'Site BT-04', 'Site BT-05'],
+            'STO Sleman': ['Site SL-01', 'Site SL-02', 'Site SL-03', 'Site SL-04', 'Site SL-05'],
+            'STO Yogyakarta Pusat': ['Site YP-01', 'Site YP-02', 'Site YP-03', 'Site YP-04', 'Site YP-05'],
+            'STO Yogyakarta Selatan': ['Site YS-01', 'Site YS-02', 'Site YS-03', 'Site YS-04', 'Site YS-05'],
+            'STO Semarang Pusat': ['Site SP-01', 'Site SP-02', 'Site SP-03', 'Site SP-04', 'Site SP-05'],
+            'STO Semarang Utara': ['Site SU-01', 'Site SU-02', 'Site SU-03', 'Site SU-04', 'Site SU-05'],
+            'STO Semarang Timur': ['Site ST-01', 'Site ST-02', 'Site ST-03', 'Site ST-04', 'Site ST-05'],
+            'STO Semarang Barat': ['Site SB-01', 'Site SB-02', 'Site SB-03', 'Site SB-04', 'Site SB-05'],
+            'STO Palembang Pusat': ['Site PP-01', 'Site PP-02', 'Site PP-03', 'Site PP-04', 'Site PP-05'],
+            'STO Palembang Utara': ['Site PN-01', 'Site PN-02', 'Site PN-03', 'Site PN-04', 'Site PN-05'],
+            'STO Palembang Timur': ['Site PT-01', 'Site PT-02', 'Site PT-03', 'Site PT-04', 'Site PT-05'],
+            'STO Palembang Barat': ['Site PB-01', 'Site PB-02', 'Site PB-03', 'Site PB-04', 'Site PB-05'],
+            'STO Makassar Pusat': ['Site MP-01', 'Site MP-02', 'Site MP-03', 'Site MP-04', 'Site MP-05'],
+            'STO Makassar Utara': ['Site MN-01', 'Site MN-02', 'Site MN-03', 'Site MN-04', 'Site MN-05'],
+            'STO Makassar Timur': ['Site MT-01', 'Site MT-02', 'Site MT-03', 'Site MT-04', 'Site MT-05'],
+            'STO Makassar Barat': ['Site MB-01', 'Site MB-02', 'Site MB-03', 'Site MB-04', 'Site MB-05']
+        };
+
+        // Fungsi untuk log ke console dan tampilkan di halaman
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logMessage = `[${timestamp}] ${message}`;
+            
+            console.log(logMessage);
+            
+            const consoleContent = document.getElementById('console-content');
+            const logElement = document.createElement('div');
+            logElement.style.color = type === 'error' ? '#dc3545' : type === 'success' ? '#28a745' : '#007bff';
+            logElement.textContent = logMessage;
+            consoleContent.appendChild(logElement);
+            
+            // Auto-scroll ke bawah
+            consoleContent.scrollTop = consoleContent.scrollHeight;
+        }
+
+        // Fungsi untuk mengisi dropdown STO berdasarkan Witel yang dipilih
+        function populateSTO(witel) {
+            log('🔧 populateSTO called with: ' + witel, 'info');
+            
+            const stoSelect = document.getElementById('sto');
+            const siteNameSelect = document.getElementById('site_name');
+            
+            if (!stoSelect) {
+                log('❌ STO element not found!', 'error');
+                return;
+            }
+            
+            if (!siteNameSelect) {
+                log('❌ Site Name element not found!', 'error');
+                return;
+            }
+            
+            log('✅ STO and Site Name elements found, resetting dropdowns...', 'success');
+            
+            // Reset dropdown STO
+            stoSelect.innerHTML = '<option value="">Pilih STO</option>';
+            
+            // Reset dropdown Site Name
+            siteNameSelect.innerHTML = '<option value="">Pilih Site Name</option>';
+            
+            log('📊 Populating STO for Witel: ' + witel, 'info');
+            log('📋 Available data for this witel: ' + JSON.stringify(stoData[witel]), 'info');
+            
+            if (witel && stoData[witel]) {
+                log('✅ Data found for witel: ' + witel, 'success');
+                log('📝 Adding STO options...', 'info');
+                
+                // Isi dropdown STO berdasarkan Witel yang dipilih
+                stoData[witel].forEach((sto, index) => {
+                    const option = document.createElement('option');
+                    option.value = sto;
+                    option.textContent = sto;
+                    stoSelect.appendChild(option);
+                    log(`✅ Added STO option ${index + 1}: ${sto}`, 'success');
+                });
+                
+                log('📊 STO options added: ' + JSON.stringify(stoData[witel]), 'success');
+                log('🔢 Total STO options in dropdown: ' + stoSelect.options.length, 'info');
+                
+                // Update status indicator
+                updateStatusIndicator('success', `STO dropdown berhasil diisi untuk Witel: ${witel}`);
+                
+                log('🎉 STO dropdown berhasil diisi untuk Witel: ' + witel, 'success');
+            } else {
+                log('❌ No data found for witel: ' + witel, 'error');
+                log('📋 Available witels: ' + Object.keys(stoData), 'info');
+                updateStatusIndicator('error', `Tidak ada data untuk Witel: ${witel}`);
+            }
+        }
+
+        // Fungsi untuk mengisi dropdown Site Name berdasarkan STO yang dipilih
+        function populateSiteName(sto) {
+            log('🔧 populateSiteName called with: ' + sto, 'info');
+            
+            const siteNameSelect = document.getElementById('site_name');
+            
+            if (!siteNameSelect) {
+                log('❌ Site Name element not found!', 'error');
+                return;
+            }
+            
+            log('✅ Site Name element found, resetting dropdown...', 'success');
+            
+            // Reset dropdown Site Name
+            siteNameSelect.innerHTML = '<option value="">Pilih Site Name</option>';
+            
+            log('📊 Populating Site Name for STO: ' + sto, 'info');
+            log('📋 Available data for this STO: ' + JSON.stringify(siteNameData[sto]), 'info');
+            
+            if (sto && siteNameData[sto]) {
+                log('✅ Data found for STO: ' + sto, 'success');
+                log('📝 Adding Site Name options...', 'info');
+                
+                // Isi dropdown Site Name berdasarkan STO yang dipilih
+                siteNameData[sto].forEach((site, index) => {
+                    const option = document.createElement('option');
+                    option.value = site;
+                    option.textContent = site;
+                    siteNameSelect.appendChild(option);
+                    log(`✅ Added Site Name option ${index + 1}: ${site}`, 'success');
+                });
+                
+                log('📊 Site Name options added: ' + JSON.stringify(siteNameData[sto]), 'success');
+                log('🔢 Total Site Name options in dropdown: ' + siteNameSelect.options.length, 'info');
+                
+                // Update status indicator
+                updateStatusIndicator('success', `Site Name dropdown berhasil diisi untuk STO: ${sto}`);
+                
+                log('🎉 Site Name dropdown berhasil diisi untuk STO: ' + sto, 'success');
+            } else {
+                log('❌ No data found for STO: ' + sto, 'error');
+                log('📋 Available STOs: ' + Object.keys(siteNameData), 'info');
+                updateStatusIndicator('error', `Tidak ada data untuk STO: ${sto}`);
+            }
+        }
+
+        // Fungsi untuk update status indicator
+        function updateStatusIndicator(type, message) {
+            const indicator = document.getElementById('status-indicator');
+            indicator.className = `status-indicator ${type}`;
+            indicator.textContent = message;
+        }
+
+        // Fungsi untuk test Witel
+        function testWitel(witel) {
+            log(`🧪 Testing Witel: ${witel}`, 'info');
+            document.getElementById('witel').value = witel;
+            populateSTO(witel);
+        }
+
+        // Fungsi untuk test STO
+        function testSto(sto) {
+            log(`🧪 Testing STO: ${sto}`, 'info');
+            document.getElementById('sto').value = sto;
+            populateSiteName(sto);
+        }
+
+        // Fungsi untuk clear console
+        function clearConsole() {
+            document.getElementById('console-content').innerHTML = '';
+            updateStatusIndicator('info', 'Status: Console cleared');
+        }
+
+        // Event listener untuk Witel
+        document.addEventListener('DOMContentLoaded', function() {
+            log('🚀 DOM Content Loaded - Setting up Witel → STO → Site Name listeners', 'success');
+            log('📊 STO Data available: ' + JSON.stringify(stoData), 'info');
+            log('📊 Site Name Data available: ' + JSON.stringify(siteNameData), 'info');
+            
+            const witelSelect = document.getElementById('witel');
+            if (witelSelect) {
+                log('✅ Witel element found, adding event listener', 'success');
+                witelSelect.addEventListener('change', function() {
+                    const selectedWitel = this.value;
+                    log('🔄 Witel changed to: ' + selectedWitel, 'info');
+                    populateSTO(selectedWitel);
+                });
+                log('✅ Event listener untuk Witel berhasil ditambahkan', 'success');
+            } else {
+                log('❌ Witel element not found!', 'error');
+            }
+            
+            const stoSelect = document.getElementById('sto');
+            if (stoSelect) {
+                log('✅ STO element found, adding event listener', 'success');
+                stoSelect.addEventListener('change', function() {
+                    const selectedSto = this.value;
+                    log('🔄 STO changed to: ' + selectedSto, 'info');
+                    populateSiteName(selectedSto);
+                });
+                log('✅ Event listener untuk STO berhasil ditambahkan', 'success');
+            } else {
+                log('❌ STO element not found!', 'error');
+            }
+            
+            updateStatusIndicator('success', 'Status: Ready - Silakan pilih Witel');
+        });
+    </script>
+</body>
+</html>

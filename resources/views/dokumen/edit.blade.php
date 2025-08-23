@@ -231,6 +231,7 @@
 
 @push('scripts')
 <script src="{{ asset('js/dropdown-automatic.js') }}"></script>
+<script src="{{ asset('js/witel-sto-site-dropdown.js') }}"></script>
 <script>
 // Data STO berdasarkan Witel
 const stoData = {
