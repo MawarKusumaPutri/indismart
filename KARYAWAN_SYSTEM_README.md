@@ -57,6 +57,15 @@ Sistem ini telah dikonfigurasi agar **karyawan hanya bisa akses dengan 1 email s
 ### 6. **Kernel**
 - `app/Http/Kernel.php` - Mendaftarkan middleware baru
 
+### 7. **Controller (Updated)**
+- `app/Http/Controllers/AuthController.php` - Validasi email karyawan langsung di controller
+
+### 5. **Routes**
+- `routes/web.php` - Menerapkan middleware pada route registrasi
+
+### 6. **Kernel**
+- `app/Http/Kernel.php` - Mendaftarkan middleware baru
+
 ## Cara Penggunaan
 
 ### 1. **Login Karyawan**
@@ -86,6 +95,12 @@ Role: Mitra
 - Validasi di controller mencegah role 'staff' dalam form
 - Form registrasi langsung set sebagai "Mitra" tanpa opsi lain
 - Input hidden field memastikan role selalu 'mitra'
+
+### 2. **Proteksi Login Karyawan**
+- Validasi email langsung di controller untuk keamanan maksimal
+- Hanya `karyawan@telkom.co.id` yang bisa login sebagai karyawan
+- Email karyawan tidak bisa digunakan untuk login mitra
+- Validasi role ganda: email + role database
 
 ### 2. **Validasi Role**
 - Hanya role 'mitra' yang diizinkan untuk registrasi

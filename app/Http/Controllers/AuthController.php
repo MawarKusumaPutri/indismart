@@ -30,6 +30,20 @@ class AuthController extends Controller
             'login_as' => 'required|in:mitra,staff',
         ]);
 
+        // Validasi tambahan untuk email karyawan
+        if ($request->login_as === 'staff' && $request->email !== 'karyawan@telkom.co.id') {
+            return back()->withErrors([
+                'email' => 'Email ini tidak memiliki akses sebagai Karyawan. Hanya email karyawan@telkom.co.id yang diizinkan.'
+            ])->withInput($request->except('password'));
+        }
+
+        // Validasi untuk mencegah email karyawan digunakan sebagai mitra
+        if ($request->login_as === 'mitra' && $request->email === 'karyawan@telkom.co.id') {
+            return back()->withErrors([
+                'login_as' => 'Email karyawan tidak bisa digunakan untuk login sebagai Mitra. Silakan pilih role Karyawan.'
+            ])->withInput($request->except('password'));
+        }
+
         $credentials = $request->only('email', 'password');
         
         if (Auth::attempt($credentials)) {
