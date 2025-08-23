@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Dropdown Otomatis - Status Implementasi → Jenis Dokumen</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        select, input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        select:focus, input:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+        }
+        .status-indicator {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .console-output {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .test-buttons {
+            margin: 20px 0;
+        }
+        .test-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .test-btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Test Dropdown Otomatis</h1>
+        <p>Status Implementasi → Jenis Dokumen</p>
+        
+        <div id="status-indicator" class="status-indicator info">
+            Status: Menunggu input...
+        </div>
+
+        <div class="form-group">
+            <label for="status_implementasi">Status Implementasi:</label>
+            <select id="status_implementasi">
+                <option value="">Pilih Status</option>
+                <option value="inisiasi">Inisiasi</option>
+                <option value="planning">Planning</option>
+                <option value="executing">Executing</option>
+                <option value="controlling">Controlling</option>
+                <option value="closing">Closing</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="jenis_dokumen">Jenis Dokumen:</label>
+            <select id="jenis_dokumen">
+                <option value="">Pilih Jenis Dokumen</option>
+            </select>
+        </div>
+
+        <div class="test-buttons">
+            <button class="test-btn" onclick="testDropdown('inisiasi')">Test Inisiasi</button>
+            <button class="test-btn" onclick="testDropdown('planning')">Test Planning</button>
+            <button class="test-btn" onclick="testDropdown('executing')">Test Executing</button>
+            <button class="test-btn" onclick="testDropdown('controlling')">Test Controlling</button>
+            <button class="test-btn" onclick="testDropdown('closing')">Test Closing</button>
+            <button class="test-btn" onclick="clearConsole()">Clear Console</button>
+        </div>
+
+        <div class="console-output" id="console-output">
+            <div>Console Output:</div>
+            <div id="console-content"></div>
+        </div>
+    </div>
+
+    <script>
+        // Data mapping Status Implementasi → Jenis Dokumen
+        const jenisDokumenData = {
+            'inisiasi': [
+                'Dokumen Kontrak Harga Satuan',
+                'Dokumen Surat Pesanan'
+            ],
+            'planning': [
+                'Berita Acara Design Review Meeting',
+                'As Planned Drawing',
+                'Rencana Anggaran Belanja',
+                'Lainnya (Eviden Pendukung)'
+            ],
+            'executing': [
+                'Berita Acara Penyelesaian Pekerjaan',
+                'Berita Acara Uji Fungsi',
+                'Lampiran Hasil Uji Fungsi',
+                'Lainnya (Eviden Pendukung)'
+            ],
+            'controlling': [
+                'Berita Acara Uji Terima',
+                'Lampiran Hasil Uji Terima',
+                'As Built Drawing Uji Terima'
+            ],
+            'closing': [
+                'Berita Acara Rekonsiliasi',
+                'Lampiran BoQ Hasil Rekonsiliasi',
+                'Berita Acara Serah Terima'
+            ]
+        };
+
+        // Fungsi untuk log ke console dan tampilkan di halaman
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logMessage = `[${timestamp}] ${message}`;
+            
+            console.log(logMessage);
+            
+            const consoleContent = document.getElementById('console-content');
+            const logElement = document.createElement('div');
+            logElement.style.color = type === 'error' ? '#dc3545' : type === 'success' ? '#28a745' : '#007bff';
+            logElement.textContent = logMessage;
+            consoleContent.appendChild(logElement);
+            
+            // Auto-scroll ke bawah
+            consoleContent.scrollTop = consoleContent.scrollHeight;
+        }
+
+        // Fungsi untuk mengisi dropdown Jenis Dokumen berdasarkan Status Implementasi yang dipilih
+        function populateJenisDokumen(statusImplementasi) {
+            log('🔧 populateJenisDokumen called with: ' + statusImplementasi, 'info');
+            
+            const jenisDokumenSelect = document.getElementById('jenis_dokumen');
+            
+            if (!jenisDokumenSelect) {
+                log('❌ Jenis Dokumen element not found!', 'error');
+                return;
+            }
+            
+            log('✅ Jenis Dokumen element found, resetting dropdown...', 'success');
+            
+            // Reset dropdown Jenis Dokumen
+            jenisDokumenSelect.innerHTML = '<option value="">Pilih Jenis Dokumen</option>';
+            
+            log('📊 Populating Jenis Dokumen for Status Implementasi: ' + statusImplementasi, 'info');
+            log('📋 Available data for this status: ' + JSON.stringify(jenisDokumenData[statusImplementasi]), 'info');
+            
+            if (statusImplementasi && jenisDokumenData[statusImplementasi]) {
+                log('✅ Data found for status: ' + statusImplementasi, 'success');
+                log('📝 Adding options...', 'info');
+                
+                // Isi dropdown Jenis Dokumen berdasarkan Status Implementasi yang dipilih
+                jenisDokumenData[statusImplementasi].forEach((jenis, index) => {
+                    const option = document.createElement('option');
+                    option.value = jenis;
+                    option.textContent = jenis;
+                    jenisDokumenSelect.appendChild(option);
+                    log(`✅ Added option ${index + 1}: ${jenis}`, 'success');
+                });
+                
+                log('📊 Jenis Dokumen options added: ' + JSON.stringify(jenisDokumenData[statusImplementasi]), 'success');
+                log('🔢 Total options in dropdown: ' + jenisDokumenSelect.options.length, 'info');
+                
+                // Update status indicator
+                updateStatusIndicator('success', `Dropdown berhasil diisi untuk status: ${statusImplementasi}`);
+                
+                // Trigger change event untuk memastikan dropdown terupdate
+                jenisDokumenSelect.dispatchEvent(new Event('change'));
+                log('🔄 Change event triggered', 'info');
+                
+                // Tampilkan pesan sukses
+                log('🎉 Dropdown Jenis Dokumen berhasil diisi untuk Status Implementasi: ' + statusImplementasi, 'success');
+            } else {
+                log('❌ No data found for status: ' + statusImplementasi, 'error');
+                log('📋 Available statuses: ' + Object.keys(jenisDokumenData), 'info');
+                updateStatusIndicator('error', `Tidak ada data untuk status: ${statusImplementasi}`);
+            }
+        }
+
+        // Fungsi untuk update status indicator
+        function updateStatusIndicator(type, message) {
+            const indicator = document.getElementById('status-indicator');
+            indicator.className = `status-indicator ${type}`;
+            indicator.textContent = message;
+        }
+
+        // Fungsi untuk test dropdown
+        function testDropdown(status) {
+            log(`🧪 Testing dropdown for status: ${status}`, 'info');
+            document.getElementById('status_implementasi').value = status;
+            populateJenisDokumen(status);
+        }
+
+        // Fungsi untuk clear console
+        function clearConsole() {
+            document.getElementById('console-content').innerHTML = '';
+            updateStatusIndicator('info', 'Status: Console cleared');
+        }
+
+        // Event listener untuk Status Implementasi
+        document.addEventListener('DOMContentLoaded', function() {
+            log('🚀 DOM Content Loaded - Setting up dropdown listeners', 'success');
+            log('📊 Jenis Dokumen Data available: ' + JSON.stringify(jenisDokumenData), 'info');
+            log('📋 Available statuses: ' + Object.keys(jenisDokumenData), 'info');
+            
+            const statusSelect = document.getElementById('status_implementasi');
+            if (statusSelect) {
+                log('✅ Status Implementasi element found, adding event listener', 'success');
+                log('📝 Current value of Status Implementasi: ' + statusSelect.value, 'info');
+                
+                // Event listener untuk perubahan Status Implementasi
+                statusSelect.addEventListener('change', function() {
+                    const selectedStatus = this.value;
+                    log('🔄 Status Implementasi changed to: ' + selectedStatus, 'info');
+                    log('📞 Calling populateJenisDokumen with: ' + selectedStatus, 'info');
+                    
+                    // Panggil fungsi untuk mengisi dropdown Jenis Dokumen
+                    populateJenisDokumen(selectedStatus);
+                });
+                
+                log('✅ Event listener untuk Status Implementasi berhasil ditambahkan', 'success');
+            } else {
+                log('❌ Status Implementasi element not found!', 'error');
+            }
+            
+            // Event listener untuk Jenis Dokumen
+            const jenisDokumenSelect = document.getElementById('jenis_dokumen');
+            if (jenisDokumenSelect) {
+                log('✅ Jenis Dokumen element found', 'success');
+                jenisDokumenSelect.addEventListener('change', function() {
+                    const selectedJenis = this.value;
+                    log('📄 Jenis Dokumen selected: ' + selectedJenis, 'info');
+                });
+                log('✅ Event listener untuk Jenis Dokumen berhasil ditambahkan', 'success');
+            } else {
+                log('❌ Jenis Dokumen element not found!', 'error');
+            }
+            
+            updateStatusIndicator('success', 'Status: Ready - Silakan pilih Status Implementasi');
+        });
+    </script>
+</body>
+</html>

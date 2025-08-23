@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Dropdown Sederhana</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .form-group { margin: 15px 0; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        select { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test Dropdown Otomatis</h1>
+    
+    <div class="form-group">
+        <label for="status_implementasi">Status Implementasi:</label>
+        <select id="status_implementasi">
+            <option value="">Pilih Status</option>
+            <option value="inisiasi">Inisiasi</option>
+            <option value="planning">Planning</option>
+            <option value="executing">Executing</option>
+            <option value="controlling">Controlling</option>
+            <option value="closing">Closing</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="jenis_dokumen">Jenis Dokumen:</label>
+        <select id="jenis_dokumen">
+            <option value="">Pilih Jenis Dokumen</option>
+        </select>
+    </div>
+
+    <div id="status" class="info">Status: Menunggu input...</div>
+
+    <script>
+        // Data mapping
+        const jenisDokumenData = {
+            'inisiasi': ['Dokumen Kontrak Harga Satuan', 'Dokumen Surat Pesanan'],
+            'planning': ['Berita Acara Design Review Meeting', 'As Planned Drawing', 'Rencana Anggaran Belanja', 'Lainnya (Eviden Pendukung)'],
+            'executing': ['Berita Acara Penyelesaian Pekerjaan', 'Berita Acara Uji Fungsi', 'Lampiran Hasil Uji Fungsi', 'Lainnya (Eviden Pendukung)'],
+            'controlling': ['Berita Acara Uji Terima', 'Lampiran Hasil Uji Terima', 'As Built Drawing Uji Terima'],
+            'closing': ['Berita Acara Rekonsiliasi', 'Lampiran BoQ Hasil Rekonsiliasi', 'Berita Acara Serah Terima']
+        };
+
+        // Fungsi untuk mengisi dropdown
+        function populateJenisDokumen(status) {
+            const jenisSelect = document.getElementById('jenis_dokumen');
+            const statusDiv = document.getElementById('status');
+            
+            // Reset dropdown
+            jenisSelect.innerHTML = '<option value="">Pilih Jenis Dokumen</option>';
+            
+            if (status && jenisDokumenData[status]) {
+                // Isi dropdown
+                jenisDokumenData[status].forEach(jenis => {
+                    const option = document.createElement('option');
+                    option.value = jenis;
+                    option.textContent = jenis;
+                    jenisSelect.appendChild(option);
+                });
+                
+                statusDiv.textContent = `✅ Dropdown berhasil diisi untuk status: ${status}`;
+                statusDiv.className = 'success';
+                console.log('Dropdown berhasil diisi:', jenisDokumenData[status]);
+            } else {
+                statusDiv.textContent = `❌ Tidak ada data untuk status: ${status}`;
+                statusDiv.className = 'error';
+            }
+        }
+
+        // Event listener
+        document.getElementById('status_implementasi').addEventListener('change', function() {
+            populateJenisDokumen(this.value);
+        });
+
+        // Test otomatis setelah 1 detik
+        setTimeout(() => {
+            console.log('Testing dropdown...');
+            document.getElementById('status_implementasi').value = 'executing';
+            populateJenisDokumen('executing');
+        }, 1000);
+    </script>
+</body>
+</html>

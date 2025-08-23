@@ -246,18 +246,31 @@ document.addEventListener('DOMContentLoaded', function() {
                  mitra_ids: selectedMitra
              })
          })
-         .then(response => {
-             console.log('Response status:', response.status);
-             console.log('Response headers:', response.headers);
-             
-             if (!response.ok) {
-                 return response.text().then(text => {
-                     console.log('Error response text:', text);
-                     throw new Error('Network response was not ok: ' + response.status);
-                 });
-             }
-             return response.json();
-         })
+                   .then(async response => {
+              console.log('Response status:', response.status);
+              console.log('Response headers:', response.headers);
+              
+              if (!response.ok) {
+                  // Clone response untuk menghindari "Body has already been consumed"
+                  const responseClone = response.clone();
+                  
+                  try {
+                      const errorData = await response.json();
+                      console.log('Error response data:', errorData);
+                      throw new Error(errorData.message || 'Network response was not ok: ' + response.status);
+                  } catch (jsonError) {
+                      try {
+                          const errorText = await responseClone.text();
+                          console.log('Error response text:', errorText);
+                          throw new Error('Network response was not ok: ' + response.status);
+                      } catch (textError) {
+                          throw new Error('Network response was not ok: ' + response.status);
+                      }
+                  }
+              }
+              
+              return response.json();
+          })
          .then(data => {
              console.log('Response data:', data);
              if (data.success) {

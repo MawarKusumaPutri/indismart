@@ -147,13 +147,17 @@ class NomorKontrakController extends Controller
             
             $mitra->update(['nomor_kontrak' => $nomorKontrak]);
             
-            // Send notification
-            NotificationService::notifyUser(
-                $mitra->id,
-                'Nomor Kontrak Ditugaskan',
-                'Anda telah ditugaskan nomor kontrak: ' . $nomorKontrak,
-                'info'
-            );
+                            // Send notification
+                try {
+                    NotificationService::notifyUser(
+                        $mitra->id,
+                        'Nomor Kontrak Ditugaskan',
+                        'Anda telah ditugaskan nomor kontrak: ' . $nomorKontrak,
+                        'info'
+                    );
+                } catch (\Exception $e) {
+                    \Log::warning('Failed to send notification to mitra ' . $mitra->id . ': ' . $e->getMessage());
+                }
             
             $assignedCount++;
         }
@@ -169,26 +173,76 @@ class NomorKontrakController extends Controller
     {
         try {
             // Only karyawan can access this
-            if (!Auth::user()->isKaryawan()) {
+            if (!Auth::user() || !Auth::user()->isKaryawan()) {
                 return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
             }
 
+            // Log request data for debugging
+            \Log::info('Bulk assign request:', [
+                'mitra_ids' => $request->mitra_ids,
+                'request_data' => $request->all()
+            ]);
+
+            // Validate mitra_ids exists and are valid
             $request->validate([
-                'mitra_ids' => 'required|array',
-                'mitra_ids.*' => 'integer|exists:users,id'
+                'mitra_ids' => 'required|array|min:1',
+                'mitra_ids.*' => 'integer|min:1'
             ]);
 
             $mitraIds = $request->mitra_ids;
+            
+            // Check if all IDs exist in users table
+            $existingUsers = User::whereIn('id', $mitraIds)->pluck('id')->toArray();
+            $nonExistingIds = array_diff($mitraIds, $existingUsers);
+            
+            if (!empty($nonExistingIds)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Beberapa ID mitra tidak ditemukan: ' . implode(', ', $nonExistingIds)
+                ], 422);
+            }
+
+            // Get mitra users without contract numbers
             $mitraWithoutContract = User::where('role', 'mitra')
                 ->whereIn('id', $mitraIds)
                 ->whereNull('nomor_kontrak')
                 ->get();
 
+            \Log::info('Mitra without contract found:', [
+                'count' => $mitraWithoutContract->count(),
+                'mitra_ids' => $mitraWithoutContract->pluck('id')->toArray()
+            ]);
+
             if ($mitraWithoutContract->isEmpty()) {
+                // Check if any of the selected users are not mitra
+                $nonMitraUsers = User::whereIn('id', $mitraIds)
+                    ->where('role', '!=', 'mitra')
+                    ->get();
+                
+                if ($nonMitraUsers->isNotEmpty()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Beberapa user yang dipilih bukan mitra: ' . $nonMitraUsers->pluck('name')->implode(', ')
+                    ], 422);
+                }
+                
+                // Check if any mitra already have contract numbers
+                $mitraWithContract = User::whereIn('id', $mitraIds)
+                    ->where('role', 'mitra')
+                    ->whereNotNull('nomor_kontrak')
+                    ->get();
+                
+                if ($mitraWithContract->isNotEmpty()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Beberapa mitra sudah memiliki nomor kontrak: ' . $mitraWithContract->pluck('name')->implode(', ')
+                    ], 422);
+                }
+                
                 return response()->json([
                     'success' => false,
                     'message' => 'Tidak ada mitra yang memerlukan nomor kontrak'
-                ]);
+                ], 422);
             }
 
             $assignedCount = 0;
@@ -233,7 +287,7 @@ class NomorKontrakController extends Controller
             \Log::error('Bulk assign error: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+                'message' => 'Terjadi kesalahan sistem: ' . $e->getMessage()
             ], 500);
         }
     }

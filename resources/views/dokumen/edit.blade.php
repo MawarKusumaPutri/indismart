@@ -166,6 +166,20 @@
                         
                         <div class="col-md-6">
                             <div class="mb-3">
+                                <label for="jenis_dokumen" class="form-label">Jenis Dokumen <span class="text-danger">*</span></label>
+                                <select class="form-select @error('jenis_dokumen') is-invalid @enderror" id="jenis_dokumen" name="jenis_dokumen" required>
+                                    <option value="">Pilih Jenis Dokumen</option>
+                                </select>
+                                @error('jenis_dokumen')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
                                 <label for="tanggal_dokumen" class="form-label">Tanggal Dokumen <span class="text-danger">*</span></label>
                                 <input type="date" class="form-control @error('tanggal_dokumen') is-invalid @enderror" id="tanggal_dokumen" name="tanggal_dokumen" value="{{ old('tanggal_dokumen', $dokumen->tanggal_dokumen->format('Y-m-d')) }}" required>
                                 @error('tanggal_dokumen')
@@ -216,6 +230,7 @@
 @endsection
 
 @push('scripts')
+<script src="{{ asset('js/dropdown-automatic.js') }}"></script>
 <script>
 // Data STO berdasarkan Witel
 const stoData = {
@@ -270,9 +285,38 @@ const siteNameData = {
     'STO Makassar Barat': ['Site MB-01', 'Site MB-02', 'Site MB-03', 'Site MB-04', 'Site MB-05']
 };
 
+// Data Jenis Dokumen berdasarkan Status Implementasi
+const jenisDokumenData = {
+    'inisiasi': [
+        'Dokumen Kontrak Harga Satuan',
+        'Dokumen Surat Pesanan'
+    ],
+    'planning': [
+        'Berita Acara Design Review Meeting',
+        'As Planned Drawing',
+        'Rencana Anggaran Belanja',
+        'Lainnya (Eviden Pendukung)'
+    ],
+    'executing': [
+        'Berita Acara Penyelesaian Pekerjaan',
+        'Berita Acara Uji Fungsi',
+        'Lampiran Hasil Uji Fungsi',
+        'Lainnya (Eviden Pendukung)'
+    ],
+    'controlling': [
+        'Berita Acara Uji Terima',
+        'Lampiran Hasil Uji Terima',
+        'As Built Drawing Uji Terima'
+    ],
+    'closing': [
+        'Berita Acara Rekonsiliasi',
+        'Lampiran BoQ Hasil Rekonsiliasi',
+        'Berita Acara Serah Terima'
+    ]
+};
+
 // Fungsi untuk mengisi dropdown STO berdasarkan Witel yang dipilih
-document.getElementById('witel').addEventListener('change', function() {
-    const witel = this.value;
+function populateSTO(witel) {
     const stoSelect = document.getElementById('sto');
     const siteNameSelect = document.getElementById('site_name');
     
@@ -282,6 +326,8 @@ document.getElementById('witel').addEventListener('change', function() {
     // Reset dropdown Site Name
     siteNameSelect.innerHTML = '<option value="">Pilih Site Name</option>';
     
+    console.log('Populating STO for Witel:', witel);
+    
     if (witel && stoData[witel]) {
         // Isi dropdown STO berdasarkan Witel yang dipilih
         stoData[witel].forEach(sto => {
@@ -290,16 +336,18 @@ document.getElementById('witel').addEventListener('change', function() {
             option.textContent = sto;
             stoSelect.appendChild(option);
         });
+        console.log('STO options added:', stoData[witel]);
     }
-});
+}
 
 // Fungsi untuk mengisi dropdown Site Name berdasarkan STO yang dipilih
-document.getElementById('sto').addEventListener('change', function() {
-    const sto = this.value;
+function populateSiteName(sto) {
     const siteNameSelect = document.getElementById('site_name');
     
     // Reset dropdown Site Name
     siteNameSelect.innerHTML = '<option value="">Pilih Site Name</option>';
+    
+    console.log('Populating Site Name for STO:', sto);
     
     if (sto && siteNameData[sto]) {
         // Isi dropdown Site Name berdasarkan STO yang dipilih
@@ -309,26 +357,110 @@ document.getElementById('sto').addEventListener('change', function() {
             option.textContent = site;
             siteNameSelect.appendChild(option);
         });
+        console.log('Site Name options added:', siteNameData[sto]);
     }
-});
+}
+
+// Fungsi untuk mengisi dropdown Jenis Dokumen berdasarkan Status Implementasi yang dipilih
+function populateJenisDokumen(statusImplementasi) {
+    const jenisDokumenSelect = document.getElementById('jenis_dokumen');
+    
+    if (!jenisDokumenSelect) {
+        console.error('Jenis Dokumen element not found!');
+        return;
+    }
+    
+    // Reset dropdown Jenis Dokumen
+    jenisDokumenSelect.innerHTML = '<option value="">Pilih Jenis Dokumen</option>';
+    
+    console.log('Populating Jenis Dokumen for Status Implementasi:', statusImplementasi);
+    console.log('Available data for this status:', jenisDokumenData[statusImplementasi]);
+    
+    if (statusImplementasi && jenisDokumenData[statusImplementasi]) {
+        // Isi dropdown Jenis Dokumen berdasarkan Status Implementasi yang dipilih
+        jenisDokumenData[statusImplementasi].forEach(jenis => {
+            const option = document.createElement('option');
+            option.value = jenis;
+            option.textContent = jenis;
+            jenisDokumenSelect.appendChild(option);
+        });
+        console.log('Jenis Dokumen options added:', jenisDokumenData[statusImplementasi]);
+        console.log('Total options in dropdown:', jenisDokumenSelect.options.length);
+    } else {
+        console.log('No data found for status:', statusImplementasi);
+    }
+}
 
 // Set nilai awal saat halaman dimuat
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM Content Loaded - Setting up dropdown listeners');
+    console.log('Jenis Dokumen Data available:', jenisDokumenData);
+    console.log('Available statuses:', Object.keys(jenisDokumenData));
+    
+    // Event listener untuk Witel
+    const witelSelect = document.getElementById('witel');
+    if (witelSelect) {
+        witelSelect.addEventListener('change', function() {
+            console.log('Witel changed to:', this.value);
+            populateSTO(this.value);
+        });
+    }
+    
+    // Event listener untuk STO
+    const stoSelect = document.getElementById('sto');
+    if (stoSelect) {
+        stoSelect.addEventListener('change', function() {
+            console.log('STO changed to:', this.value);
+            populateSiteName(this.value);
+        });
+    }
+    
+    // Event listener untuk Status Implementasi - DROPDOWN OTOMATIS
+    const statusSelect = document.getElementById('status_implementasi');
+    if (statusSelect) {
+        console.log('✅ Status Implementasi element found, adding event listener');
+        statusSelect.addEventListener('change', function() {
+            const selectedStatus = this.value;
+            console.log('🔄 Status Implementasi changed to:', selectedStatus);
+            console.log('📞 Calling populateJenisDokumen with:', selectedStatus);
+            populateJenisDokumen(selectedStatus);
+        });
+        console.log('✅ Event listener untuk Status Implementasi berhasil ditambahkan');
+    } else {
+        console.error('❌ Status Implementasi element not found!');
+    }
+    
+    // Event listener untuk Jenis Dokumen
+    const jenisDokumenSelect = document.getElementById('jenis_dokumen');
+    if (jenisDokumenSelect) {
+        jenisDokumenSelect.addEventListener('change', function() {
+            const selectedJenis = this.value;
+            console.log('📄 Jenis Dokumen selected:', selectedJenis);
+        });
+        console.log('✅ Event listener untuk Jenis Dokumen berhasil ditambahkan');
+    } else {
+        console.error('❌ Jenis Dokumen element not found!');
+    }
+
     const currentWitel = '{{ $dokumen->witel }}';
     const currentSto = '{{ $dokumen->sto }}';
     const currentSiteName = '{{ $dokumen->site_name }}';
+    const currentStatusImplementasi = '{{ $dokumen->status_implementasi }}';
+    const currentJenisDokumen = '{{ $dokumen->jenis_dokumen }}';
+    
+    console.log('Current values:', { currentWitel, currentSto, currentSiteName, currentStatusImplementasi, currentJenisDokumen });
     
     if (currentWitel) {
         document.getElementById('witel').value = currentWitel;
         // Trigger change event untuk mengisi STO
-        document.getElementById('witel').dispatchEvent(new Event('change'));
+        populateSTO(currentWitel);
         
         // Set STO setelah dropdown terisi
         setTimeout(() => {
             if (currentSto) {
                 document.getElementById('sto').value = currentSto;
                 // Trigger change event untuk mengisi Site Name
-                document.getElementById('sto').dispatchEvent(new Event('change'));
+                populateSiteName(currentSto);
                 
                 // Set Site Name setelah dropdown terisi
                 setTimeout(() => {
@@ -336,6 +468,18 @@ document.addEventListener('DOMContentLoaded', function() {
                         document.getElementById('site_name').value = currentSiteName;
                     }
                 }, 100);
+            }
+        }, 100);
+    }
+    
+    if (currentStatusImplementasi) {
+        document.getElementById('status_implementasi').value = currentStatusImplementasi;
+        populateJenisDokumen(currentStatusImplementasi);
+        
+        // Set Jenis Dokumen setelah dropdown terisi
+        setTimeout(() => {
+            if (currentJenisDokumen) {
+                document.getElementById('jenis_dokumen').value = currentJenisDokumen;
             }
         }, 100);
     }
