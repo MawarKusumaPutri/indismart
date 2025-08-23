@@ -296,7 +296,7 @@
                                 </div>
                                 
                                 <div class="text-center mt-4">
-                                    <a href="#" class="forgot-password d-block mb-3">Lupa password?</a>
+                                    <a href="{{ route('password.request') }}" class="forgot-password d-block mb-3">Lupa password?</a>
                                     <div class="register-link">
                                         Belum punya akun? <a href="{{ route('register') }}">Daftar sekarang</a>
                                     </div>

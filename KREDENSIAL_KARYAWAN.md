@@ -47,7 +47,11 @@
 ## 🆘 Jika Ada Masalah
 
 ### Lupa Password
-Hubungi administrator untuk reset password ke `Ped123*`
+- Klik link "Lupa password?" di halaman login
+- Masukkan email: `karyawan@telkom.co.id`
+- Sistem akan generate token reset password
+- Cek log Laravel untuk token (dalam development)
+- Atau hubungi administrator untuk reset manual ke `Ped123*`
 
 ### Email Tidak Bisa Diakses
 Pastikan menggunakan email yang benar: `karyawan@telkom.co.id`

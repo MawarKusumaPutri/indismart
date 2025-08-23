@@ -102,6 +102,13 @@ Role: Mitra
 - Email karyawan tidak bisa digunakan untuk login mitra
 - Validasi role ganda: email + role database
 
+### 3. **Fitur Lupa Password**
+- Link "Lupa password?" yang bisa diklik
+- Form request reset password via email
+- Token reset password yang aman
+- Halaman reset password dengan validasi
+- Update password otomatis setelah reset
+
 ### 2. **Validasi Role**
 - Hanya role 'mitra' yang diizinkan untuk registrasi
 - Role 'staff' diblokir di level controller dan middleware
