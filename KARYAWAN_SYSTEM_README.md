@@ -16,6 +16,9 @@ Sistem ini telah dikonfigurasi agar **karyawan hanya bisa akses dengan 1 email s
 - ✅ **Hanya 1 Email Karyawan**: Sistem hanya mengizinkan 1 user karyawan
 - ✅ **Middleware Proteksi**: Mencegah akses ke halaman registrasi jika sudah ada karyawan
 - ✅ **Validasi Role**: Mencegah registrasi dengan role 'staff'
+- ✅ **Validasi Login Ketat**: Mitra tidak bisa login sebagai karyawan dan sebaliknya
+- ✅ **Email Restriction**: Hanya karyawan@telkom.co.id yang bisa login sebagai karyawan
+- ✅ **Audit Trail**: Log semua aktivitas login untuk monitoring keamanan
 
 ### 3. Alur Sistem
 
@@ -24,6 +27,8 @@ Sistem ini telah dikonfigurasi agar **karyawan hanya bisa akses dengan 1 email s
 2. **Tidak Bisa Register**: Jika mencoba register sebagai karyawan, akan ditolak
 3. **Akses Terbatas**: Hanya bisa login dengan akun yang sudah dibuat
 4. **Kredensial Tersembunyi**: Email dan password hanya muncul saat memilih role "Karyawan"
+5. **Email Restriction**: Hanya bisa login dengan email karyawan@telkom.co.id
+6. **Role Protection**: Tidak bisa diakses oleh user mitra
 
 #### Untuk Mitra:
 1. **Bisa Register**: Mitra bisa register akun baru (langsung sebagai Mitra)

@@ -247,11 +247,16 @@
                             
                             @if ($errors->any())
                                 <div class="alert alert-danger">
+                                    <h6 class="alert-heading">⚠️ Error Login</h6>
                                     <ul class="mb-0">
                                         @foreach ($errors->all() as $error)
                                             <li>{{ $error }}</li>
                                         @endforeach
                                     </ul>
+                                    <hr>
+                                    <small class="text-muted">
+                                        <strong>Tips:</strong> Pastikan email dan role yang dipilih sesuai dengan akun Anda.
+                                    </small>
                                 </div>
                             @endif
                             
@@ -334,11 +339,32 @@
         function toggleCredentials() {
             const loginAs = document.getElementById('login_as').value;
             const karyawanCredentials = document.getElementById('karyawan-credentials');
+            const emailInput = document.getElementById('email');
             
             if (loginAs === 'staff') {
                 karyawanCredentials.style.display = 'block';
+                // Set placeholder untuk email karyawan
+                emailInput.placeholder = 'Masukkan email karyawan (karyawan@telkom.co.id)';
+                // Validasi email karyawan
+                emailInput.addEventListener('input', validateKaryawanEmail);
             } else {
                 karyawanCredentials.style.display = 'none';
+                // Reset placeholder untuk email mitra
+                emailInput.placeholder = 'Masukkan email Anda';
+                // Hapus validasi email karyawan
+                emailInput.removeEventListener('input', validateKaryawanEmail);
+            }
+        }
+        
+        // Function untuk validasi email karyawan
+        function validateKaryawanEmail() {
+            const emailInput = document.getElementById('email');
+            const loginAs = document.getElementById('login_as').value;
+            
+            if (loginAs === 'staff' && emailInput.value !== 'karyawan@telkom.co.id') {
+                emailInput.setCustomValidity('Untuk login sebagai Karyawan, gunakan email: karyawan@telkom.co.id');
+            } else {
+                emailInput.setCustomValidity('');
             }
         }
 

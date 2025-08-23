@@ -80,5 +80,6 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'role' => \App\Http\Middleware\RoleMiddleware::class,
         'prevent.karyawan.registration' => \App\Http\Middleware\PreventKaryawanRegistration::class,
+        'validate.login.role' => \App\Http\Middleware\ValidateLoginRole::class,
     ];
 }

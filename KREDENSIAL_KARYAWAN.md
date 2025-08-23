@@ -38,6 +38,9 @@
 - ✅ **Validasi role** di level controller dan database
 - ✅ **Kredensial tersembunyi** - hanya muncul saat memilih role "Karyawan"
 - ✅ **Form registrasi aman** - langsung set sebagai Mitra tanpa opsi lain
+- ✅ **Validasi login ketat** - Mitra tidak bisa akses login karyawan
+- ✅ **Email restriction** - Hanya karyawan@telkom.co.id yang bisa login sebagai karyawan
+- ✅ **Audit trail** - Semua aktivitas login tercatat untuk monitoring
 
 ---
 
@@ -51,6 +54,11 @@ Pastikan menggunakan email yang benar: `karyawan@telkom.co.id`
 
 ### Role Tidak Muncul
 Pastikan memilih "Karyawan" dari dropdown "Masuk Sebagai"
+
+### Error "Email Tidak Memiliki Akses sebagai Karyawan"
+- Pastikan menggunakan email: `karyawan@telkom.co.id`
+- Email mitra tidak bisa digunakan untuk login sebagai karyawan
+- Hanya akun karyawan yang bisa akses role karyawan
 
 ---
 

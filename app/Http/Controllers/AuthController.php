@@ -35,25 +35,38 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
             
-            // Periksa apakah role user sesuai
-            if ($request->login_as === 'staff' && !$user->isKaryawan()) {
-                Auth::logout();
-                return back()->withErrors([
-                    'login_as' => 'Anda tidak memiliki akses sebagai Karyawan.'
-                ]);
-            }
+            // Validasi ketat: User hanya bisa login sesuai role aslinya
+            if ($request->login_as === 'staff') {
+                // Jika mencoba login sebagai karyawan, pastikan user benar-benar karyawan
+                if (!$user->isKaryawan()) {
+                    Auth::logout();
+                    return back()->withErrors([
+                        'login_as' => 'Akun ini tidak memiliki akses sebagai Karyawan. Silakan pilih role Mitra.'
+                    ])->withInput($request->except('password'));
+                }
+                
+                // Log aktivitas login karyawan untuk audit trail
+                \Log::info('User karyawan login: ' . $user->email . ' - ' . now());
+                
+                $request->session()->regenerate();
+                return redirect()->intended('staff/dashboard');
+            } 
             
-            if ($request->login_as === 'mitra' && !$user->isMitra()) {
-                Auth::logout();
-                return back()->withErrors([
-                    'login_as' => 'Anda tidak memiliki akses sebagai Mitra.'
-                ]);
+            if ($request->login_as === 'mitra') {
+                // Jika mencoba login sebagai mitra, pastikan user benar-benar mitra
+                if (!$user->isMitra()) {
+                    Auth::logout();
+                    return back()->withErrors([
+                        'login_as' => 'Akun ini tidak memiliki akses sebagai Mitra. Silakan pilih role Karyawan.'
+                    ])->withInput($request->except('password'));
+                }
+                
+                // Log aktivitas login mitra untuk audit trail
+                \Log::info('User mitra login: ' . $user->email . ' - ' . now());
+                
+                $request->session()->regenerate();
+                return redirect()->intended('mitra/dashboard');
             }
-            
-            $request->session()->regenerate();
-
-            // Redirect berdasarkan role yang dipilih
-            return redirect()->intended($request->login_as . '/dashboard');
         }
 
         return back()->withErrors([
