@@ -64,8 +64,8 @@ class ReviewController extends Controller
      */
     public function create(Dokumen $dokumen)
     {
-        // Pastikan hanya staff yang bisa review
-        if (!Auth::user()->isStaff()) {
+        // Pastikan hanya karyawan yang bisa review
+        if (!Auth::user()->isKaryawan()) {
             abort(403);
         }
 
@@ -82,8 +82,8 @@ class ReviewController extends Controller
      */
     public function store(Request $request, Dokumen $dokumen)
     {
-        // Pastikan hanya staff yang bisa review
-        if (!Auth::user()->isStaff()) {
+        // Pastikan hanya karyawan yang bisa review
+        if (!Auth::user()->isKaryawan()) {
             abort(403);
         }
 
@@ -114,8 +114,8 @@ class ReviewController extends Controller
      */
     public function show(Review $review)
     {
-        // Pastikan hanya staff yang bisa lihat review
-        if (!Auth::user()->isStaff()) {
+        // Pastikan hanya karyawan yang bisa lihat review
+        if (!Auth::user()->isKaryawan()) {
             abort(403);
         }
 
@@ -127,8 +127,8 @@ class ReviewController extends Controller
      */
     public function edit(Review $review)
     {
-        // Pastikan hanya staff yang bisa edit review
-        if (!Auth::user()->isStaff()) {
+        // Pastikan hanya karyawan yang bisa edit review
+        if (!Auth::user()->isKaryawan()) {
             abort(403);
         }
 
@@ -145,8 +145,8 @@ class ReviewController extends Controller
      */
     public function update(Request $request, Review $review)
     {
-        // Pastikan hanya staff yang bisa update review
-        if (!Auth::user()->isStaff()) {
+        // Pastikan hanya karyawan yang bisa update review
+        if (!Auth::user()->isKaryawan()) {
             abort(403);
         }
 
@@ -180,8 +180,8 @@ class ReviewController extends Controller
      */
     public function destroy(Review $review)
     {
-        // Pastikan hanya staff yang bisa hapus review
-        if (!Auth::user()->isStaff()) {
+        // Pastikan hanya karyawan yang bisa hapus review
+        if (!Auth::user()->isKaryawan()) {
             abort(403);
         }
 

@@ -15,8 +15,8 @@
                 <li class="breadcrumb-item">
                     @if($user->isMitra())
                         <a href="{{ route('mitra.dashboard') }}">Dashboard</a>
-                    @elseif($user->isStaff())
-                        <a href="{{ route('staff.dashboard') }}">Dashboard</a>
+                                                @elseif($user->isKaryawan())
+                                <a href="{{ route('staff.dashboard') }}">Dashboard</a>
                     @endif
                 </li>
                 <li class="breadcrumb-item active">Profile</li>
@@ -63,7 +63,7 @@
                                 <h5 class="mb-1">{{ $user->name }}</h5>
                                 <span class="badge bg-{{ $user->role === 'mitra' ? 'success' : 'secondary' }} fs-6">
                                     <i class="bi bi-{{ $user->role === 'mitra' ? 'building' : 'person' }} me-1"></i>
-                                    {{ $user->role === 'mitra' ? 'Mitra' : 'Staff' }}
+                                    {{ $user->role === 'mitra' ? 'Mitra' : 'Karyawan' }}
                                 </span>
                             </div>
                             
@@ -217,10 +217,10 @@
                                 <a href="{{ route('mitra.dashboard') }}" class="btn btn-outline-secondary">
                                     <i class="bi bi-speedometer2 me-1"></i> Dashboard Mitra
                                 </a>
-                            @elseif($user->isStaff())
-                                <a href="{{ route('staff.dashboard') }}" class="btn btn-outline-secondary">
-                                    <i class="bi bi-speedometer2 me-1"></i> Dashboard Staff
-                                </a>
+                                                          @elseif($user->isKaryawan())
+                                  <a href="{{ route('staff.dashboard') }}" class="btn btn-outline-secondary">
+                                      <i class="bi bi-speedometer2 me-1"></i> Dashboard Karyawan
+                                  </a>
                             @endif
                         </div>
                     </div>

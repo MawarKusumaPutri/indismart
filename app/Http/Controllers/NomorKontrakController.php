@@ -14,8 +14,8 @@ class NomorKontrakController extends Controller
      */
     public function index()
     {
-        // Only staff can access this
-        if (!Auth::user()->isStaff()) {
+        // Only karyawan can access this
+        if (!Auth::user()->isKaryawan()) {
             abort(403);
         }
 
@@ -31,8 +31,8 @@ class NomorKontrakController extends Controller
      */
     public function assign($id)
     {
-        // Only staff can access this
-        if (!Auth::user()->isStaff()) {
+        // Only karyawan can access this
+        if (!Auth::user()->isKaryawan()) {
             abort(403);
         }
 
@@ -46,8 +46,8 @@ class NomorKontrakController extends Controller
      */
     public function store(Request $request, $id)
     {
-        // Only staff can access this
-        if (!Auth::user()->isStaff()) {
+        // Only karyawan can access this
+        if (!Auth::user()->isKaryawan()) {
             abort(403);
         }
 
@@ -84,8 +84,8 @@ class NomorKontrakController extends Controller
      */
     public function generate()
     {
-        // Only staff can access this
-        if (!Auth::user()->isStaff()) {
+        // Only karyawan can access this
+        if (!Auth::user()->isKaryawan()) {
             abort(403);
         }
 
@@ -116,8 +116,8 @@ class NomorKontrakController extends Controller
      */
     public function bulkAssign()
     {
-        // Only staff can access this
-        if (!Auth::user()->isStaff()) {
+        // Only karyawan can access this
+        if (!Auth::user()->isKaryawan()) {
             abort(403);
         }
 
@@ -168,8 +168,8 @@ class NomorKontrakController extends Controller
     public function bulkAssignSelected(Request $request)
     {
         try {
-            // Only staff can access this
-            if (!Auth::user()->isStaff()) {
+            // Only karyawan can access this
+            if (!Auth::user()->isKaryawan()) {
                 return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
             }
 

@@ -26,7 +26,7 @@ class CheckRole
             return redirect('staff/dashboard');
         }
 
-        if ($role == 'staff' && !Auth::user()->isStaff()) {
+        if ($role == 'staff' && !Auth::user()->isKaryawan()) {
             return redirect('mitra/dashboard');
         }
 

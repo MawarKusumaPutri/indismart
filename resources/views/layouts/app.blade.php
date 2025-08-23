@@ -111,7 +111,7 @@
                 <a href="{{ route('mitra.dashboard') }}" class="sidebar-menu-item {{ request()->routeIs('mitra.dashboard') ? 'active' : '' }}">
                     <i class="bi bi-speedometer2 sidebar-menu-icon"></i> Dashboard
                 </a>
-            @elseif(Auth::user()->isStaff())
+            @elseif(Auth::user()->isKaryawan())
                 <a href="{{ route('staff.dashboard') }}" class="sidebar-menu-item {{ request()->routeIs('staff.dashboard') ? 'active' : '' }}">
                     <i class="bi bi-speedometer2 sidebar-menu-icon"></i> Dashboard
                 </a>
@@ -121,7 +121,7 @@
                 <i class="bi bi-file-earmark-text sidebar-menu-icon"></i> Dokumen
             </a>
             
-            @if(Auth::user()->isStaff())
+            @if(Auth::user()->isKaryawan())
                 <a href="{{ route('manajemen-mitra.index') }}" class="sidebar-menu-item {{ request()->routeIs('manajemen-mitra.*') ? 'active' : '' }}">
                     <i class="bi bi-people sidebar-menu-icon"></i> Manajemen Mitra
                 </a>

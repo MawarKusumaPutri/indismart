@@ -10,7 +10,7 @@ class StaffMiddleware
 {
     public function handle(Request $request, Closure $next)
     {
-        if (!Auth::check() || !Auth::user()->isStaff()) {
+        if (!Auth::check() || !Auth::user()->isKaryawan()) {
             Auth::logout();
             return redirect('/login');
         }

@@ -9,15 +9,15 @@ use App\Models\Dokumen;
 class NotificationService
 {
     /**
-     * Kirim notifikasi ke semua staff
+     * Kirim notifikasi ke semua karyawan
      */
-    public static function notifyStaff($title, $message, $type = 'info', $data = [])
+    public static function notifyKaryawan($title, $message, $type = 'info', $data = [])
     {
-        $staffUsers = User::where('role', 'staff')->get();
+        $karyawanUsers = User::where('role', 'staff')->get();
         
-        foreach ($staffUsers as $staff) {
+        foreach ($karyawanUsers as $karyawan) {
             Notification::create([
-                'user_id' => $staff->id,
+                'user_id' => $karyawan->id,
                 'title' => $title,
                 'message' => $message,
                 'type' => $type,
@@ -49,7 +49,7 @@ class NotificationService
             'action_url' => route('dokumen.show', $dokumen->id),
         ];
 
-        self::notifyStaff($title, $message, 'success', $data);
+        self::notifyKaryawan($title, $message, 'success', $data);
     }
 
     /**
@@ -75,7 +75,7 @@ class NotificationService
             'action_url' => route('dokumen.show', $dokumen->id),
         ];
 
-        self::notifyStaff($title, $message, 'warning', $data);
+        self::notifyKaryawan($title, $message, 'warning', $data);
     }
 
     /**
@@ -94,7 +94,7 @@ class NotificationService
             'tanggal_hapus' => now()->format('d M Y H:i'),
         ];
 
-        self::notifyStaff($title, $message, 'error', $data);
+        self::notifyKaryawan($title, $message, 'error', $data);
     }
 
     /**
@@ -208,6 +208,6 @@ class NotificationService
             'action_url' => route('manajemen-mitra.show', $mitra->id),
         ];
 
-        self::notifyStaff($title, $message, 'info', $data);
+        self::notifyKaryawan($title, $message, 'info', $data);
     }
 } 

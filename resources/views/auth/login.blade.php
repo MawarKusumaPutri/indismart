@@ -271,7 +271,7 @@
                                     <label for="login_as" class="form-label">Masuk Sebagai</label>
                                     <select class="form-control" id="login_as" name="login_as" required>
                                         <option value="mitra">Mitra</option>
-                                        <option value="staff">Staff</option>
+                                        <option value="staff">Karyawan</option>
                                     </select>
                                 </div>
                                 

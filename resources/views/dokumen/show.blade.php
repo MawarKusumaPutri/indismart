@@ -201,7 +201,7 @@
         <div class="card">
             <div class="card-header bg-white d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">Riwayat Review</h5>
-                @if(Auth::user()->isStaff())
+                @if(Auth::user()->isKaryawan())
                     <a href="{{ route('reviews.create', $dokumen) }}" class="btn btn-primary btn-sm">
                         <i class="bi bi-plus-circle me-1"></i> Tambah Review
                     </a>
@@ -252,7 +252,7 @@
                     <div class="text-center py-4">
                         <i class="bi bi-clipboard-x display-1 text-muted"></i>
                         <h6 class="mt-3">Belum ada review</h6>
-                        <p class="text-muted">Dokumen ini belum memiliki review dari staff.</p>
+                        <p class="text-muted">Dokumen ini belum memiliki review dari karyawan.</p>
                     </div>
                 @endif
             </div>

@@ -185,7 +185,7 @@
                             <thead>
                                 <tr>
                                     <th>No</th>
-                                    @if(Auth::user()->isStaff())
+                                    @if(Auth::user()->isKaryawan())
                                         <th>Mitra</th>
                                     @endif
                                     <th>Nama Dokumen</th>
@@ -203,7 +203,7 @@
                                 @foreach($dokumen as $index => $item)
                                     <tr>
                                         <td>{{ $dokumen->firstItem() + $index }}</td>
-                                        @if(Auth::user()->isStaff())
+                                        @if(Auth::user()->isKaryawan())
                                             <td>{{ $item->user->name }}</td>
                                         @endif
                                         <td>

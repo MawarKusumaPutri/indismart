@@ -36,10 +36,10 @@ class AuthController extends Controller
             $user = Auth::user();
             
             // Periksa apakah role user sesuai
-            if ($request->login_as === 'staff' && !$user->isStaff()) {
+            if ($request->login_as === 'staff' && !$user->isKaryawan()) {
                 Auth::logout();
                 return back()->withErrors([
-                    'login_as' => 'Anda tidak memiliki akses sebagai Staff.'
+                    'login_as' => 'Anda tidak memiliki akses sebagai Karyawan.'
                 ]);
             }
             
@@ -96,7 +96,7 @@ class AuthController extends Controller
         }
 
         // Redirect berdasarkan role
-        if ($user->isStaff()) {
+        if ($user->isKaryawan()) {
             return redirect('staff/dashboard');
         } else {
             return redirect('mitra/dashboard');

@@ -24,7 +24,7 @@
                 <div>
                     <strong>Anda belum memiliki nomor kontrak!</strong>
                     <br>
-                    <small class="text-muted">Silakan hubungi staff untuk mendapatkan nomor kontrak terlebih dahulu sebelum membuat dokumen.</small>
+                    <small class="text-muted">Silakan hubungi karyawan untuk mendapatkan nomor kontrak terlebih dahulu sebelum membuat dokumen.</small>
                 </div>
             </div>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>

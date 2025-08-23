@@ -76,11 +76,11 @@ class User extends Authenticatable
     }
 
     /**
-     * Check if user is staff
+     * Check if user is karyawan
      *
      * @return bool
      */
-    public function isStaff(): bool
+    public function isKaryawan(): bool
     {
         return $this->role === 'staff';
     }

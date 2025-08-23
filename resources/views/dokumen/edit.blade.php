@@ -75,7 +75,7 @@
                                            placeholder="Nomor kontrak akan diisi otomatis" 
                                            {{ auth()->user()->nomor_kontrak ? 'readonly' : 'required' }}>
                                     @if(!auth()->user()->nomor_kontrak)
-                                        <button type="button" class="btn btn-outline-warning" onclick="alert('Silakan hubungi staff untuk mendapatkan nomor kontrak terlebih dahulu.')">
+                                        <button type="button" class="btn btn-outline-warning" onclick="alert('Silakan hubungi karyawan untuk mendapatkan nomor kontrak terlebih dahulu.')">
                                             <i class="bi bi-exclamation-triangle me-1"></i> Belum Ada
                                         </button>
                                     @else
@@ -89,7 +89,7 @@
                                 @enderror
                                 @if(!auth()->user()->nomor_kontrak)
                                     <div class="alert alert-warning mt-2">
-                                        <small><i class="bi bi-info-circle me-1"></i> Anda belum memiliki nomor kontrak. Silakan hubungi staff untuk mendapatkan nomor kontrak terlebih dahulu.</small>
+                                        <small><i class="bi bi-info-circle me-1"></i> Anda belum memiliki nomor kontrak. Silakan hubungi karyawan untuk mendapatkan nomor kontrak terlebih dahulu.</small>
                                     </div>
                                 @else
                                     <small class="text-muted">Nomor kontrak Anda: <strong>{{ auth()->user()->nomor_kontrak }}</strong></small>

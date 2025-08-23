@@ -11,7 +11,7 @@ class Review extends Model
 
     protected $fillable = [
         'dokumen_id',
-        'reviewer_id', // staff yang review
+        'reviewer_id', // karyawan yang review
         'status', // approved, rejected, pending
         'komentar',
         'rating', // 1-5 stars
@@ -32,7 +32,7 @@ class Review extends Model
     }
 
     /**
-     * Relasi dengan User (Staff yang review)
+     * Relasi dengan User (Karyawan yang review)
      */
     public function reviewer()
     {

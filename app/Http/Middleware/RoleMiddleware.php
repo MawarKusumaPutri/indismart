@@ -21,9 +21,9 @@ class RoleMiddleware
             return redirect('/login')->with('error', 'Akses ditolak. Anda bukan Mitra.');
         }
 
-        if ($role === 'staff' && !$user->isStaff()) {
+        if ($role === 'staff' && !$user->isKaryawan()) {
             Auth::logout();
-            return redirect('/login')->with('error', 'Akses ditolak. Anda bukan Staff.');
+            return redirect('/login')->with('error', 'Akses ditolak. Anda bukan Karyawan.');
         }
 
         return $next($request);

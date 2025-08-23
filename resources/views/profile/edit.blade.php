@@ -15,7 +15,7 @@
                 <li class="breadcrumb-item">
                     @if($user->isMitra())
                         <a href="{{ route('mitra.dashboard') }}">Dashboard</a>
-                    @elseif($user->isStaff())
+                    @elseif($user->isKaryawan())
                         <a href="{{ route('staff.dashboard') }}">Dashboard</a>
                     @endif
                 </li>

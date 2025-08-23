@@ -37,7 +37,7 @@ Route::group(['prefix' => 'mitra', 'middleware' => ['web']], function () {
     Route::get('/dashboard', [DashboardController::class, 'mitraDashboard'])->name('mitra.dashboard');
 });
 
-// Staff Routes
+// Karyawan Routes
 Route::group(['prefix' => 'staff', 'middleware' => ['web']], function () {
     Route::get('/dashboard', [DashboardController::class, 'staffDashboard'])->name('staff.dashboard');
     Route::get('/mitra/{id}/detail', [DashboardController::class, 'mitraDetail'])->name('staff.mitra.detail');
@@ -85,7 +85,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::delete('/profile/avatar', [ProfileController::class, 'deleteAvatar'])->name('profile.delete-avatar');
 });
 
-// Review Routes (Staff Only)
+// Review Routes (Karyawan Only)
 Route::group(['middleware' => ['auth', 'role:staff']], function () {
     Route::get('/reviews', [ReviewController::class, 'index'])->name('reviews.index');
     Route::get('/reviews/create/{dokumen}', [ReviewController::class, 'create'])->name('reviews.create');
@@ -97,14 +97,14 @@ Route::group(['middleware' => ['auth', 'role:staff']], function () {
     Route::get('/reviews/pending/count', [ReviewController::class, 'getPendingReviews'])->name('reviews.pending-count');
 });
 
-// Manajemen Mitra Routes (Staff Only)
+// Manajemen Mitra Routes (Karyawan Only)
 Route::group(['middleware' => ['auth', 'role:staff']], function () {
     Route::get('/manajemen-mitra', [ManajemenMitraController::class, 'index'])->name('manajemen-mitra.index');
     Route::get('/manajemen-mitra/{id}', [ManajemenMitraController::class, 'show'])->name('manajemen-mitra.show');
     Route::get('/manajemen-mitra/export', [ManajemenMitraController::class, 'export'])->name('manajemen-mitra.export');
 });
 
-// Nomor Kontrak Routes (Staff Only)
+// Nomor Kontrak Routes (Karyawan Only)
 Route::group(['middleware' => ['auth', 'role:staff']], function () {
     Route::get('/nomor-kontrak', [NomorKontrakController::class, 'index'])->name('nomor-kontrak.index');
     Route::get('/nomor-kontrak/{id}/assign', [NomorKontrakController::class, 'assign'])->name('nomor-kontrak.assign');
@@ -131,7 +131,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/settings/system/delete-account', [SettingsController::class, 'deleteAccount'])->name('settings.system.delete-account');
 });
 
-// Looker Studio Routes (Staff Only)
+// Looker Studio Routes (Karyawan Only)
 Route::group(['middleware' => ['auth', 'role:staff']], function () {
     Route::get('/looker-studio', [LookerStudioController::class, 'index'])->name('looker-studio.index');
     Route::get('/looker-studio/dashboard-data', [LookerStudioController::class, 'dashboardData'])->name('looker-studio.dashboard-data');

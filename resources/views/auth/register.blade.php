@@ -261,7 +261,7 @@
                                     <label for="role" class="form-label">Daftar Sebagai</label>
                                     <select class="form-select" id="role" name="role" required>
                                         <option value="mitra">Mitra</option>
-                                        <option value="staff">Staff</option>
+                                        <option value="staff">Karyawan</option>
                                     </select>
                                 </div>
                                 
