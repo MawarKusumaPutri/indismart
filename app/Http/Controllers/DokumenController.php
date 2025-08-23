@@ -140,8 +140,17 @@ class DokumenController extends Controller
             'site_name' => 'required|string|max:255',
             'status_implementasi' => 'required|in:inisiasi,planning,executing,controlling,closing',
             'tanggal_dokumen' => 'required|date',
-            'file' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,jpg,jpeg,png|max:10240',
+            'file' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx|max:10240',
+            'fotos.*' => 'required|image|mimes:jpg,jpeg,png|max:5120', // 5MB per foto
+            'fotos' => 'required|array|min:3|max:10', // Minimal 3 foto, maksimal 10 foto
+            'captions.*' => 'nullable|string|max:255',
             'keterangan' => 'nullable|string',
+        ], [
+            'fotos.min' => 'Minimal harus upload 3 foto.',
+            'fotos.max' => 'Maksimal hanya bisa upload 10 foto.',
+            'fotos.*.image' => 'File harus berupa gambar.',
+            'fotos.*.mimes' => 'Format gambar yang didukung: JPG, JPEG, PNG.',
+            'fotos.*.max' => 'Ukuran foto maksimal 5MB.',
         ]);
 
         $data = $request->all();
@@ -162,8 +171,37 @@ class DokumenController extends Controller
 
         $dokumen = Dokumen::create($data);
 
+        // Handle foto upload
+        if ($request->hasFile('fotos')) {
+            $fotos = $request->file('fotos');
+            $captions = $request->input('captions', []);
+            
+            foreach ($fotos as $index => $foto) {
+                $fileName = time() . '_' . $index . '_' . $foto->getClientOriginalName();
+                $filePath = $foto->storeAs('fotos', $fileName, 'public');
+                
+                $caption = isset($captions[$index]) ? $captions[$index] : null;
+                
+                \App\Models\Foto::create([
+                    'dokumen_id' => $dokumen->id,
+                    'file_path' => $filePath,
+                    'original_name' => $foto->getClientOriginalName(),
+                    'caption' => $caption,
+                    'order' => $index + 1,
+                ]);
+            }
+        }
+
         // Kirim notifikasi ke staff
         NotificationService::notifyDokumenUploaded($dokumen);
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Dokumen dan foto berhasil ditambahkan!',
+                'dokumen_id' => $dokumen->id
+            ]);
+        }
 
         return redirect()->route('dokumen.index')->with('success', 'Dokumen berhasil ditambahkan!');
     }
@@ -215,7 +253,7 @@ class DokumenController extends Controller
             'site_name' => 'required|string|max:255',
             'status_implementasi' => 'required|in:inisiasi,planning,executing,controlling,closing',
             'tanggal_dokumen' => 'required|date',
-            'file' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,jpg,jpeg,png|max:10240',
+            'file' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx|max:10240',
             'keterangan' => 'nullable|string',
         ]);
 

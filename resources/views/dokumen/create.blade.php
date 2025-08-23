@@ -2,6 +2,218 @@
 
 @section('title', 'Tambah Dokumen Baru')
 
+@section('styles')
+<style>
+    /* Upload Foto Styles */
+    .upload-foto-container {
+        border: 2px dashed #ddd;
+        border-radius: 8px;
+        padding: 20px;
+        background-color: #f8f9fa;
+    }
+
+    .upload-area {
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        padding: 30px;
+        border: 2px dashed #6c757d;
+        border-radius: 8px;
+        margin-top: 15px;
+        background-color: #f8f9fa;
+    }
+
+    .upload-area:hover {
+        background-color: #e9ecef;
+        border-color: #495057;
+    }
+
+    .upload-area.dragover {
+        background-color: #d4edda;
+        border-color: #28a745;
+        transform: scale(1.02);
+    }
+
+    .upload-area.dragging {
+        background-color: #cce5ff;
+        border-color: #007bff;
+        border-style: solid;
+    }
+
+    .upload-icon {
+        font-size: 3rem;
+        color: #6c757d;
+        margin-bottom: 15px;
+    }
+
+    .upload-text {
+        font-size: 1.1rem;
+        font-weight: 500;
+        color: #495057;
+        margin-bottom: 10px;
+    }
+
+    .upload-info {
+        font-size: 0.9rem;
+        color: #6c757d;
+        margin-bottom: 0;
+    }
+
+    .foto-preview-container {
+        margin-top: 20px;
+    }
+
+    .foto-preview-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 15px;
+        margin-top: 15px;
+    }
+
+    .foto-preview-item {
+        position: relative;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        overflow: hidden;
+        background: white;
+    }
+
+    .foto-preview-item img {
+        width: 100%;
+        height: 120px;
+        object-fit: cover;
+    }
+
+    .foto-preview-item .foto-caption {
+        padding: 8px;
+        font-size: 0.8rem;
+    }
+
+    .foto-preview-item .foto-caption input {
+        width: 100%;
+        border: none;
+        outline: none;
+        font-size: 0.8rem;
+    }
+
+    .foto-preview-item .remove-foto {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background: rgba(220, 53, 69, 0.9);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 25px;
+        height: 25px;
+        font-size: 12px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .foto-preview-item .remove-foto:hover {
+        background: rgba(220, 53, 69, 1);
+    }
+
+    .foto-validation {
+        text-align: center;
+    }
+
+    .foto-validation.error {
+        color: #dc3545;
+    }
+
+    .foto-validation.success {
+        color: #28a745;
+    }
+
+    /* File List Styles */
+    .file-list {
+        max-height: 200px;
+        overflow-y: auto;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 10px;
+        background-color: #f8f9fa;
+    }
+
+    .file-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px;
+        margin-bottom: 5px;
+        background: white;
+        border-radius: 4px;
+        border: 1px solid #e9ecef;
+    }
+
+    .file-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .file-info {
+        display: flex;
+        align-items: center;
+        flex: 1;
+    }
+
+    .file-icon {
+        margin-right: 10px;
+        color: #6c757d;
+    }
+
+    .file-details {
+        flex: 1;
+    }
+
+    .file-name {
+        font-weight: 500;
+        color: #495057;
+        margin-bottom: 2px;
+    }
+
+    .file-size {
+        font-size: 0.8rem;
+        color: #6c757d;
+    }
+
+    .file-status {
+        margin-left: 10px;
+        font-size: 0.8rem;
+    }
+
+    .file-status.valid {
+        color: #28a745;
+    }
+
+    .file-status.invalid {
+        color: #dc3545;
+    }
+
+    .remove-file {
+        background: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        font-size: 12px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-left: 10px;
+    }
+
+    .remove-file:hover {
+        background: #c82333;
+    }
+</style>
+@endsection
+
 @section('content')
 <div class="page-title-box">
     <div class="row align-items-center">
@@ -192,8 +404,8 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="file" class="form-label">Upload File</label>
-                                <input type="file" class="form-control @error('file') is-invalid @enderror" id="file" name="file" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png">
-                                <div class="form-text">Format yang didukung: PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX, JPG, JPEG, PNG (Max: 10MB)</div>
+                                <input type="file" class="form-control @error('file') is-invalid @enderror" id="file" name="file" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx">
+                                <div class="form-text">Format yang didukung: PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX (Max: 10MB)</div>
                                 @error('file')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -207,6 +419,52 @@
                                 @error('keterangan')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Upload Foto Section -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <label class="form-label">Upload Foto <span class="text-danger">*</span></label>
+                                <div class="upload-foto-container">
+                                    <!-- File Input yang Visible -->
+                                    <div class="mb-3">
+                                        <input type="file" class="form-control" id="fotoInput" name="fotos[]" multiple accept=".jpg,.jpeg,.png">
+                                        <div class="form-text">Minimal 3 foto, maksimal 10 foto (JPG, JPEG, PNG - Max: 5MB)</div>
+                                    </div>
+                                    
+                                    <!-- Drag & Drop Area -->
+                                    <div class="upload-area" id="uploadArea">
+                                        <div class="upload-icon">
+                                            <i class="bi bi-camera"></i>
+                                        </div>
+                                        <p class="upload-text">Atau drag & drop foto ke sini</p>
+                                        <p class="upload-info">Pilih minimal 3 foto untuk melanjutkan</p>
+                                        <div class="drag-instructions mt-2">
+                                            <small class="text-muted">
+                                                <i class="bi bi-mouse me-1"></i>Klik untuk browse atau 
+                                                <i class="bi bi-arrows-move me-1"></i>drag file dari komputer Anda
+                                            </small>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- File List -->
+                                    <div class="selected-files mt-3" id="selectedFiles" style="display: none;">
+                                        <h6>File yang Dipilih:</h6>
+                                        <div class="file-list" id="fileList"></div>
+                                    </div>
+                                    
+                                    <!-- Preview Container -->
+                                    <div class="foto-preview-container" id="fotoPreviewContainer" style="display: none;">
+                                        <h6>Preview Foto:</h6>
+                                        <div class="foto-preview-grid" id="fotoPreviewGrid"></div>
+                                        <div class="foto-validation mt-2">
+                                            <small class="text-muted">Minimal 3 foto diperlukan</small>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -377,10 +635,311 @@ document.addEventListener('DOMContentLoaded', function() {
     const oldStatusImplementasi = '{{ old("status_implementasi") }}';
     const oldJenisDokumen = '{{ old("jenis_dokumen") }}';
     
-    if (oldWitel) {
-        document.getElementById('witel').value = oldWitel;
-        // Trigger change event untuk mengisi STO
-        document.getElementById('witel').dispatchEvent(new Event('change'));
+            if (oldWitel) {
+            document.getElementById('witel').value = oldWitel;
+            // Trigger change event untuk mengisi STO
+            document.getElementById('witel').dispatchEvent(new Event('change'));
+        }
+    });
+
+    // Upload Foto JavaScript
+    let selectedFotos = [];
+    const uploadArea = document.getElementById('uploadArea');
+    const fotoInput = document.getElementById('fotoInput');
+    const fotoPreviewContainer = document.getElementById('fotoPreviewContainer');
+    const fotoPreviewGrid = document.getElementById('fotoPreviewGrid');
+    const fotoValidation = document.querySelector('.foto-validation');
+    const selectedFiles = document.getElementById('selectedFiles');
+    const fileList = document.getElementById('fileList');
+
+    // Click to select files
+    uploadArea.addEventListener('click', () => {
+        fotoInput.click();
+    });
+
+    // Drag and drop functionality
+    let dragCounter = 0;
+
+    // Prevent default drag behaviors on entire page
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, preventDefaults, false);
+        document.body.addEventListener(eventName, preventDefaults, false);
+        document.addEventListener(eventName, preventDefaults, false);
+    });
+
+    // Add drag & drop to entire page for better UX
+    document.addEventListener('dragenter', (e) => {
+        if (e.dataTransfer.types.includes('Files')) {
+            uploadArea.classList.add('dragging');
+            uploadArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    });
+
+    document.addEventListener('dragleave', (e) => {
+        // Only remove if leaving the entire document
+        if (e.clientX === 0 && e.clientY === 0) {
+            uploadArea.classList.remove('dragging');
+        }
+    });
+
+    document.addEventListener('drop', (e) => {
+        uploadArea.classList.remove('dragging');
+        // If not dropped on upload area, handle it anyway
+        if (!uploadArea.contains(e.target)) {
+            handleDrop(e);
+        }
+    });
+
+    // Highlight drop area when item is dragged over it
+    ['dragenter', 'dragover'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, highlight, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, unhighlight, false);
+    });
+
+    // Handle dropped files
+    uploadArea.addEventListener('drop', handleDrop, false);
+
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    function highlight(e) {
+        uploadArea.classList.add('dragover');
+        if (e.type === 'dragenter') {
+            dragCounter++;
+        }
+    }
+
+    function unhighlight(e) {
+        if (e.type === 'dragleave') {
+            dragCounter--;
+        }
+        if (dragCounter === 0 || e.type === 'drop') {
+            uploadArea.classList.remove('dragover');
+            dragCounter = 0;
+        }
+    }
+
+    function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = Array.from(dt.files);
+        
+        // Filter only image files
+        const imageFiles = files.filter(file => file.type.startsWith('image/'));
+        
+        if (imageFiles.length === 0) {
+            alert('Hanya file gambar yang diizinkan!');
+            return;
+        }
+        
+        if (imageFiles.length !== files.length) {
+            alert(`${files.length - imageFiles.length} file bukan gambar dan diabaikan.`);
+        }
+        
+        // Update input file dengan drag & drop files
+        const dataTransfer = new DataTransfer();
+        imageFiles.forEach(file => dataTransfer.items.add(file));
+        fotoInput.files = dataTransfer.files;
+        
+        selectedFotos = []; // Reset array
+        handleFotos(imageFiles);
+        updateFileList();
+        
+        // Visual feedback
+        uploadArea.style.background = '#d4edda';
+        uploadArea.style.borderColor = '#28a745';
+        
+        // Success message
+        const successMsg = document.createElement('div');
+        successMsg.className = 'alert alert-success mt-2';
+        successMsg.innerHTML = `<i class="bi bi-check-circle me-2"></i>${imageFiles.length} foto berhasil ditambahkan!`;
+        uploadArea.appendChild(successMsg);
+        
+        setTimeout(() => {
+            uploadArea.style.background = '';
+            uploadArea.style.borderColor = '';
+            if (successMsg.parentNode) {
+                successMsg.remove();
+            }
+        }, 3000);
+    }
+
+    // File input change
+    fotoInput.addEventListener('change', (e) => {
+        const files = Array.from(e.target.files);
+        selectedFotos = []; // Reset array
+        handleFotos(files);
+        updateFileList();
+    });
+
+    function handleFotos(files) {
+        const validFiles = files.filter(file => {
+            const isValidType = ['image/jpeg', 'image/jpg', 'image/png'].includes(file.type);
+            const isValidSize = file.size <= 5 * 1024 * 1024; // 5MB
+            
+            if (!isValidType) {
+                alert(`File ${file.name} bukan format gambar yang valid.`);
+                return false;
+            }
+            
+            if (!isValidSize) {
+                alert(`File ${file.name} terlalu besar. Maksimal 5MB.`);
+                return false;
+            }
+            
+            return true;
+        });
+
+        if (selectedFotos.length + validFiles.length > 10) {
+            alert('Maksimal hanya bisa upload 10 foto.');
+            return;
+        }
+
+        validFiles.forEach(file => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const foto = {
+                    file: file,
+                    preview: e.target.result,
+                    id: Date.now() + Math.random()
+                };
+                selectedFotos.push(foto);
+                updateFotoPreview();
+                updateFileList();
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    function updateFotoPreview() {
+        if (selectedFotos.length === 0) {
+            fotoPreviewContainer.style.display = 'none';
+            return;
+        }
+
+        fotoPreviewContainer.style.display = 'block';
+        fotoPreviewGrid.innerHTML = '';
+
+        selectedFotos.forEach((foto, index) => {
+            const fotoItem = document.createElement('div');
+            fotoItem.className = 'foto-preview-item';
+            fotoItem.innerHTML = `
+                <img src="${foto.preview}" alt="Preview">
+                <div class="foto-caption">
+                    <input type="text" placeholder="Caption (opsional)" class="foto-caption-input" data-index="${index}">
+                </div>
+                <button type="button" class="remove-foto" onclick="removeFoto(${index})">
+                    <i class="bi bi-x"></i>
+                </button>
+            `;
+            fotoPreviewGrid.appendChild(fotoItem);
+        });
+
+        updateValidation();
+        updateFileList();
+    }
+
+    window.removeFoto = function(index) {
+        selectedFotos.splice(index, 1);
+        
+        // Update input file
+        const dt = new DataTransfer();
+        selectedFotos.forEach(foto => dt.items.add(foto.file));
+        fotoInput.files = dt.files;
+        
+        updateFotoPreview();
+        updateFileList();
+    }
+
+    function updateFileList() {
+        if (selectedFotos.length === 0) {
+            selectedFiles.style.display = 'none';
+            return;
+        }
+
+        selectedFiles.style.display = 'block';
+        fileList.innerHTML = '';
+
+        selectedFotos.forEach((foto, index) => {
+            const fileItem = document.createElement('div');
+            fileItem.className = 'file-item';
+            
+            const fileSize = (foto.file.size / 1024 / 1024).toFixed(2);
+            const isValidType = ['image/jpeg', 'image/jpg', 'image/png'].includes(foto.file.type);
+            const isValidSize = foto.file.size <= 5 * 1024 * 1024;
+            
+            fileItem.innerHTML = `
+                <div class="file-info">
+                    <div class="file-icon">
+                        <i class="bi bi-image"></i>
+                    </div>
+                    <div class="file-details">
+                        <div class="file-name">${foto.file.name}</div>
+                        <div class="file-size">${fileSize} MB</div>
+                    </div>
+                    <div class="file-status ${isValidType && isValidSize ? 'valid' : 'invalid'}">
+                        ${isValidType && isValidSize ? '✓ Valid' : '✗ Invalid'}
+                    </div>
+                </div>
+                <button type="button" class="remove-file" onclick="removeFoto(${index})">
+                    <i class="bi bi-x"></i>
+                </button>
+            `;
+            
+            fileList.appendChild(fileItem);
+        });
+    }
+
+    function updateValidation() {
+        if (selectedFotos.length < 3) {
+            fotoValidation.innerHTML = '<small class="text-danger">Minimal 3 foto diperlukan</small>';
+            fotoValidation.className = 'foto-validation error';
+        } else {
+            fotoValidation.innerHTML = '<small class="text-success">✓ Foto siap diupload</small>';
+            fotoValidation.className = 'foto-validation success';
+        }
+    }
+
+    // Form submission
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const fileInput = document.getElementById('fotoInput');
+        
+        if (!fileInput.files || fileInput.files.length < 3) {
+            e.preventDefault();
+            alert('Minimal harus upload 3 foto.');
+            return;
+        }
+
+        if (fileInput.files.length > 10) {
+            e.preventDefault();
+            alert('Maksimal hanya bisa upload 10 foto.');
+            return;
+        }
+
+        // Validasi setiap file
+        for (let i = 0; i < fileInput.files.length; i++) {
+            const file = fileInput.files[i];
+            
+            if (!['image/jpeg', 'image/jpg', 'image/png'].includes(file.type)) {
+                e.preventDefault();
+                alert(`File ${file.name} bukan format gambar yang valid.`);
+                return;
+            }
+            
+            if (file.size > 5 * 1024 * 1024) {
+                e.preventDefault();
+                alert(`File ${file.name} terlalu besar. Maksimal 5MB.`);
+                return;
+            }
+        }
+
+        // Form akan disubmit secara normal ke DokumenController
+        console.log('Form submitted with', fileInput.files.length, 'files');
+    });
         
         // Set STO setelah dropdown terisi
         setTimeout(() => {

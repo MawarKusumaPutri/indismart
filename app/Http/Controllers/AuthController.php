@@ -202,15 +202,25 @@ class AuthController extends Controller
      */
     public function register(Request $request)
     {
+        // Log untuk debug
+        \Log::info('Registrasi dimulai', [
+            'request_data' => $request->except(['password', 'password_confirmation']),
+            'has_password' => $request->has('password'),
+            'has_password_confirmation' => $request->has('password_confirmation')
+        ]);
+
         // Cek apakah sudah ada user karyawan dalam sistem
         $karyawanExists = User::where('role', 'staff')->exists();
         
-        if ($karyawanExists) {
+        // Jika mencoba registrasi sebagai staff dan sudah ada staff, tolak
+        if ($request->role === 'staff' && $karyawanExists) {
+            \Log::info('Registrasi ditolak: Mencoba registrasi staff padahal sudah ada staff');
             return redirect()->route('login')->with('info', 'Sistem karyawan sudah tersedia. Silakan login dengan akun yang ada.');
         }
 
         // Mencegah registrasi sebagai karyawan
         if ($request->role === 'staff') {
+            \Log::info('Registrasi ditolak: Mencoba registrasi sebagai staff');
             return back()->withErrors([
                 'role' => 'Registrasi sebagai Karyawan tidak diizinkan. Silakan hubungi administrator.'
             ]);
@@ -218,6 +228,7 @@ class AuthController extends Controller
 
         // Validasi email karyawan tidak bisa digunakan untuk registrasi
         if ($request->email === 'karyawan@telkom.co.id') {
+            \Log::info('Registrasi ditolak: Email karyawan digunakan');
             return back()->withErrors([
                 'email' => 'Email karyawan tidak bisa digunakan untuk registrasi. Email ini khusus untuk sistem karyawan.'
             ]);
@@ -230,25 +241,42 @@ class AuthController extends Controller
             'role' => 'required|in:mitra',
         ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => $request->role,
-        ]);
+        try {
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'role' => $request->role,
+            ]);
 
-        Auth::login($user);
+            \Log::info('User berhasil dibuat', [
+                'user_id' => $user->id,
+                'email' => $user->email,
+                'role' => $user->role
+            ]);
 
-        // Kirim notifikasi ke staff jika yang registrasi adalah mitra
-        if ($user->isMitra()) {
-            NotificationService::notifyMitraRegistration($user);
-        }
+            Auth::login($user);
 
-        // Redirect berdasarkan role
-        if ($user->isKaryawan()) {
-            return redirect('staff/dashboard');
-        } else {
-            return redirect('mitra/dashboard');
+            // Kirim notifikasi ke staff jika yang registrasi adalah mitra
+            if ($user->isMitra()) {
+                NotificationService::notifyMitraRegistration($user);
+            }
+
+            // Redirect berdasarkan role
+            if ($user->isKaryawan()) {
+                return redirect('staff/dashboard');
+            } else {
+                return redirect('mitra/dashboard');
+            }
+        } catch (\Exception $e) {
+            \Log::error('Error saat membuat user', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return back()->withErrors([
+                'general' => 'Terjadi kesalahan saat mendaftar. Silakan coba lagi.'
+            ])->withInput($request->except(['password', 'password_confirmation']));
         }
     }
 

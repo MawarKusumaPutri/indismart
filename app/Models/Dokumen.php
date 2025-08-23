@@ -48,6 +48,14 @@ class Dokumen extends Model
     }
 
     /**
+     * Relasi dengan Foto
+     */
+    public function fotos()
+    {
+        return $this->hasMany(Foto::class)->ordered();
+    }
+
+    /**
      * Get latest review
      */
     public function latestReview()

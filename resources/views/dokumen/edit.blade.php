@@ -179,8 +179,8 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="file" class="form-label">Upload File</label>
-                                <input type="file" class="form-control @error('file') is-invalid @enderror" id="file" name="file" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png">
-                                <div class="form-text">Format yang didukung: PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX, JPG, JPEG, PNG (Max: 10MB)</div>
+                                <input type="file" class="form-control @error('file') is-invalid @enderror" id="file" name="file" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx">
+                                <div class="form-text">Format yang didukung: PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX (Max: 10MB)</div>
                                 @if($dokumen->file_path)
                                     <div class="mt-2">
                                         <small class="text-muted">File saat ini: {{ $dokumen->file_name }} ({{ $dokumen->file_size }} KB)</small>

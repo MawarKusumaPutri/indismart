@@ -11,6 +11,7 @@ use App\Http\Controllers\ManajemenMitraController;
 use App\Http\Controllers\NomorKontrakController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\LookerStudioController;
+use App\Http\Controllers\FotoController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -61,6 +62,14 @@ Route::group(['middleware' => 'auth'], function () {
     Route::delete('/dokumen/{dokumen}', [DokumenController::class, 'destroy'])->name('dokumen.destroy');
     Route::get('/dokumen/{dokumen}/download', [DokumenController::class, 'download'])->name('dokumen.download');
     Route::delete('/dokumen/{dokumen}/file', [DokumenController::class, 'deleteFile'])->name('dokumen.delete-file');
+});
+
+// Foto Routes
+Route::group(['middleware' => 'auth'], function () {
+    Route::get('/dokumen/{dokumen}/fotos', [FotoController::class, 'index'])->name('fotos.index');
+    Route::post('/dokumen/{dokumen}/fotos', [FotoController::class, 'store'])->name('fotos.store');
+    Route::delete('/fotos/{foto}', [FotoController::class, 'destroy'])->name('fotos.destroy');
+    Route::put('/dokumen/{dokumen}/fotos/order', [FotoController::class, 'updateOrder'])->name('fotos.update-order');
 });
 
 // Notification Routes
