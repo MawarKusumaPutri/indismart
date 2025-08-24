@@ -138,5 +138,6 @@ Route::group(['middleware' => ['auth', 'role:staff']], function () {
     Route::post('/looker-studio/set-custom-url', [LookerStudioController::class, 'setCustomUrl'])->name('looker-studio.set-custom-url');
     Route::get('/looker-studio/get-current-url', [LookerStudioController::class, 'getCurrentUrl'])->name('looker-studio.get-current-url');
     Route::post('/looker-studio/handle-error', [LookerStudioController::class, 'handleError'])->name('looker-studio.handle-error');
+    Route::post('/looker-studio/create-direct-link', [LookerStudioController::class, 'createDirectLink'])->name('looker-studio.create-direct-link');
 });
 

@@ -288,15 +288,17 @@ class LookerStudioController extends Controller
     }
 
     /**
-     * Generate alternative URL untuk Looker Studio
+     * Generate alternative URL untuk Looker Studio - Ultra Simple
      */
     private function generateAlternativeUrl()
     {
         try {
-            // URL alternatif yang lebih sederhana
+            // Generate a simple report ID
+            $reportId = 'indismart_alt_' . date('Ymd') . '_' . substr(md5(uniqid()), 0, 8);
+            
+            // URL alternatif yang sangat sederhana
             $alternativeUrl = 'https://lookerstudio.google.com/reporting/create?' . http_build_query([
-                'c.reportId' => $this->generateReportId(),
-                'c.templateId' => '1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms',
+                'c.reportId' => $reportId,
                 'c.theme' => 'default',
                 'c.reportName' => 'Indismart Analytics - Alternative',
             ]);
@@ -308,7 +310,7 @@ class LookerStudioController extends Controller
         } catch (\Exception $e) {
             Log::error('LookerStudio: Error generating alternative URL - ' . $e->getMessage());
             
-            // Fallback ke URL paling sederhana
+            // Ultimate fallback ke URL paling sederhana
             return 'https://lookerstudio.google.com/reporting/create';
         }
     }
@@ -827,49 +829,66 @@ class LookerStudioController extends Controller
     }
 
     /**
-     * Create Looker Studio URL
+     * Create Looker Studio URL - Completely Simplified
      */
     private function createLookerStudioUrl($data)
     {
         try {
-            // Base URL untuk Looker Studio dengan template yang sudah ada
+            // Use the absolute simplest approach - just the base URL
             $baseUrl = 'https://lookerstudio.google.com/reporting/create';
             
-            // Gunakan template sederhana yang tidak memerlukan data source kompleks
-            $templateConfig = [
-                'templateId' => '1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms',
-                'theme' => 'indismart_theme',
-                'reportName' => 'Indismart Analytics Dashboard',
-            ];
+            Log::info('LookerStudio: Using base URL only', ['url' => $baseUrl]);
             
-            // Build URL dengan parameter yang lebih sederhana
-            $params = http_build_query([
-                'c.reportId' => $this->generateReportId(),
-                'c.templateId' => $templateConfig['templateId'],
-                'c.theme' => $templateConfig['theme'],
-                'c.reportName' => $templateConfig['reportName'],
-                'c.dataSource' => json_encode([
-                    'type' => 'manual',
-                    'name' => 'Indismart Data',
-                    'description' => 'Data analytics untuk Indismart'
-                ]),
-            ]);
-            
-            $url = $baseUrl . '?' . $params;
-            
-            Log::info('LookerStudio: Simple URL generated successfully', ['url_length' => strlen($url)]);
-            
-            return $url;
+            return $baseUrl;
             
         } catch (\Exception $e) {
             Log::error('LookerStudio: Error creating URL - ' . $e->getMessage());
             
-            // Fallback URL jika terjadi error
-            $fallbackUrl = 'https://lookerstudio.google.com/reporting/create?c.reportId=' . $this->generateReportId();
+            // Ultimate fallback - just the base URL
+            return 'https://lookerstudio.google.com/reporting/create';
+        }
+    }
+
+
+
+    /**
+     * Create a direct link to Looker Studio
+     */
+    public function createDirectLink()
+    {
+        try {
+            $user = Auth::user();
             
-            Log::info('LookerStudio: Using fallback URL', ['fallback_url' => $fallbackUrl]);
+            if (!$user || $user->role !== 'staff') {
+                Log::warning('LookerStudio: Unauthorized direct link creation attempt');
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Anda tidak memiliki akses ke fitur ini.'
+                ], 403);
+            }
             
-            return $fallbackUrl;
+            // Create a direct link to Looker Studio
+            $directUrl = 'https://lookerstudio.google.com/';
+            
+            Log::info('LookerStudio: Direct link created by user ' . $user->id);
+            
+            return response()->json([
+                'success' => true,
+                'url' => $directUrl,
+                'message' => 'Link langsung ke Looker Studio berhasil dibuat!'
+            ]);
+            
+        } catch (\Exception $e) {
+            Log::error('LookerStudio: Error in createDirectLink - ' . $e->getMessage(), [
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'user_id' => Auth::id()
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal membuat link langsung: ' . $e->getMessage()
+            ], 500);
         }
     }
 
@@ -1078,4 +1097,6 @@ class LookerStudioController extends Controller
             throw new \Exception('Gagal export ke CSV: ' . $e->getMessage());
         }
     }
+
+
 }

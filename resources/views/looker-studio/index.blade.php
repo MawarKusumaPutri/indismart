@@ -23,6 +23,10 @@
                         <i class="bi bi-plus-circle me-1"></i>
                         Generate Dashboard
                     </button>
+                    <button type="button" class="btn btn-info" onclick="createDirectLink()">
+                        <i class="bi bi-box-arrow-up-right me-1"></i>
+                        Direct Link
+                    </button>
                 </div>
             </div>
         </div>
@@ -1279,5 +1283,53 @@ function detectLookerStudioError() {
 document.addEventListener('DOMContentLoaded', function() {
     detectLookerStudioError();
 });
+
+
+
+function createDirectLink() {
+    try {
+        // Check if CSRF token exists
+        const csrfToken = document.querySelector('meta[name="csrf-token"]');
+        if (!csrfToken) {
+            showAlert('error', 'CSRF token tidak ditemukan. Silakan refresh halaman.');
+            return;
+        }
+        
+        // Show loading indicator
+        showAlert('info', 'Membuat link langsung ke Looker Studio...');
+        
+        fetch('/looker-studio/create-direct-link', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken.getAttribute('content')
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                // Show success message
+                showAlert('success', data.message);
+                
+                // Open the link in new tab
+                window.open(data.url, '_blank');
+            } else {
+                showAlert('error', 'Gagal membuat link: ' + (data.message || 'Unknown error'));
+            }
+        })
+        .catch(error => {
+            console.error('Error creating direct link:', error);
+            showAlert('error', 'Terjadi kesalahan: ' + error.message);
+        });
+    } catch (error) {
+        console.error('Error in createDirectLink:', error);
+        showAlert('error', 'Terjadi kesalahan sistem: ' + error.message);
+    }
+}
 </script>
 @endpush
