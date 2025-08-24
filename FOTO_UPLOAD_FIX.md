@@ -35,7 +35,7 @@ Upload foto tidak berfungsi karena beberapa masalah:
 2. **Isi semua field dokumen**
 3. **Upload foto**:
    - Klik area "Upload Foto" atau drag & drop
-   - Pilih minimal 3 foto (maksimal 10)
+   - Pilih minimal 1 foto (tidak ada batas maksimal)
    - Format: JPG, JPEG, PNG (max 5MB per foto)
    - Preview akan muncul
 4. **Klik "Simpan Dokumen"**
@@ -44,8 +44,8 @@ Upload foto tidak berfungsi karena beberapa masalah:
 ## Validasi
 
 ### Client-side:
-- Minimal 3 foto
-- Maksimal 10 foto
+- Minimal 1 foto
+- Tidak ada batas maksimal
 - Format JPG, JPEG, PNG
 - Ukuran maksimal 5MB per foto
 

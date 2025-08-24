@@ -432,7 +432,7 @@
                                     <!-- File Input yang Visible -->
                                     <div class="mb-3">
                                         <input type="file" class="form-control" id="fotoInput" name="fotos[]" multiple accept=".jpg,.jpeg,.png">
-                                        <div class="form-text">Minimal 3 foto, maksimal 10 foto (JPG, JPEG, PNG - Max: 5MB)</div>
+                                        <div class="form-text">Minimal 1 foto, tidak ada batas maksimal (JPG, JPEG, PNG - Max: 5MB)</div>
                                     </div>
                                     
                                     <!-- Drag & Drop Area -->
@@ -441,7 +441,7 @@
                                             <i class="bi bi-camera"></i>
                                         </div>
                                         <p class="upload-text">Atau drag & drop foto ke sini</p>
-                                        <p class="upload-info">Pilih minimal 3 foto untuk melanjutkan</p>
+                                        <p class="upload-info">Pilih minimal 1 foto untuk melanjutkan</p>
                                         <div class="drag-instructions mt-2">
                                             <small class="text-muted">
                                                 <i class="bi bi-mouse me-1"></i>Klik untuk browse atau 
@@ -461,7 +461,7 @@
                                         <h6>Preview Foto:</h6>
                                         <div class="foto-preview-grid" id="fotoPreviewGrid"></div>
                                         <div class="foto-validation mt-2">
-                                            <small class="text-muted">Minimal 3 foto diperlukan</small>
+                                            <small class="text-muted">Minimal 1 foto diperlukan</small>
                                         </div>
                                     </div>
                                 </div>
@@ -967,10 +967,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return true;
         });
 
-        if (selectedFotos.length + validFiles.length > 10) {
-            alert('Maksimal hanya bisa upload 10 foto.');
-            return;
-        }
+        // Tidak ada batas maksimal untuk jumlah foto
 
         validFiles.forEach(file => {
             const reader = new FileReader();
@@ -1068,8 +1065,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function updateValidation() {
-        if (selectedFotos.length < 3) {
-            fotoValidation.innerHTML = '<small class="text-danger">Minimal 3 foto diperlukan</small>';
+        if (selectedFotos.length < 1) {
+            fotoValidation.innerHTML = '<small class="text-danger">Minimal 1 foto diperlukan</small>';
             fotoValidation.className = 'foto-validation error';
         } else {
             fotoValidation.innerHTML = '<small class="text-success">✓ Foto siap diupload</small>';
@@ -1081,17 +1078,13 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelector('form').addEventListener('submit', function(e) {
         const fileInput = document.getElementById('fotoInput');
         
-        if (!fileInput.files || fileInput.files.length < 3) {
+        if (!fileInput.files || fileInput.files.length < 1) {
             e.preventDefault();
-            alert('Minimal harus upload 3 foto.');
+            alert('Minimal harus upload 1 foto.');
             return;
         }
 
-        if (fileInput.files.length > 10) {
-            e.preventDefault();
-            alert('Maksimal hanya bisa upload 10 foto.');
-            return;
-        }
+        // Tidak ada batas maksimal untuk jumlah foto
 
         // Validasi setiap file
         for (let i = 0; i < fileInput.files.length; i++) {

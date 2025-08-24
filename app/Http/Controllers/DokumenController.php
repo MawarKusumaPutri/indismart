@@ -142,12 +142,11 @@ class DokumenController extends Controller
             'tanggal_dokumen' => 'required|date',
             'file' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx|max:10240',
             'fotos.*' => 'required|image|mimes:jpg,jpeg,png|max:5120', // 5MB per foto
-            'fotos' => 'required|array|min:3|max:10', // Minimal 3 foto, maksimal 10 foto
+            'fotos' => 'required|array|min:1', // Minimal 1 foto, tidak ada batas maksimal
             'captions.*' => 'nullable|string|max:255',
             'keterangan' => 'nullable|string',
         ], [
-            'fotos.min' => 'Minimal harus upload 3 foto.',
-            'fotos.max' => 'Maksimal hanya bisa upload 10 foto.',
+            'fotos.min' => 'Minimal harus upload 1 foto.',
             'fotos.*.image' => 'File harus berupa gambar.',
             'fotos.*.mimes' => 'Format gambar yang didukung: JPG, JPEG, PNG.',
             'fotos.*.max' => 'Ukuran foto maksimal 5MB.',

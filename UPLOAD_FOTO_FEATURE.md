@@ -7,8 +7,8 @@ Fitur upload foto memungkinkan mitra untuk mengupload minimal 3 foto untuk setia
 ## Fitur Utama
 
 ### ✅ **Validasi Foto**
-- **Minimal**: 3 foto per dokumen
-- **Maksimal**: 10 foto per dokumen
+- **Minimal**: 1 foto per dokumen
+- **Maksimal**: Tidak terbatas
 - **Format**: JPG, JPEG, PNG
 - **Ukuran**: Maksimal 5MB per foto
 - **Validasi**: Client-side dan server-side
@@ -73,7 +73,7 @@ CREATE TABLE fotos (
 2. Isi semua field dokumen yang diperlukan
 3. Di bagian "Upload Foto":
    - Klik area upload atau drag & drop foto
-   - Pilih minimal 3 foto (maksimal 10 foto)
+   - Pilih minimal 1 foto (tidak ada batas maksimal)
    - Tambahkan caption untuk setiap foto (opsional)
    - Preview foto sebelum upload
 4. Klik "Simpan Dokumen"
@@ -81,10 +81,10 @@ CREATE TABLE fotos (
 
 ### 2. **Validasi**
 - Sistem akan memvalidasi:
-  - Minimal 3 foto
+  - Minimal 1 foto
   - Format file (JPG, JPEG, PNG)
   - Ukuran file (maksimal 5MB)
-  - Jumlah foto (maksimal 10)
+  - Jumlah foto (tidak ada batas maksimal)
 
 ### 3. **Preview**
 - Foto yang dipilih akan ditampilkan dalam grid
@@ -162,11 +162,10 @@ PUT /dokumen/{dokumen}/fotos/order
 ## Testing
 
 ### Manual Testing
-1. **Upload 2 foto** - Harus error (minimal 3)
-2. **Upload 11 foto** - Harus error (maksimal 10)
-3. **Upload file non-gambar** - Harus error
-4. **Upload file > 5MB** - Harus error
-5. **Upload 3-10 foto valid** - Harus berhasil
+1. **Upload 0 foto** - Harus error (minimal 1)
+2. **Upload file non-gambar** - Harus error
+3. **Upload file > 5MB** - Harus error
+4. **Upload 1+ foto valid** - Harus berhasil
 
 ### Automated Testing
 - Unit tests untuk model Foto
