@@ -70,6 +70,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/dokumen/{dokumen}/fotos', [FotoController::class, 'store'])->name('fotos.store');
     Route::delete('/fotos/{foto}', [FotoController::class, 'destroy'])->name('fotos.destroy');
     Route::put('/dokumen/{dokumen}/fotos/order', [FotoController::class, 'updateOrder'])->name('fotos.update-order');
+    Route::get('/fotos/{foto}/download', [FotoController::class, 'download'])->name('fotos.download');
 });
 
 // Notification Routes

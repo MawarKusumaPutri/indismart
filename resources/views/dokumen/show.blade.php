@@ -196,6 +196,66 @@
         </div>
     </div>
 
+    <!-- Foto Section -->
+    <div class="col-12 mt-4">
+        <div class="card">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Foto Proyek</h5>
+                <span class="badge bg-info">{{ $dokumen->fotos->count() }} Foto</span>
+            </div>
+            <div class="card-body">
+                @if($dokumen->fotos->count() > 0)
+                    <div class="row">
+                        @foreach($dokumen->fotos as $foto)
+                            <div class="col-md-3 col-sm-6 mb-4">
+                                <div class="card h-100">
+                                    <div class="position-relative">
+                                        <img src="{{ Storage::url($foto->file_path) }}" 
+                                             class="card-img-top" 
+                                             alt="{{ $foto->caption ?? 'Foto Proyek' }}"
+                                             style="height: 200px; object-fit: cover; cursor: pointer;"
+                                             onclick="showImageModal('{{ Storage::url($foto->file_path) }}', '{{ $foto->caption ?? 'Foto Proyek' }}')">
+                                        <div class="position-absolute top-0 end-0 m-2">
+                                            <span class="badge bg-dark">{{ $loop->iteration }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="card-body p-2">
+                                        @if($foto->caption)
+                                            <p class="card-text small mb-2">{{ $foto->caption }}</p>
+                                        @endif
+                                        <div class="d-grid gap-1">
+                                            <a href="{{ route('fotos.download', $foto) }}" 
+                                               class="btn btn-success btn-sm">
+                                                <i class="bi bi-download me-1"></i> Download
+                                            </a>
+                                            @if(Auth::user()->isMitra() && $dokumen->user_id === Auth::id())
+                                                <form method="POST" action="{{ route('fotos.destroy', $foto) }}" 
+                                                      onsubmit="return confirm('Apakah Anda yakin ingin menghapus foto ini?')"
+                                                      class="d-inline">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-outline-danger btn-sm w-100">
+                                                        <i class="bi bi-trash me-1"></i> Hapus
+                                                    </button>
+                                                </form>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <div class="text-center py-4">
+                        <i class="bi bi-images display-1 text-muted"></i>
+                        <h6 class="mt-3">Tidak ada foto</h6>
+                        <p class="text-muted">Dokumen ini belum memiliki foto proyek.</p>
+                    </div>
+                @endif
+            </div>
+        </div>
+    </div>
+
     <!-- Review Section -->
     <div class="col-12 mt-4">
         <div class="card">
@@ -294,4 +354,30 @@
         border-radius: 0.5rem;
     }
 </style>
+
+<!-- Modal untuk preview foto -->
+<div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="imageModalLabel">Preview Foto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="modalImage" src="" alt="" class="img-fluid" style="max-height: 70vh;">
+                <p id="modalCaption" class="mt-3 text-muted"></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function showImageModal(imageSrc, caption) {
+    document.getElementById('modalImage').src = imageSrc;
+    document.getElementById('modalCaption').textContent = caption || 'Foto Proyek';
+    
+    const imageModal = new bootstrap.Modal(document.getElementById('imageModal'));
+    imageModal.show();
+}
+</script>
 @endsection 

@@ -144,6 +144,29 @@ class FotoController extends Controller
     }
 
     /**
+     * Download foto
+     */
+    public function download(Foto $foto)
+    {
+        $user = Auth::user();
+        
+        // Mitra hanya bisa download foto dari dokumennya sendiri
+        // Staff bisa download semua foto
+        if ($user->isMitra() && $foto->dokumen->user_id !== $user->id) {
+            abort(403, 'Anda tidak memiliki akses untuk download foto ini.');
+        }
+
+        if (!$foto->file_path || !Storage::disk('public')->exists($foto->file_path)) {
+            return back()->with('error', 'Foto tidak ditemukan!');
+        }
+
+        // Get original filename
+        $originalName = $foto->original_name ?? basename($foto->file_path);
+
+        return Storage::disk('public')->download($foto->file_path, $originalName);
+    }
+
+    /**
      * Reorder foto setelah penghapusan
      */
     private function reorderFotos($dokumenId)
