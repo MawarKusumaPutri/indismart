@@ -16,6 +16,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
         body {
@@ -130,6 +132,9 @@
                 </a>
                 <a href="{{ route('reviews.index') }}" class="sidebar-menu-item {{ request()->routeIs('reviews.*') ? 'active' : '' }}">
                     <i class="bi bi-clipboard-check sidebar-menu-icon"></i> Review Dokumen
+                </a>
+                <a href="{{ route('looker-studio.index') }}" class="sidebar-menu-item {{ request()->routeIs('looker-studio.*') ? 'active' : '' }}">
+                    <i class="bi bi-graph-up-arrow sidebar-menu-icon"></i> Looker Studio
                 </a>
 
             @endif

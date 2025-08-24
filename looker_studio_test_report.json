@@ -1,0 +1,8 @@
+{
+    "timestamp": "2025-08-24 20:37:36",
+    "environment": "local",
+    "laravel_version": "12.21.0",
+    "php_version": "8.2.12",
+    "memory_usage": 25165824,
+    "peak_memory": 25165824
+}

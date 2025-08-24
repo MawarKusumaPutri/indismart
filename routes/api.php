@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\LookerStudioApiController;
 
 
 /*
@@ -17,6 +18,16 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
+});
+
+// Looker Studio API Routes
+Route::prefix('looker-studio')->group(function () {
+    Route::get('/analytics', [LookerStudioApiController::class, 'getAnalyticsData']);
+    Route::get('/summary', [LookerStudioApiController::class, 'getSummaryData']);
+    Route::get('/realtime', [LookerStudioApiController::class, 'getRealTimeData']);
+    Route::get('/export', [LookerStudioApiController::class, 'exportData']);
+    Route::get('/charts', [LookerStudioApiController::class, 'getChartsData']);
+    Route::get('/trends', [LookerStudioApiController::class, 'getTrendsData']);
 });
 
 

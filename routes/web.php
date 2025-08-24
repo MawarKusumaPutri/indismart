@@ -12,6 +12,7 @@ use App\Http\Controllers\NomorKontrakController;
 use App\Http\Controllers\SettingsController;
 
 use App\Http\Controllers\FotoController;
+use App\Http\Controllers\LookerStudioController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -128,5 +129,14 @@ Route::group(['middleware' => 'auth'], function () {
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/manajemen-dokumen', [DashboardController::class, 'manajemenDokumen'])->name('manajemen-dokumen');
+});
+
+// Looker Studio Routes (Staff Only)
+Route::group(['middleware' => ['auth', 'role:staff']], function () {
+    Route::get('/looker-studio', [LookerStudioController::class, 'index'])->name('looker-studio.index');
+    Route::post('/looker-studio/generate', [LookerStudioController::class, 'generateDashboard'])->name('looker-studio.generate');
+    Route::post('/looker-studio/set-custom-url', [LookerStudioController::class, 'setCustomUrl'])->name('looker-studio.set-custom-url');
+    Route::get('/looker-studio/get-current-url', [LookerStudioController::class, 'getCurrentUrl'])->name('looker-studio.get-current-url');
+    Route::post('/looker-studio/handle-error', [LookerStudioController::class, 'handleError'])->name('looker-studio.handle-error');
 });
 
