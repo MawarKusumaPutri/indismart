@@ -58,10 +58,30 @@
                                 <td><strong>Site Name:</strong></td>
                                 <td>{{ $dokumen->site_name }}</td>
                             </tr>
-                            <tr>
-                                <td><strong>Status Implementasi:</strong></td>
-                                <td><span class="badge bg-secondary">{{ $dokumen->status_implementasi }}</span></td>
-                            </tr>
+                                                         <tr>
+                                 <td><strong>Status Implementasi:</strong></td>
+                                 <td>
+                                     @php
+                                         $statusColors = [
+                                             'inisiasi' => 'bg-primary',
+                                             'planning' => 'bg-info',
+                                             'executing' => 'bg-warning',
+                                             'controlling' => 'bg-secondary',
+                                             'closing' => 'bg-success'
+                                         ];
+                                         $statusLabels = [
+                                             'inisiasi' => 'Inisiasi',
+                                             'planning' => 'Planning',
+                                             'executing' => 'Executing',
+                                             'controlling' => 'Controlling',
+                                             'closing' => 'Closing'
+                                         ];
+                                     @endphp
+                                     <span class="badge {{ $statusColors[$dokumen->status_implementasi] ?? 'bg-secondary' }}">
+                                         {{ $statusLabels[$dokumen->status_implementasi] ?? $dokumen->status_implementasi }}
+                                     </span>
+                                 </td>
+                             </tr>
                         </table>
                     </div>
                 </div>
@@ -110,20 +130,7 @@
                         @enderror
                     </div>
                     
-                    <div class="mb-3">
-                        <label for="rating" class="form-label">Rating</label>
-                        <div class="rating-input">
-                            @for($i = 1; $i <= 5; $i++)
-                                <input type="radio" name="rating" id="rating{{ $i }}" value="{{ $i }}" class="rating-radio">
-                                <label for="rating{{ $i }}" class="rating-star">
-                                    <i class="bi bi-star"></i>
-                                </label>
-                            @endfor
-                        </div>
-                        @error('rating')
-                            <div class="text-danger small">{{ $message }}</div>
-                        @enderror
-                    </div>
+
                     
                     <div class="mb-3">
                         <label for="komentar" class="form-label">Komentar</label>
@@ -145,63 +152,9 @@
 </div>
 @endsection
 
-@push('styles')
-<style>
-.rating-input {
-    display: flex;
-    flex-direction: row-reverse;
-    gap: 5px;
-}
-
-.rating-radio {
-    display: none;
-}
-
-.rating-star {
-    cursor: pointer;
-    font-size: 1.5rem;
-    color: #ddd;
-    transition: color 0.2s;
-}
-
-.rating-star:hover,
-.rating-star:hover ~ .rating-star,
-.rating-radio:checked ~ .rating-star {
-    color: #ffc107;
-}
-
-.rating-radio:checked ~ .rating-star {
-    color: #ffc107;
-}
-</style>
-@endpush
-
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Rating functionality
-    const ratingStars = document.querySelectorAll('.rating-star');
-    const ratingRadios = document.querySelectorAll('.rating-radio');
-    
-    ratingStars.forEach((star, index) => {
-        star.addEventListener('click', function() {
-            // Uncheck all radios
-            ratingRadios.forEach(radio => radio.checked = false);
-            
-            // Check the clicked radio
-            ratingRadios[index].checked = true;
-            
-            // Update star colors
-            ratingStars.forEach((s, i) => {
-                if (i <= index) {
-                    s.style.color = '#ffc107';
-                } else {
-                    s.style.color = '#ddd';
-                }
-            });
-        });
-    });
-    
     // Form validation
     const form = document.querySelector('form');
     const statusSelect = document.getElementById('status');

@@ -107,7 +107,7 @@
                                             </span>
                                         </td>
                                         <td>
-                                            <small>{{ $doc->created_at->format('d/m/Y H:i') }}</small>
+                                            <small>@indonesianDate($doc->created_at)</small>
                                         </td>
                                         <td>
                                             @if($doc->latestReview && $doc->latestReview->reviewer)

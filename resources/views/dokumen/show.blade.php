@@ -95,15 +95,15 @@
                             </tr>
                             <tr>
                                 <td><strong>Tanggal Dokumen</strong></td>
-                                <td>{{ $dokumen->tanggal_dokumen->format('d/m/Y') }}</td>
+                                <td>@indonesianDateOnly($dokumen->tanggal_dokumen)</td>
                             </tr>
                             <tr>
                                 <td><strong>Dibuat Pada</strong></td>
-                                <td>{{ $dokumen->created_at->format('d/m/Y H:i') }}</td>
+                                <td>@indonesianDate($dokumen->created_at)</td>
                             </tr>
                             <tr>
                                 <td><strong>Terakhir Diupdate</strong></td>
-                                <td>{{ $dokumen->updated_at->format('d/m/Y H:i') }}</td>
+                                <td>@indonesianDate($dokumen->updated_at)</td>
                             </tr>
                             <tr>
                                 <td><strong>File</strong></td>
@@ -291,17 +291,10 @@
                                                     {{ ucfirst($review->status) }}
                                                 </span>
                                             </h6>
-                                            <small class="text-muted">{{ $review->created_at->format('d M Y H:i') }}</small>
+                                            <small class="text-muted">@indonesianDate($review->created_at)</small>
                                         </div>
                                         @if($review->komentar)
                                             <p class="mb-2">{{ $review->komentar }}</p>
-                                        @endif
-                                        @if($review->rating)
-                                            <div class="rating">
-                                                @for($i = 1; $i <= 5; $i++)
-                                                    <i class="bi {{ $i <= $review->rating ? 'bi-star-fill text-warning' : 'bi-star' }}"></i>
-                                                @endfor
-                                            </div>
                                         @endif
                                     </div>
                                 </div>

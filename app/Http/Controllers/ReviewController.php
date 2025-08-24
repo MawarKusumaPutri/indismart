@@ -90,7 +90,6 @@ class ReviewController extends Controller
         $request->validate([
             'status' => 'required|in:approved,rejected,pending',
             'komentar' => 'nullable|string|max:1000',
-            'rating' => 'nullable|integer|min:1|max:5',
         ]);
 
         $review = Review::create([
@@ -98,8 +97,7 @@ class ReviewController extends Controller
             'reviewer_id' => Auth::id(),
             'status' => $request->status,
             'komentar' => $request->komentar,
-            'rating' => $request->rating,
-            'reviewed_at' => now(),
+            'reviewed_at' => now()->setTimezone('Asia/Jakarta'),
         ]);
 
         // Kirim notifikasi ke mitra
@@ -158,14 +156,12 @@ class ReviewController extends Controller
         $request->validate([
             'status' => 'required|in:approved,rejected,pending',
             'komentar' => 'nullable|string|max:1000',
-            'rating' => 'nullable|integer|min:1|max:5',
         ]);
 
         $review->update([
             'status' => $request->status,
             'komentar' => $request->komentar,
-            'rating' => $request->rating,
-            'reviewed_at' => now(),
+            'reviewed_at' => now()->setTimezone('Asia/Jakarta'),
         ]);
 
         // Kirim notifikasi ke mitra
