@@ -79,6 +79,9 @@
                                         <option value="Troubleshooting" {{ request('jenis_proyek') == 'Troubleshooting' ? 'selected' : '' }}>Troubleshooting</option>
                                         <option value="Survey" {{ request('jenis_proyek') == 'Survey' ? 'selected' : '' }}>Survey</option>
                                         <option value="Audit" {{ request('jenis_proyek') == 'Audit' ? 'selected' : '' }}>Audit</option>
+                                        <option value="Recovery" {{ request('jenis_proyek') == 'Recovery' ? 'selected' : '' }}>Recovery</option>
+                                        <option value="Preventif" {{ request('jenis_proyek') == 'Preventif' ? 'selected' : '' }}>Preventif</option>
+                                        <option value="Relokasi" {{ request('jenis_proyek') == 'Relokasi' ? 'selected' : '' }}>Relokasi</option>
                                         <option value="Lainnya" {{ request('jenis_proyek') == 'Lainnya' ? 'selected' : '' }}>Lainnya</option>
                                     </select>
                                 </div>

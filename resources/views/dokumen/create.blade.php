@@ -268,6 +268,9 @@
                                     <option value="Troubleshooting" {{ old('jenis_proyek') == 'Troubleshooting' ? 'selected' : '' }}>Troubleshooting</option>
                                     <option value="Survey" {{ old('jenis_proyek') == 'Survey' ? 'selected' : '' }}>Survey</option>
                                     <option value="Audit" {{ old('jenis_proyek') == 'Audit' ? 'selected' : '' }}>Audit</option>
+                                    <option value="Recovery" {{ old('jenis_proyek') == 'Recovery' ? 'selected' : '' }}>Recovery</option>
+                                    <option value="Preventif" {{ old('jenis_proyek') == 'Preventif' ? 'selected' : '' }}>Preventif</option>
+                                    <option value="Relokasi" {{ old('jenis_proyek') == 'Relokasi' ? 'selected' : '' }}>Relokasi</option>
                                     <option value="Lainnya" {{ old('jenis_proyek') == 'Lainnya' ? 'selected' : '' }}>Lainnya</option>
                                 </select>
                                 @error('jenis_proyek')

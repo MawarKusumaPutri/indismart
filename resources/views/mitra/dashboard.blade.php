@@ -90,6 +90,9 @@
                                 <option value="upgrade">Upgrade Jaringan</option>
                                 <option value="instalasi">Instalasi BTS</option>
                                 <option value="maintenance">Maintenance</option>
+                                <option value="recovery">Recovery</option>
+                                <option value="preventif">Preventif</option>
+                                <option value="relokasi">Relokasi</option>
                             </select>
                         </div>
                         <div class="col-md-3 mb-3">
