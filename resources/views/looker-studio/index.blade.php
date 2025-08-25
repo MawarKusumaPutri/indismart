@@ -14,20 +14,12 @@
                     </h1>
                     <p class="text-muted mb-0">Analytics Dashboard untuk Indismart</p>
                 </div>
-                <div class="d-flex gap-2">
-                    <button type="button" class="btn btn-outline-primary" onclick="refreshData()">
-                        <i class="bi bi-arrow-clockwise me-1"></i>
-                        Refresh Data
-                    </button>
-                    <button type="button" class="btn btn-primary" onclick="generateDashboard()">
-                        <i class="bi bi-plus-circle me-1"></i>
-                        Generate Dashboard
-                    </button>
-                    <button type="button" class="btn btn-info" onclick="createDirectLink()">
-                        <i class="bi bi-box-arrow-up-right me-1"></i>
-                        Direct Link
-                    </button>
-                </div>
+                                 <div class="d-flex gap-2">
+                     <button type="button" class="btn btn-outline-primary" onclick="refreshData()">
+                         <i class="bi bi-arrow-clockwise me-1"></i>
+                         Refresh Data
+                     </button>
+                 </div>
             </div>
         </div>
     </div>
@@ -221,42 +213,73 @@
                                     style="border:0;"
                                     allowfullscreen>
                             </iframe>
-                            <div class="mt-3 text-center">
-                                <button type="button" class="btn btn-outline-primary" onclick="openDashboardInNewTab()">
-                                    <i class="bi bi-box-arrow-up-right me-2"></i>
-                                    Buka di Tab Baru
-                                </button>
-                                <button type="button" class="btn btn-outline-secondary ms-2" onclick="showEmbeddingHelp()">
-                                    <i class="bi bi-question-circle me-2"></i>
-                                    Bantuan Embedding
-                                </button>
-                            </div>
+                                                         <div class="mt-3 text-center">
+                                 <button type="button" class="btn btn-outline-primary" onclick="openDashboardInNewTab()">
+                                     <i class="bi bi-box-arrow-up-right me-2"></i>
+                                     Buka di Tab Baru
+                                 </button>
+                                 <button type="button" class="btn btn-outline-secondary ms-2" onclick="showEmbeddingHelp()">
+                                     <i class="bi bi-question-circle me-2"></i>
+                                     Bantuan Embedding
+                                 </button>
+                                 <button type="button" class="btn btn-outline-warning ms-2" onclick="editDashboardUrl()">
+                                     <i class="bi bi-pencil me-2"></i>
+                                     Edit URL
+                                 </button>
+                                 <button type="button" class="btn btn-outline-danger ms-2" onclick="deleteDashboardUrl()">
+                                     <i class="bi bi-trash me-2"></i>
+                                     Hapus URL
+                                 </button>
+                             </div>
                         </div>
                         
-                        <!-- No Dashboard State -->
-                        <div id="noDashboardState" class="text-center py-5" style="display: none;">
-                            <div class="mb-4">
-                                <i class="bi bi-graph-up text-muted" style="font-size: 4rem;"></i>
-                            </div>
-                            <h5>Belum Ada Dashboard</h5>
-                            <p class="text-muted mb-4">
-                                Dashboard Looker Studio belum dibuat atau belum dikonfigurasi.
-                            </p>
-                            <div class="d-flex justify-content-center gap-2">
-                                <button type="button" class="btn btn-primary" onclick="generateDashboard()">
-                                    <i class="bi bi-plus-circle me-2"></i>
-                                    Buat Dashboard Baru
-                                </button>
-                                <button type="button" class="btn btn-outline-secondary" onclick="showCustomUrlInput()">
-                                    <i class="bi bi-link me-2"></i>
-                                    Masukkan URL Dashboard
-                                </button>
-                                <button type="button" class="btn btn-success" onclick="createNewReport()">
-                                    <i class="bi bi-file-earmark-plus me-2"></i>
-                                    Buat Laporan Baru
-                                </button>
-                            </div>
-                        </div>
+                                                 <!-- No Dashboard State -->
+                         <div id="noDashboardState" class="text-center py-5" style="display: none;">
+                             <div class="mb-4">
+                                 <i class="bi bi-graph-up text-muted" style="font-size: 4rem;"></i>
+                             </div>
+                             <h5>Belum Ada Dashboard</h5>
+                             <p class="text-muted mb-4">
+                                 Dashboard Looker Studio belum dibuat atau belum dikonfigurasi.
+                             </p>
+                             
+                             <!-- URL Input Section -->
+                             <div class="row justify-content-center mb-4">
+                                 <div class="col-md-8">
+                                     <div class="card">
+                                         <div class="card-body">
+                                             <h6 class="card-title">
+                                                 <i class="bi bi-link me-2"></i>
+                                                 Masukkan URL Dashboard Looker Studio
+                                             </h6>
+                                             <div class="input-group">
+                                                 <input type="url" class="form-control" id="newUrlInput" placeholder="https://lookerstudio.google.com/reporting/..." aria-label="URL Dashboard">
+                                                 <button class="btn btn-primary" type="button" onclick="loadNewUrl()">
+                                                     <i class="bi bi-arrow-right me-1"></i>
+                                                     Muat Dashboard
+                                                 </button>
+                                             </div>
+                                             <div class="form-text">Masukkan URL embed dari Looker Studio yang sudah dibuat</div>
+                                         </div>
+                                     </div>
+                                 </div>
+                             </div>
+                             
+                             <div class="d-flex justify-content-center gap-2">
+                                 <button type="button" class="btn btn-success" onclick="createNewReport()">
+                                     <i class="bi bi-file-earmark-plus me-2"></i>
+                                     Buat Laporan Baru
+                                 </button>
+                                 <button type="button" class="btn btn-outline-warning" onclick="editDashboardUrl()">
+                                     <i class="bi bi-pencil me-2"></i>
+                                     Edit URL
+                                 </button>
+                                 <button type="button" class="btn btn-outline-danger" onclick="deleteDashboardUrl()">
+                                     <i class="bi bi-trash me-2"></i>
+                                     Hapus URL
+                                 </button>
+                             </div>
+                         </div>
                         
                                                  <!-- Error State -->
                          <div id="dashboardError" class="text-center py-5" style="display: none;">
@@ -267,24 +290,28 @@
                              <p class="text-muted mb-4" id="errorMessage">
                                  Terjadi kesalahan saat memuat dashboard.
                              </p>
-                             <div class="d-flex justify-content-center gap-2 flex-wrap">
-                                 <button type="button" class="btn btn-primary" onclick="refreshDashboard()">
-                                     <i class="bi bi-arrow-clockwise me-2"></i>
-                                     Coba Lagi
-                                 </button>
-                                 <button type="button" class="btn btn-outline-secondary" onclick="showCustomUrlInput()">
-                                     <i class="bi bi-link me-2"></i>
-                                     Masukkan URL Manual
-                                 </button>
-                                 <button type="button" class="btn btn-success" onclick="createNewReport()">
-                                     <i class="bi bi-file-earmark-plus me-2"></i>
-                                     Buat Laporan Baru
-                                 </button>
-                                 <button type="button" class="btn btn-info" onclick="showEmbeddingHelp()">
-                                     <i class="bi bi-question-circle me-2"></i>
-                                     Bantuan
-                                 </button>
-                             </div>
+                                                                                          <div class="d-flex justify-content-center gap-2 flex-wrap">
+                                   <button type="button" class="btn btn-primary" onclick="refreshDashboard()">
+                                       <i class="bi bi-arrow-clockwise me-2"></i>
+                                       Coba Lagi
+                                   </button>
+                                   <button type="button" class="btn btn-success" onclick="createNewReport()">
+                                       <i class="bi bi-file-earmark-plus me-2"></i>
+                                       Buat Laporan Baru
+                                   </button>
+                                   <button type="button" class="btn btn-info" onclick="showEmbeddingHelp()">
+                                       <i class="bi bi-question-circle me-2"></i>
+                                       Bantuan
+                                   </button>
+                                   <button type="button" class="btn btn-outline-warning" onclick="editDashboardUrl()">
+                                       <i class="bi bi-pencil me-2"></i>
+                                       Edit URL
+                                   </button>
+                                   <button type="button" class="btn btn-outline-danger" onclick="deleteDashboardUrl()">
+                                       <i class="bi bi-trash me-2"></i>
+                                       Hapus URL
+                                   </button>
+                               </div>
                              <div class="mt-3">
                                  <small class="text-muted">
                                      <i class="bi bi-info-circle me-1"></i>
@@ -298,112 +325,10 @@
         </div>
     </div>
 
-    <!-- Looker Studio Integration Controls -->
-    <div class="row">
-        <div class="col-12">
-            <div class="card shadow">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">
-                        <i class="bi bi-gear me-2"></i>
-                        Konfigurasi Dashboard
-                    </h6>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h5>Generate Dashboard Otomatis</h5>
-                            <p class="text-muted">
-                                Klik tombol di bawah untuk membuat dashboard Looker Studio secara otomatis 
-                                dengan data real-time dari sistem Indismart.
-                            </p>
-                            <div class="d-grid gap-2">
-                                <button type="button" class="btn btn-primary btn-lg" onclick="generateDashboard()">
-                                    <i class="bi bi-magic me-2"></i>
-                                    Generate Looker Studio Dashboard
-                                </button>
-                                <button type="button" class="btn btn-outline-secondary" onclick="showDashboardUrl()">
-                                    <i class="bi bi-link me-2"></i>
-                                    Tampilkan URL Dashboard
-                                </button>
-                            </div>
-                            
-                            <!-- Custom URL Input -->
-                            <div class="mt-4" id="customUrlSection" style="display: none;">
-                                <h6>Masukkan URL Looker Studio Eksternal</h6>
-                                <p class="text-muted small">
-                                    Jika Anda sudah memiliki dashboard Looker Studio yang sudah dibuat, 
-                                    masukkan URL-nya di sini.
-                                </p>
-                                <div class="input-group mb-3">
-                                    <input type="url" class="form-control" id="customUrlInput" 
-                                           placeholder="https://lookerstudio.google.com/reporting/..." 
-                                           pattern="https://lookerstudio\.google\.com.*">
-                                    <button class="btn btn-outline-primary" type="button" onclick="setCustomUrl()">
-                                        <i class="bi bi-check-circle me-1"></i>
-                                        Set URL
-                                    </button>
-                                </div>
-                                <small class="text-muted">
-                                    <i class="bi bi-info-circle me-1"></i>
-                                    URL harus dari Looker Studio (https://lookerstudio.google.com)
-                                </small>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <h5>Export Data</h5>
-                            <p class="text-muted">
-                                Export data dalam berbagai format untuk digunakan di Looker Studio.
-                            </p>
-                            <div class="d-grid gap-2">
-                                <button type="button" class="btn btn-info" onclick="exportData('csv')">
-                                    <i class="bi bi-filetype-csv me-2"></i>
-                                    Export CSV
-                                </button>
-                                <button type="button" class="btn btn-warning" onclick="exportData('all')">
-                                    <i class="bi bi-download me-2"></i>
-                                    Export Semua Data
-                                </button>
-                            </div>
-                            
-                            <!-- Dashboard URL Display -->
-                            <div id="dashboardUrlSection" class="mt-4" style="display: none;">
-                                <div class="alert alert-success">
-                                    <h6><i class="bi bi-check-circle me-2"></i>Dashboard Berhasil Dibuat!</h6>
-                                    <p class="mb-2">URL Dashboard Looker Studio:</p>
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" id="dashboardUrl" readonly>
-                                        <button class="btn btn-outline-secondary" type="button" onclick="copyDashboardUrl()">
-                                            <i class="bi bi-clipboard"></i>
-                                        </button>
-                                        <a class="btn btn-primary" id="openDashboardBtn" href="#" target="_blank">
-                                            <i class="bi bi-box-arrow-up-right me-2"></i>
-                                            Buka Dashboard
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    
 </div>
 
-<!-- Loading Modal -->
-<div class="modal fade" id="loadingModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-body text-center">
-                <div class="spinner-border text-primary mb-3" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
-                <h5>Membuat Dashboard Looker Studio...</h5>
-                <p class="text-muted">Mohon tunggu, sistem sedang memproses data dan membuat dashboard.</p>
-            </div>
-        </div>
-    </div>
-</div>
+
 @endsection
 
 @push('styles')
@@ -482,19 +407,7 @@ document.addEventListener('DOMContentLoaded', function() {
         initializeCharts();
         loadRealTimeData();
         
-        // Add event listener for custom URL input
-        const customUrlInput = document.getElementById('customUrlInput');
-        if (customUrlInput) {
-            customUrlInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    setCustomUrl();
-                }
-            });
-        }
-        
-        // Check if there's an existing custom URL and display it
-        checkExistingUrl();
+
         
         // Initialize dashboard display with better error handling
         setTimeout(() => {
@@ -603,337 +516,17 @@ function initializeCharts() {
     }
 }
 
-function generateDashboard() {
-    try {
-        // Check if CSRF token exists
-        const csrfToken = document.querySelector('meta[name="csrf-token"]');
-        if (!csrfToken) {
-            showAlert('error', 'CSRF token tidak ditemukan. Silakan refresh halaman.');
-            return;
-        }
 
-        // Show loading modal
-        const loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
-        loadingModal.show();
 
-        // Make API call to generate dashboard
-        fetch('/looker-studio/generate', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': csrfToken.getAttribute('content')
-            }
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            loadingModal.hide();
-            
-            if (data.success) {
-                // Store URL in localStorage for embedded display
-                localStorage.setItem('lookerStudioDashboardUrl', data.url);
-                
-                // Show dashboard URL
-                document.getElementById('dashboardUrl').value = data.url;
-                document.getElementById('openDashboardBtn').href = data.url;
-                document.getElementById('dashboardUrlSection').style.display = 'block';
-                
-                // Load the dashboard in the embedded iframe
-                loadDashboard(data.url);
-                
-                // Show success message
-                showAlert('success', 'Dashboard Looker Studio berhasil dibuat dan dimuat!');
-            } else {
-                showAlert('error', 'Gagal membuat dashboard: ' + (data.message || 'Unknown error'));
-            }
-        })
-        .catch(error => {
-            loadingModal.hide();
-            console.error('Error generating dashboard:', error);
-            showAlert('error', 'Terjadi kesalahan: ' + error.message);
-        });
-    } catch (error) {
-        console.error('Error in generateDashboard:', error);
-        showAlert('error', 'Terjadi kesalahan sistem: ' + error.message);
-    }
-}
 
-function showDashboardUrl() {
-    try {
-        // Get current URL (custom or generated)
-        fetch('/looker-studio/get-current-url', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            }
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.success) {
-                // Store URL in localStorage for embedded display
-                localStorage.setItem('lookerStudioDashboardUrl', data.url);
-                
-                // Show dashboard URL
-                document.getElementById('dashboardUrl').value = data.url;
-                document.getElementById('openDashboardBtn').href = data.url;
-                document.getElementById('dashboardUrlSection').style.display = 'block';
-                
-                // Load the dashboard in the embedded iframe
-                loadDashboard(data.url);
-                
-                // Show success message
-                const message = data.type === 'custom' ? 
-                    'URL Looker Studio eksternal ditemukan dan dimuat!' : 
-                    'URL Looker Studio baru dibuat dan dimuat!';
-                showAlert('success', message);
-            } else {
-                showAlert('error', 'Gagal mendapatkan URL: ' + (data.message || 'Unknown error'));
-            }
-        })
-        .catch(error => {
-            console.error('Error getting current URL:', error);
-            showAlert('error', 'Terjadi kesalahan: ' + error.message);
-        });
-    } catch (error) {
-        console.error('Error in showDashboardUrl:', error);
-        showAlert('error', 'Terjadi kesalahan sistem: ' + error.message);
-    }
-}
 
-function setCustomUrl() {
-    try {
-        const customUrlInput = document.getElementById('customUrlInput');
-        const customUrl = customUrlInput.value.trim();
-        
-        if (!customUrl) {
-            showAlert('error', 'Silakan masukkan URL Looker Studio');
-            return;
-        }
-        
-        // Validate URL format
-        if (!customUrl.startsWith('https://lookerstudio.google.com')) {
-            showAlert('error', 'URL harus dari Looker Studio (https://lookerstudio.google.com)');
-            return;
-        }
-        
-        // Check if CSRF token exists
-        const csrfToken = document.querySelector('meta[name="csrf-token"]');
-        if (!csrfToken) {
-            showAlert('error', 'CSRF token tidak ditemukan. Silakan refresh halaman.');
-            return;
-        }
-        
-        // Show loading indicator
-        const setUrlBtn = document.querySelector('button[onclick="setCustomUrl()"]');
-        const originalText = setUrlBtn.innerHTML;
-        setUrlBtn.innerHTML = '<i class="bi bi-hourglass-split me-1 spin"></i> Setting...';
-        setUrlBtn.disabled = true;
-        
-        console.log('Setting custom URL:', customUrl);
-        
-        // Make API call to set custom URL
-        fetch('/looker-studio/set-custom-url', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': csrfToken.getAttribute('content')
-            },
-            body: JSON.stringify({
-                custom_url: customUrl
-            })
-        })
-        .then(response => {
-            console.log('Response status:', response.status);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log('Response data:', data);
-            
-            // Reset button
-            setUrlBtn.innerHTML = originalText;
-            setUrlBtn.disabled = false;
-            
-            if (data.success) {
-                // Store URL in localStorage for embedded display
-                localStorage.setItem('lookerStudioDashboardUrl', data.url);
-                console.log('URL stored in localStorage:', data.url);
-                
-                // Show dashboard URL
-                document.getElementById('dashboardUrl').value = data.url;
-                document.getElementById('openDashboardBtn').href = data.url;
-                document.getElementById('dashboardUrlSection').style.display = 'block';
-                
-                // Load the dashboard in the embedded iframe
-                console.log('Loading dashboard with URL:', data.url);
-                loadDashboard(data.url);
-                
-                // Clear input
-                customUrlInput.value = '';
-                
-                // Show success message
-                showAlert('success', 'URL Looker Studio eksternal berhasil disimpan dan dimuat!');
-            } else {
-                showAlert('error', 'Gagal menyimpan URL: ' + (data.message || 'Unknown error'));
-            }
-        })
-        .catch(error => {
-            // Reset button
-            setUrlBtn.innerHTML = originalText;
-            setUrlBtn.disabled = false;
-            
-            console.error('Error setting custom URL:', error);
-            showAlert('error', 'Terjadi kesalahan: ' + error.message);
-        });
-    } catch (error) {
-        console.error('Error in setCustomUrl:', error);
-        showAlert('error', 'Terjadi kesalahan sistem: ' + error.message);
-    }
-}
 
-function checkExistingUrl() {
-    try {
-        // Check if there's an existing custom URL
-        fetch('/looker-studio/get-current-url', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            }
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.success && data.type === 'custom') {
-                // Show existing custom URL
-                document.getElementById('dashboardUrl').value = data.url;
-                document.getElementById('openDashboardBtn').href = data.url;
-                document.getElementById('dashboardUrlSection').style.display = 'block';
-                
-                // Show info message
-                showAlert('success', 'URL Looker Studio eksternal ditemukan dan siap digunakan!');
-            }
-        })
-        .catch(error => {
-            console.error('Error checking existing URL:', error);
-            // Don't show error alert for this, as it's just a check
-        });
-    } catch (error) {
-        console.error('Error in checkExistingUrl:', error);
-        // Don't show error alert for this, as it's just a check
-    }
-}
 
-function copyDashboardUrl() {
-    try {
-        const urlInput = document.getElementById('dashboardUrl');
-        if (!urlInput) {
-            showAlert('error', 'URL input tidak ditemukan');
-            return;
-        }
-        
-        if (!urlInput.value) {
-            showAlert('error', 'URL belum dibuat. Silakan generate dashboard terlebih dahulu.');
-            return;
-        }
-        
-        urlInput.select();
-        urlInput.setSelectionRange(0, 99999); // For mobile devices
-        
-        // Try modern clipboard API first
-        if (navigator.clipboard && window.isSecureContext) {
-            navigator.clipboard.writeText(urlInput.value).then(() => {
-                showAlert('success', 'URL berhasil disalin ke clipboard!');
-            }).catch(() => {
-                // Fallback to execCommand
-                document.execCommand('copy');
-                showAlert('success', 'URL berhasil disalin ke clipboard!');
-            });
-        } else {
-            // Fallback for older browsers
-            document.execCommand('copy');
-            showAlert('success', 'URL berhasil disalin ke clipboard!');
-        }
-        
-    } catch (error) {
-        console.error('Error copying URL:', error);
-        showAlert('error', 'Gagal menyalin URL: ' + error.message);
-    }
-}
 
-function exportData(format) {
-    try {
-        // Show loading indicator
-        const exportBtn = document.querySelector(`button[onclick="exportData('${format}')"]`);
-        const originalText = exportBtn.innerHTML;
-        exportBtn.innerHTML = '<i class="bi bi-hourglass-split me-1 spin"></i> Exporting...';
-        exportBtn.disabled = true;
-        
-        const url = `/api/looker-studio/export?format=${format}&type=all`;
-        
-        if (format === 'csv') {
-            // For CSV, use direct download with proper headers
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `indismart_data_${new Date().toISOString().split('T')[0]}.csv`;
-            link.style.display = 'none';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            
-            // Reset button after a short delay
-            setTimeout(() => {
-                exportBtn.innerHTML = originalText;
-                exportBtn.disabled = false;
-                showAlert('success', 'Data CSV berhasil di-export!');
-            }, 1000);
-            
-        } else if (format === 'all') {
-            // Export all data as CSV
-            const link = document.createElement('a');
-            link.href = `/api/looker-studio/export?format=csv&type=all`;
-            link.download = `indismart_all_data_${new Date().toISOString().split('T')[0]}.csv`;
-            link.style.display = 'none';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            
-            // Reset button after a short delay
-            setTimeout(() => {
-                exportBtn.innerHTML = originalText;
-                exportBtn.disabled = false;
-                showAlert('success', 'Semua data berhasil di-export sebagai CSV!');
-            }, 1000);
-        }
-        
-    } catch (error) {
-        // Reset button
-        const exportBtn = document.querySelector(`button[onclick="exportData('${format}')"]`);
-        if (exportBtn) {
-            exportBtn.innerHTML = originalText;
-            exportBtn.disabled = false;
-        }
-        
-        console.error('Error in exportData:', error);
-        showAlert('error', 'Gagal export data: ' + error.message);
-    }
-}
+
+
+
+
 
 function exportChartData(chartType) {
     try {
@@ -1325,7 +918,7 @@ function loadDashboard(url) {
         // Check if URL can be embedded
         if (urlInfo.embedUrl.includes('/reporting/create')) {
             console.log('URL cannot be embedded, showing alternative options');
-            showDashboardError('URL ini tidak dapat di-embed karena merupakan halaman pembuatan dashboard. Gunakan tombol "Buka di Tab Baru" atau "Buat Laporan Baru" untuk membuat dashboard yang dapat di-embed.');
+                         showDashboardError('URL ini tidak dapat di-embed karena merupakan halaman pembuatan dashboard. Gunakan tombol "Buka di Tab Baru" untuk membuka dashboard atau "Buat Laporan Baru" untuk membuat dashboard yang dapat di-embed.');
             
             // Add button to open in new tab
             const openInNewTabBtn = document.createElement('button');
@@ -1658,11 +1251,10 @@ function showNoDashboardState() {
             infoMessage.className = 'alert alert-info mt-3';
             infoMessage.innerHTML = `
                 <h6><i class="bi bi-info-circle me-2"></i>Tips untuk Dashboard Pertama:</h6>
-                <ul class="mb-0">
-                    <li>Klik "Generate Dashboard" untuk membuat dashboard otomatis</li>
-                    <li>Atau klik "Buat Laporan Baru" untuk membuat dashboard manual</li>
-                    <li>Setelah dashboard dibuat, URL akan disimpan untuk penggunaan selanjutnya</li>
-                </ul>
+                                 <ul class="mb-0">
+                     <li>Klik "Buat Laporan Baru" untuk membuat dashboard manual</li>
+                     <li>Setelah dashboard dibuat, URL akan disimpan untuk penggunaan selanjutnya</li>
+                 </ul>
             `;
             noDashboardElement.appendChild(infoMessage);
         }
@@ -1691,12 +1283,7 @@ function hideAllDashboardStates() {
     });
 }
 
-function showCustomUrlInput() {
-    const customUrlSection = document.getElementById('customUrlSection');
-    if (customUrlSection) {
-        customUrlSection.style.display = 'block';
-    }
-}
+
 
 // Handle embedding issues
 function openDashboardInNewTab() {
@@ -1789,9 +1376,9 @@ function showEmbeddingHelp() {
                                             Konfigurasi Manual
                                         </h6>
                                         <p class="card-text small">Masukkan URL embed yang sudah dikonfigurasi dengan benar.</p>
-                                        <button type="button" class="btn btn-sm btn-success" onclick="showCustomUrlInput()">
-                                            Masukkan URL
-                                        </button>
+                                                                                 <button type="button" class="btn btn-sm btn-success" onclick="window.open('https://lookerstudio.google.com/reporting/create', '_blank')">
+                                             Buat Dashboard Baru
+                                         </button>
                                     </div>
                                 </div>
                             </div>
@@ -1820,10 +1407,10 @@ function showEmbeddingHelp() {
                             <i class="bi bi-box-arrow-up-right me-2"></i>
                             Buka Dashboard
                         </button>
-                        <button type="button" class="btn btn-success" onclick="showCustomUrlInput()">
-                            <i class="bi bi-gear me-2"></i>
-                            Konfigurasi Manual
-                        </button>
+                                                 <button type="button" class="btn btn-success" onclick="window.open('https://lookerstudio.google.com/reporting/create', '_blank')">
+                             <i class="bi bi-plus-circle me-2"></i>
+                             Buat Dashboard Baru
+                         </button>
                     </div>
                 </div>
             </div>
@@ -2171,80 +1758,7 @@ function createNewReport() {
 
 
 
-function createDirectLink() {
-    try {
-        console.log('Creating direct link to Looker Studio...');
-        
-        // Check if CSRF token exists
-        const csrfToken = document.querySelector('meta[name="csrf-token"]');
-        if (!csrfToken) {
-            showAlert('error', 'CSRF token tidak ditemukan. Silakan refresh halaman.');
-            return;
-        }
-        
-        // Show loading indicator
-        showAlert('info', 'Membuat link langsung ke Looker Studio...');
-        
-        // Add loading state to button
-        const directLinkBtn = document.querySelector('button[onclick="createDirectLink()"]');
-        const originalText = directLinkBtn.innerHTML;
-        directLinkBtn.innerHTML = '<i class="bi bi-hourglass-split me-1 spin"></i> Creating...';
-        directLinkBtn.disabled = true;
-        
-        fetch('/looker-studio/create-direct-link', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': csrfToken.getAttribute('content'),
-                'Accept': 'application/json'
-            }
-        })
-        .then(response => {
-            console.log('Response status:', response.status);
-            
-            if (!response.ok) {
-                if (response.status === 401) {
-                    throw new Error('Silakan login terlebih dahulu.');
-                } else if (response.status === 403) {
-                    throw new Error('Anda tidak memiliki akses ke fitur ini.');
-                } else if (response.status === 404) {
-                    throw new Error('Endpoint tidak ditemukan. Silakan refresh halaman.');
-                } else {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log('Response data:', data);
-            
-            // Reset button
-            directLinkBtn.innerHTML = originalText;
-            directLinkBtn.disabled = false;
-            
-            if (data.success) {
-                // Show success message
-                showAlert('success', data.message);
-                
-                // Open the link in new tab
-                window.open(data.url, '_blank');
-            } else {
-                showAlert('error', 'Gagal membuat link: ' + (data.message || 'Unknown error'));
-            }
-        })
-        .catch(error => {
-            // Reset button
-            directLinkBtn.innerHTML = originalText;
-            directLinkBtn.disabled = false;
-            
-            console.error('Error creating direct link:', error);
-            showAlert('error', 'Terjadi kesalahan: ' + error.message);
-        });
-    } catch (error) {
-        console.error('Error in createDirectLink:', error);
-        showAlert('error', 'Terjadi kesalahan sistem: ' + error.message);
-    }
-}
+
 
 // New function to handle authentication required state
 function showAuthenticationRequiredState(urlInfo) {
@@ -2270,20 +1784,28 @@ function showAuthenticationRequiredState(urlInfo) {
                     <p class="mb-0"><strong>Status:</strong> Memerlukan autentikasi Google</p>
                 </div>
                 
-                                 <div class="d-flex justify-content-center gap-2 flex-wrap">
-                     <button type="button" class="btn btn-primary" onclick="openDashboardWithAuth('${urlInfo.originalUrl}')">
-                         <i class="bi bi-box-arrow-up-right me-2"></i>
-                         Buka di Tab Baru (Login)
-                     </button>
-                     <button type="button" class="btn btn-info" onclick="tryEmbedAfterAuth('${urlInfo.embedUrl}')">
-                         <i class="bi bi-arrow-clockwise me-2"></i>
-                         Coba Embed Lagi
-                     </button>
-                     <button type="button" class="btn btn-warning" onclick="showAuthenticationHelp()">
-                         <i class="bi bi-question-circle me-2"></i>
-                         Bantuan
-                     </button>
-                 </div>
+                                                                   <div class="d-flex justify-content-center gap-2 flex-wrap">
+                      <button type="button" class="btn btn-primary" onclick="openDashboardWithAuth('${urlInfo.originalUrl}')">
+                          <i class="bi bi-box-arrow-up-right me-2"></i>
+                          Buka di Tab Baru (Login)
+                      </button>
+                      <button type="button" class="btn btn-info" onclick="tryEmbedAfterAuth('${urlInfo.embedUrl}')">
+                          <i class="bi bi-arrow-clockwise me-2"></i>
+                          Coba Embed Lagi
+                      </button>
+                      <button type="button" class="btn btn-warning" onclick="showAuthenticationHelp()">
+                          <i class="bi bi-question-circle me-2"></i>
+                          Bantuan
+                      </button>
+                      <button type="button" class="btn btn-outline-warning" onclick="editDashboardUrl()">
+                          <i class="bi bi-pencil me-2"></i>
+                          Edit URL
+                      </button>
+                      <button type="button" class="btn btn-outline-danger" onclick="deleteDashboardUrl()">
+                          <i class="bi bi-trash me-2"></i>
+                          Hapus URL
+                      </button>
+                  </div>
                 
                 <div class="mt-4">
                     <small class="text-muted">
@@ -2376,16 +1898,264 @@ function tryEmbedAfterAuth(embedUrl) {
     }
 }
 
-// Enhanced hideAllDashboardStates to include auth required state
-function hideAllDashboardStates() {
-    const states = ['dashboardLoading', 'dashboardEmbed', 'noDashboardState', 'dashboardError', 'authRequiredState'];
-    states.forEach(stateId => {
-        const element = document.getElementById(stateId);
-        if (element) {
-            element.style.display = 'none';
-        }
-    });
-}
+ // Enhanced hideAllDashboardStates to include auth required state
+ function hideAllDashboardStates() {
+     const states = ['dashboardLoading', 'dashboardEmbed', 'noDashboardState', 'dashboardError', 'authRequiredState'];
+     states.forEach(stateId => {
+         const element = document.getElementById(stateId);
+         if (element) {
+             element.style.display = 'none';
+         }
+     });
+ }
+
+ // Function to edit dashboard URL
+ function editDashboardUrl() {
+     try {
+         const storedUrl = localStorage.getItem('lookerStudioDashboardUrl');
+         
+         if (!storedUrl) {
+             showAlert('error', 'Tidak ada URL dashboard yang tersimpan untuk diedit.');
+             return;
+         }
+         
+         // Show edit modal
+         const editModalHtml = `
+             <div class="modal fade" id="editUrlModal" tabindex="-1">
+                 <div class="modal-dialog">
+                     <div class="modal-content">
+                         <div class="modal-header">
+                             <h5 class="modal-title">
+                                 <i class="bi bi-pencil me-2"></i>
+                                 Edit URL Dashboard
+                             </h5>
+                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                         </div>
+                         <div class="modal-body">
+                             <div class="mb-3">
+                                 <label for="editUrlInput" class="form-label">URL Dashboard Looker Studio:</label>
+                                 <input type="url" class="form-control" id="editUrlInput" value="${storedUrl}" placeholder="https://lookerstudio.google.com/reporting/...">
+                                 <div class="form-text">Masukkan URL Looker Studio yang valid</div>
+                             </div>
+                             <div class="alert alert-info">
+                                 <i class="bi bi-info-circle me-2"></i>
+                                 <strong>Tips:</strong> Pastikan URL adalah URL embed yang valid dari Looker Studio
+                             </div>
+                         </div>
+                         <div class="modal-footer">
+                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                             <button type="button" class="btn btn-primary" onclick="saveEditedUrl()">
+                                 <i class="bi bi-check me-2"></i>
+                                 Simpan Perubahan
+                             </button>
+                         </div>
+                     </div>
+                 </div>
+             </div>
+         `;
+         
+         // Remove existing modal if any
+         const existingModal = document.getElementById('editUrlModal');
+         if (existingModal) {
+             existingModal.remove();
+         }
+         
+         // Add modal to body
+         document.body.insertAdjacentHTML('beforeend', editModalHtml);
+         
+         // Show modal
+         const modal = new bootstrap.Modal(document.getElementById('editUrlModal'));
+         modal.show();
+         
+         // Add enter key listener
+         const editUrlInput = document.getElementById('editUrlInput');
+         if (editUrlInput) {
+             editUrlInput.addEventListener('keypress', function(e) {
+                 if (e.key === 'Enter') {
+                     e.preventDefault();
+                     saveEditedUrl();
+                 }
+             });
+         }
+         
+     } catch (error) {
+         console.error('Error showing edit URL modal:', error);
+         showAlert('error', 'Gagal menampilkan modal edit URL: ' + error.message);
+     }
+ }
+
+ // Function to save edited URL
+ function saveEditedUrl() {
+     try {
+         const editUrlInput = document.getElementById('editUrlInput');
+         const newUrl = editUrlInput.value.trim();
+         
+         if (!newUrl) {
+             showAlert('error', 'URL tidak boleh kosong');
+             return;
+         }
+         
+         if (!newUrl.includes('lookerstudio.google.com')) {
+             showAlert('error', 'URL harus dari Looker Studio (https://lookerstudio.google.com)');
+             return;
+         }
+         
+         // Save new URL to localStorage
+         localStorage.setItem('lookerStudioDashboardUrl', newUrl);
+         
+         // Close modal
+         const modal = bootstrap.Modal.getInstance(document.getElementById('editUrlModal'));
+         if (modal) {
+             modal.hide();
+         }
+         
+         // Show success message
+         showAlert('success', 'URL dashboard berhasil diperbarui!');
+         
+         // Reload dashboard with new URL
+         setTimeout(() => {
+             loadDashboard(newUrl);
+         }, 1000);
+         
+     } catch (error) {
+         console.error('Error saving edited URL:', error);
+         showAlert('error', 'Gagal menyimpan URL: ' + error.message);
+     }
+ }
+
+ // Function to delete dashboard URL
+ function deleteDashboardUrl() {
+     try {
+         const storedUrl = localStorage.getItem('lookerStudioDashboardUrl');
+         
+         if (!storedUrl) {
+             showAlert('error', 'Tidak ada URL dashboard yang tersimpan untuk dihapus.');
+             return;
+         }
+         
+         // Show confirmation modal
+         const deleteModalHtml = `
+             <div class="modal fade" id="deleteUrlModal" tabindex="-1">
+                 <div class="modal-dialog">
+                     <div class="modal-content">
+                         <div class="modal-header">
+                             <h5 class="modal-title">
+                                 <i class="bi bi-exclamation-triangle text-danger me-2"></i>
+                                 Konfirmasi Hapus URL
+                             </h5>
+                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                         </div>
+                         <div class="modal-body">
+                             <div class="alert alert-warning">
+                                 <i class="bi bi-exclamation-triangle me-2"></i>
+                                 <strong>Peringatan:</strong> Anda yakin ingin menghapus URL dashboard ini?
+                             </div>
+                             <p class="mb-2"><strong>URL yang akan dihapus:</strong></p>
+                             <p class="text-muted small">${storedUrl}</p>
+                             <p class="text-muted small">Setelah dihapus, Anda perlu memasukkan URL baru untuk menampilkan dashboard.</p>
+                         </div>
+                         <div class="modal-footer">
+                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                             <button type="button" class="btn btn-danger" onclick="confirmDeleteUrl()">
+                                 <i class="bi bi-trash me-2"></i>
+                                 Ya, Hapus URL
+                             </button>
+                         </div>
+                     </div>
+                 </div>
+             </div>
+         `;
+         
+         // Remove existing modal if any
+         const existingModal = document.getElementById('deleteUrlModal');
+         if (existingModal) {
+             existingModal.remove();
+         }
+         
+         // Add modal to body
+         document.body.insertAdjacentHTML('beforeend', deleteModalHtml);
+         
+         // Show modal
+         const modal = new bootstrap.Modal(document.getElementById('deleteUrlModal'));
+         modal.show();
+         
+     } catch (error) {
+         console.error('Error showing delete URL modal:', error);
+         showAlert('error', 'Gagal menampilkan modal konfirmasi hapus: ' + error.message);
+     }
+ }
+
+ // Function to confirm URL deletion
+ function confirmDeleteUrl() {
+     try {
+         // Remove URL from localStorage
+         localStorage.removeItem('lookerStudioDashboardUrl');
+         
+         // Close modal
+         const modal = bootstrap.Modal.getInstance(document.getElementById('deleteUrlModal'));
+         if (modal) {
+             modal.hide();
+         }
+         
+         // Show success message
+         showAlert('success', 'URL dashboard berhasil dihapus!');
+         
+         // Show no dashboard state
+         setTimeout(() => {
+             showNoDashboardState();
+         }, 1000);
+         
+     } catch (error) {
+         console.error('Error confirming URL deletion:', error);
+         showAlert('error', 'Gagal menghapus URL: ' + error.message);
+     }
+ }
+
+ // Function to load new URL from input
+ function loadNewUrl() {
+     try {
+         const newUrlInput = document.getElementById('newUrlInput');
+         const newUrl = newUrlInput.value.trim();
+         
+         if (!newUrl) {
+             showAlert('error', 'Silakan masukkan URL dashboard terlebih dahulu');
+             return;
+         }
+         
+         if (!newUrl.includes('lookerstudio.google.com')) {
+             showAlert('error', 'URL harus dari Looker Studio (https://lookerstudio.google.com)');
+             return;
+         }
+         
+         // Save URL to localStorage
+         localStorage.setItem('lookerStudioDashboardUrl', newUrl);
+         
+         // Show success message
+         showAlert('success', 'URL dashboard berhasil disimpan! Memuat dashboard...');
+         
+         // Load dashboard with new URL
+         setTimeout(() => {
+             loadDashboard(newUrl);
+         }, 1000);
+         
+     } catch (error) {
+         console.error('Error loading new URL:', error);
+         showAlert('error', 'Gagal memuat URL baru: ' + error.message);
+     }
+ }
+
+ // Add event listener for Enter key on new URL input
+ document.addEventListener('DOMContentLoaded', function() {
+     const newUrlInput = document.getElementById('newUrlInput');
+     if (newUrlInput) {
+         newUrlInput.addEventListener('keypress', function(e) {
+             if (e.key === 'Enter') {
+                 e.preventDefault();
+                 loadNewUrl();
+             }
+         });
+     }
+ });
 </script>
 @endpush
 
