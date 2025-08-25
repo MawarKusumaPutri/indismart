@@ -113,9 +113,6 @@
                         <button type="button" class="btn btn-success btn-sm" id="assignSelectedBtn" style="display: none;">
                             <i class="bi bi-hash me-1"></i> Tugaskan Nomor Kontrak ke Mitra Terpilih
                         </button>
-                        <button type="button" class="btn btn-warning btn-sm" id="bulkAssignBtn" style="display: none;">
-                            <i class="bi bi-magic me-1"></i> Generate Otomatis untuk Mitra Terpilih
-                        </button>
                     </div>
                     <div>
                         {{ $mitraUsers->links() }}
@@ -126,27 +123,7 @@
     </div>
 </div>
 
-<!-- Modal untuk Bulk Assign -->
-<div class="modal fade" id="bulkAssignModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Tugaskan Nomor Kontrak Secara Massal</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <p>Anda akan menugaskan nomor kontrak secara otomatis untuk <span id="selectedCount">0</span> mitra yang dipilih.</p>
-                <p class="text-muted">Sistem akan generate nomor kontrak otomatis dengan format: KTRK[YYYY][MM][XXXX]</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                <button type="button" class="btn btn-success" id="confirmBulkAssign">
-                    <i class="bi bi-check-circle me-1"></i> Konfirmasi
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
+
 @endsection
 
 @push('scripts')
@@ -155,9 +132,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const selectAllCheckbox = document.getElementById('selectAll');
     const mitraCheckboxes = document.querySelectorAll('.mitra-checkbox');
     const assignSelectedBtn = document.getElementById('assignSelectedBtn');
-    const bulkAssignBtn = document.getElementById('bulkAssignBtn');
-    const selectedCountSpan = document.getElementById('selectedCount');
-    const confirmBulkAssignBtn = document.getElementById('confirmBulkAssign');
 
     // Handle select all checkbox
     selectAllCheckbox.addEventListener('change', function() {
@@ -198,97 +172,12 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (checkedCount > 0) {
             assignSelectedBtn.style.display = 'inline-block';
-            bulkAssignBtn.style.display = 'inline-block';
         } else {
             assignSelectedBtn.style.display = 'none';
-            bulkAssignBtn.style.display = 'none';
         }
     }
 
-    // Handle bulk assign button
-    bulkAssignBtn.addEventListener('click', function() {
-        const checkedCount = document.querySelectorAll('.mitra-checkbox:checked').length;
-        selectedCountSpan.textContent = checkedCount;
-        
-        const modal = new bootstrap.Modal(document.getElementById('bulkAssignModal'));
-        modal.show();
-    });
 
-         // Handle confirm bulk assign
-     confirmBulkAssignBtn.addEventListener('click', function() {
-         const selectedMitra = Array.from(document.querySelectorAll('.mitra-checkbox:checked'))
-             .map(checkbox => checkbox.value);
-         
-         if (selectedMitra.length === 0) {
-             alert('Pilih mitra terlebih dahulu!');
-             return;
-         }
-
-         console.log('Selected mitra:', selectedMitra);
-
-         // Show loading state
-         confirmBulkAssignBtn.disabled = true;
-         confirmBulkAssignBtn.innerHTML = '<i class="bi bi-hourglass-split me-1"></i> Processing...';
-
-         // Get CSRF token
-         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-         console.log('CSRF Token:', csrfToken);
-
-         // Send AJAX request
-         fetch('{{ route("nomor-kontrak.bulk-assign-selected") }}', {
-             method: 'POST',
-             headers: {
-                 'Content-Type': 'application/json',
-                 'X-CSRF-TOKEN': csrfToken,
-                 'Accept': 'application/json',
-             },
-             body: JSON.stringify({
-                 mitra_ids: selectedMitra
-             })
-         })
-                   .then(async response => {
-              console.log('Response status:', response.status);
-              console.log('Response headers:', response.headers);
-              
-              if (!response.ok) {
-                  // Clone response untuk menghindari "Body has already been consumed"
-                  const responseClone = response.clone();
-                  
-                  try {
-                      const errorData = await response.json();
-                      console.log('Error response data:', errorData);
-                      throw new Error(errorData.message || 'Network response was not ok: ' + response.status);
-                  } catch (jsonError) {
-                      try {
-                          const errorText = await responseClone.text();
-                          console.log('Error response text:', errorText);
-                          throw new Error('Network response was not ok: ' + response.status);
-                      } catch (textError) {
-                          throw new Error('Network response was not ok: ' + response.status);
-                      }
-                  }
-              }
-              
-              return response.json();
-          })
-         .then(data => {
-             console.log('Response data:', data);
-             if (data.success) {
-                 alert(data.message);
-                 location.reload();
-             } else {
-                 alert('Terjadi kesalahan: ' + (data.message || 'Unknown error'));
-             }
-         })
-         .catch(error => {
-             console.error('Error:', error);
-             alert('Terjadi kesalahan saat memproses permintaan. Silakan coba lagi. Error: ' + error.message);
-         })
-         .finally(() => {
-             confirmBulkAssignBtn.disabled = false;
-             confirmBulkAssignBtn.innerHTML = '<i class="bi bi-check-circle me-1"></i> Konfirmasi';
-         });
-     });
 
     // Handle assign selected button
     assignSelectedBtn.addEventListener('click', function() {
@@ -304,7 +193,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Redirect to assign page for single mitra
             window.location.href = `{{ route('nomor-kontrak.index') }}/${selectedMitra[0]}/assign`;
         } else {
-            alert('Untuk menugaskan nomor kontrak manual, pilih satu mitra saja. Untuk multiple mitra, gunakan "Generate Otomatis".');
+            alert('Untuk menugaskan nomor kontrak manual, pilih satu mitra saja.');
         }
     });
 });

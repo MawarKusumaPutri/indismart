@@ -204,20 +204,27 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($dashboardData['aktivitas_mitra'] as $mitra)
+                                @forelse($dashboardData['aktivitas_mitra'] as $mitra)
                                 <tr>
-                                    <td>{{ $mitra->name }}</td>
-                                    <td>{{ $mitra->dokumen_count }}</td>
-                                    <td>{{ $mitra->fotos_count }}</td>
+                                    <td>{{ $mitra->name ?? 'Unknown' }}</td>
+                                    <td>{{ $mitra->dokumen_count ?? 0 }}</td>
+                                    <td>{{ $mitra->fotos_count ?? 0 }}</td>
                                     <td>
-                                        @if($mitra->dokumen_count > 0)
+                                        @if(($mitra->dokumen_count ?? 0) > 0)
                                             <span class="badge bg-success">Aktif</span>
                                         @else
                                             <span class="badge bg-secondary">Tidak Aktif</span>
                                         @endif
                                     </td>
                                 </tr>
-                                @endforeach
+                                @empty
+                                <tr>
+                                    <td colspan="4" class="text-center text-muted">
+                                        <i class="bi bi-info-circle me-2"></i>
+                                        Belum ada aktivitas mitra yang tercatat
+                                    </td>
+                                </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
@@ -235,7 +242,7 @@
                 </div>
                 <div class="card-body">
                     <div class="timeline">
-                        @foreach($dashboardData['recent_activities'] as $activity)
+                        @forelse($dashboardData['recent_activities'] as $activity)
                         <div class="timeline-item">
                             <div class="timeline-marker">
                                 @if($activity['type'] == 'dokumen')
@@ -244,15 +251,22 @@
                                     <i class="bi bi-image text-success"></i>
                                 @elseif($activity['type'] == 'review')
                                     <i class="bi bi-star text-warning"></i>
+                                @else
+                                    <i class="bi bi-activity text-info"></i>
                                 @endif
                             </div>
                             <div class="timeline-content">
-                                <h6 class="timeline-title">{{ $activity['title'] }}</h6>
-                                <p class="timeline-text">{{ $activity['user'] }}</p>
-                                <small class="text-muted">{{ $activity['time'] }}</small>
+                                <h6 class="timeline-title">{{ $activity['title'] ?? 'Aktivitas' }}</h6>
+                                <p class="timeline-text">{{ $activity['user'] ?? 'User' }}</p>
+                                <small class="text-muted">{{ $activity['time'] ?? 'Baru saja' }}</small>
                             </div>
                         </div>
-                        @endforeach
+                        @empty
+                        <div class="text-center text-muted py-3">
+                            <i class="bi bi-info-circle me-2"></i>
+                            Belum ada aktivitas terbaru yang tercatat
+                        </div>
+                        @endforelse
                     </div>
                 </div>
             </div>
@@ -316,10 +330,6 @@
                                 Export data dalam berbagai format untuk digunakan di Looker Studio.
                             </p>
                             <div class="d-grid gap-2">
-                                <button type="button" class="btn btn-success" onclick="exportData('json')">
-                                    <i class="bi bi-filetype-json me-2"></i>
-                                    Export JSON
-                                </button>
                                 <button type="button" class="btn btn-info" onclick="exportData('csv')">
                                     <i class="bi bi-filetype-csv me-2"></i>
                                     Export CSV
@@ -879,64 +889,22 @@ function exportData(format) {
                 showAlert('success', 'Data CSV berhasil di-export!');
             }, 1000);
             
-        } else if (format === 'json') {
-            // For JSON, fetch and download
-            fetch(url, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                }
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                // Reset button
-                exportBtn.innerHTML = originalText;
-                exportBtn.disabled = false;
-                
-                if (data.success) {
-                    // Download JSON file
-                    const blob = new Blob([JSON.stringify(data.data, null, 2)], { type: 'application/json' });
-                    const downloadUrl = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = downloadUrl;
-                    a.download = `indismart_data_${new Date().toISOString().split('T')[0]}.json`;
-                    a.style.display = 'none';
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    window.URL.revokeObjectURL(downloadUrl);
-                    
-                    showAlert('success', 'Data JSON berhasil di-export!');
-                } else {
-                    showAlert('error', 'Gagal export data: ' + (data.message || 'Unknown error'));
-                }
-            })
-            .catch(error => {
-                // Reset button
-                exportBtn.innerHTML = originalText;
-                exportBtn.disabled = false;
-                
-                console.error('Error exporting JSON data:', error);
-                showAlert('error', 'Gagal export data JSON: ' + error.message);
-            });
-            
         } else if (format === 'all') {
-            // Export all formats
-            Promise.all([
-                exportData('json'),
-                exportData('csv')
-            ]).then(() => {
-                showAlert('success', 'Semua data berhasil di-export!');
-            }).catch(error => {
-                console.error('Error exporting all data:', error);
-                showAlert('error', 'Gagal export semua data: ' + error.message);
-            });
+            // Export all data as CSV
+            const link = document.createElement('a');
+            link.href = `/api/looker-studio/export?format=csv&type=all`;
+            link.download = `indismart_all_data_${new Date().toISOString().split('T')[0]}.csv`;
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Reset button after a short delay
+            setTimeout(() => {
+                exportBtn.innerHTML = originalText;
+                exportBtn.disabled = false;
+                showAlert('success', 'Semua data berhasil di-export sebagai CSV!');
+            }, 1000);
         }
         
     } catch (error) {
@@ -1288,6 +1256,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function createDirectLink() {
     try {
+        console.log('Creating direct link to Looker Studio...');
+        
         // Check if CSRF token exists
         const csrfToken = document.querySelector('meta[name="csrf-token"]');
         if (!csrfToken) {
@@ -1298,20 +1268,43 @@ function createDirectLink() {
         // Show loading indicator
         showAlert('info', 'Membuat link langsung ke Looker Studio...');
         
+        // Add loading state to button
+        const directLinkBtn = document.querySelector('button[onclick="createDirectLink()"]');
+        const originalText = directLinkBtn.innerHTML;
+        directLinkBtn.innerHTML = '<i class="bi bi-hourglass-split me-1 spin"></i> Creating...';
+        directLinkBtn.disabled = true;
+        
         fetch('/looker-studio/create-direct-link', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': csrfToken.getAttribute('content')
+                'X-CSRF-TOKEN': csrfToken.getAttribute('content'),
+                'Accept': 'application/json'
             }
         })
         .then(response => {
+            console.log('Response status:', response.status);
+            
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                if (response.status === 401) {
+                    throw new Error('Silakan login terlebih dahulu.');
+                } else if (response.status === 403) {
+                    throw new Error('Anda tidak memiliki akses ke fitur ini.');
+                } else if (response.status === 404) {
+                    throw new Error('Endpoint tidak ditemukan. Silakan refresh halaman.');
+                } else {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
             }
             return response.json();
         })
         .then(data => {
+            console.log('Response data:', data);
+            
+            // Reset button
+            directLinkBtn.innerHTML = originalText;
+            directLinkBtn.disabled = false;
+            
             if (data.success) {
                 // Show success message
                 showAlert('success', data.message);
@@ -1323,6 +1316,10 @@ function createDirectLink() {
             }
         })
         .catch(error => {
+            // Reset button
+            directLinkBtn.innerHTML = originalText;
+            directLinkBtn.disabled = false;
+            
             console.error('Error creating direct link:', error);
             showAlert('error', 'Terjadi kesalahan: ' + error.message);
         });
@@ -1333,3 +1330,4 @@ function createDirectLink() {
 }
 </script>
 @endpush
+

@@ -613,25 +613,14 @@ class LookerStudioApiController extends Controller
                 'ip' => $request->ip()
             ]);
             
-            $format = $request->get('format', 'json');
+            $format = $request->get('format', 'csv');
             $dataType = $request->get('type', 'all');
             
             // Prepare comprehensive data for export
             $data = $this->prepareComprehensiveExportData($dataType);
             
-            switch ($format) {
-                case 'csv':
-                    return $this->exportToCSV($data, $dataType);
-                case 'json':
-                default:
-                    return response()->json([
-                        'success' => true,
-                        'data' => $data,
-                        'exported_at' => Carbon::now()->toISOString(),
-                        'format' => $format,
-                        'type' => $dataType
-                    ]);
-            }
+            // Only support CSV export now
+            return $this->exportToCSV($data, $dataType);
             
         } catch (\Exception $e) {
             Log::error('LookerStudio API: Error in exportData - ' . $e->getMessage(), [

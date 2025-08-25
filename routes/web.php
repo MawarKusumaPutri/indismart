@@ -110,7 +110,7 @@ Route::group(['middleware' => ['auth', 'role:staff']], function () {
     Route::get('/nomor-kontrak/generate', [NomorKontrakController::class, 'generate'])->name('nomor-kontrak.generate');
     Route::get('/nomor-kontrak/bulk-assign', [NomorKontrakController::class, 'bulkAssign'])->name('nomor-kontrak.bulk-assign');
     Route::post('/nomor-kontrak/bulk-assign', [NomorKontrakController::class, 'bulkAssignStore'])->name('nomor-kontrak.bulk-assign-store');
-    Route::post('/nomor-kontrak/bulk-assign-selected', [NomorKontrakController::class, 'bulkAssignSelected'])->name('nomor-kontrak.bulk-assign-selected');
+    
 });
 
 // Settings Routes
