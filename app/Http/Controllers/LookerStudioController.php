@@ -881,17 +881,44 @@ class LookerStudioController extends Controller
     private function createLookerStudioUrl($data)
     {
         try {
-            // Use the absolute simplest approach - just the base URL
+            // Create a more functional URL that can be embedded
+            // We'll use a sample dashboard URL that demonstrates the concept
             $baseUrl = 'https://lookerstudio.google.com/reporting/create';
             
-            Log::info('LookerStudio: Using base URL only', ['url' => $baseUrl]);
+            // For demonstration purposes, we'll create a URL that opens a new report
+            // In a real implementation, you would create an actual dashboard and return its embed URL
+            $dashboardUrl = $baseUrl . '?ds.ds0.connector=bigQuery&ds.ds0.projectId=your-project-id';
             
-            return $baseUrl;
+            Log::info('LookerStudio: Created dashboard URL', ['url' => $dashboardUrl]);
+            
+            return $dashboardUrl;
             
         } catch (\Exception $e) {
             Log::error('LookerStudio: Error creating URL - ' . $e->getMessage());
             
-            // Ultimate fallback - just the base URL
+            // Fallback to base URL
+            return 'https://lookerstudio.google.com/reporting/create';
+        }
+    }
+    
+    /**
+     * Create a sample dashboard URL for testing embedding
+     */
+    private function createSampleEmbedUrl()
+    {
+        try {
+            // This is a sample URL that demonstrates the embed format
+            // In production, you would use actual dashboard URLs
+            $sampleUrl = 'https://lookerstudio.google.com/embed/reporting/sample-report-id';
+            
+            Log::info('LookerStudio: Created sample embed URL', ['url' => $sampleUrl]);
+            
+            return $sampleUrl;
+            
+        } catch (\Exception $e) {
+            Log::error('LookerStudio: Error creating sample embed URL - ' . $e->getMessage());
+            
+            // Fallback to create new report
             return 'https://lookerstudio.google.com/reporting/create';
         }
     }
